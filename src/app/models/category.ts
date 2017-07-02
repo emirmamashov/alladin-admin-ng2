@@ -1,0 +1,8 @@
+export class Category {
+  _id: string;
+  name: string;
+  parentCategory: string;
+  description: string;
+  keywords: string;
+  author: string;
+}

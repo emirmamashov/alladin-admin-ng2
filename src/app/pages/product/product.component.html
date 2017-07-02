@@ -1,0 +1,267 @@
+<button class="btn btn-primary" data-toggle="modal" data-target="#modal" (click)="clearNewProcut(); changeEditStatus(false);">Добавить</button>
+<table class="table table-striped table-hover ">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Название</th>
+            <th>Описание</th>
+            <th>Телефон</th>
+            <th>Цена</th>
+            <th>Цена акции</th>
+            <th>SEO Url</th>
+            <th>Промо стикеры</th>
+            <th>Изображение товара</th>
+            <th>Производитель</th>
+            <th>Главная категория</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let product of products; let i=index" data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">
+            <td>{{ i+1 }}</td>
+            <td>{{ product.name }}</td>
+            <td>{{ product.description }}</td>
+            <td>{{ product.phone }}</td>
+            <td>{{ product.price }}</td>
+            <td>{{ product.priceStock }}</td>
+            <td>{{ product.seoUrl }}</td>
+            <td>{{ product.promoStickers }}</td>
+            <td><img src="{{ apiUrl }}/{{ product.image }}" width="50" height="50" /></td>
+            <td>{{ product.producer }}</td>
+            <td>{{ product.category }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<div class="modal" id="modal">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Товар</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <label>Название: </label>
+                            <input type="text" class="form-control" id="name" placeholder="Название" [(ngModel)]="newProduct.name" [value]="newProduct.name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <label>HTML-тег H1: </label>
+                            <input type="text" class="form-control" id="htmlH1" placeholder="HTML-тег H1" [(ngModel)]="newProduct.htmlH1" [value]="newProduct.htmlH1">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <label>HTML-тег title: </label>
+                            <input type="text" class="form-control" id="htmlTitle" placeholder="HTML-тег title" [(ngModel)]="newProduct.htmlTitle" [value]="newProduct.htmlTitle">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <label>META description: </label>
+                            <input type="text" class="form-control" id="metaDescription" placeholder="META description" [(ngModel)]="newProduct.metaDescription" [value]="newProduct.metaDescription">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-10">
+                            <label>META keywords: </label>
+                            <input type="text" class="form-control" id="metaKeywords" placeholder="META keywords" [(ngModel)]="newProduct.metaKeywords" [value]="newProduct.metaKeywords">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <label>Описание товара: </label>
+                            <textarea class="form-control" rows="3" id="description" [(ngModel)]="newProduct.description" placeholder="Описание товара">
+                              {{ newProduct.description }}
+                            </textarea>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <label>Теги товара(через запятую): </label>
+                            <input type="text" class="form-control" id="tegs" placeholder="Теги товара" [(ngModel)]="newProduct.tegs" [value]="newProduct.tegs">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <label>Телефон: </label>
+                            <input type="text" class="form-control" id="phone" placeholder="Телефон" [(ngModel)]="newProduct.phone" [value]="newProduct.phone">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <label>Цена: </label>
+                            <input type="text" class="form-control" id="price" placeholder="Цена" [(ngModel)]="newProduct.price" [value]="newProduct.price">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <label>Цена акции: </label>
+                            <input type="text" class="form-control" id="priceStock" placeholder="Цена акции" [(ngModel)]="newProduct.priceStock" [value]="newProduct.priceStock">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <label>SEO url: </label>
+                            <input type="text" class="form-control" id="seoUrl" placeholder="SEO Url" [(ngModel)]="newProduct.seoUrl" [value]="newProduct.seoUrl">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <label>Выберите промостикер: </label>
+                            <p-dropdown [options]="promoStickersItem" [(ngModel)]="newProduct.promoStickers" [filter]="true" [style]="{'width':'100%'}"></p-dropdown>
+
+                            <button type="button" class="btn btn-link" (click)="changeShowAddPromoSticker()">
+                              <i class="fa fa-plus" aria-hidden="true"></i>
+                              Добавления промостикера:
+                            </button>
+                        </div>
+                        <div class="col-lg-10" *ngIf="showAddPromoSticker">
+                            <div class="form-horizontal container" style="width: 100%">
+                                <fieldset>
+                                    <div class="form-group">
+                                        <div class="col-lg-10">
+                                            <input type="text" class="form-control" id="name" placeholder="Название" [(ngModel)]="newPromoSticker.name" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-lg-10">
+                                            <input #file type="file" class="form-control" id="image" placeholder="Изображение" [(ngModel)]="newPromoSticker.image" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-lg-10 col-lg-offset-2">
+                                            <button type="reset" class="btn btn-default" (click)="changeShowAddPromoSticker()">Отмена</button>
+                                            <button type="submit" class="btn btn-primary" (click)="addPromoSticker(file, newPromoSticker)">Сохранить</button>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <label><i class="fa fa-picture-o" aria-hidden="true"></i> Выберите изображение товара</label>
+                            <input #fileProduct type="file" class="form-control" id="image" placeholder="Изображение товара" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-10">
+                            <label>Выберите производителя: </label>
+                            <!--producer-->
+                            <p-dropdown [options]="producersItem" [(ngModel)]="newProduct.producer" [filter]="true" [style]="{'width':'100%'}"></p-dropdown>
+
+                            <button type="button" class="btn btn-link" (click)="changeShowAddProducer()">
+                                <i class="fa fa-plus" aria-hidden="true"></i>
+                                Добавления производителя:
+                            </button>
+                        </div>
+                        <div class="col-lg-10" *ngIf="showAddProducer">
+                            <div class="form-horizontal container" style="width: 100%">
+                                <fieldset>
+                                    <div class="form-group">
+                                        <div class="col-lg-10">
+                                            <input type="text" class="form-control" id="name" placeholder="Название" [(ngModel)]="newProducer.name" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-lg-10">
+                                            <textarea class="form-control" id="description" placeholder="Описание" [(ngModel)]="newProducer.description">
+
+                        </textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-lg-10">
+                                            <input type="text" class="form-control" id="keywords" placeholder="Ключевые слова через запятую" [(ngModel)]="newProducer.keywords" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-lg-10 col-lg-offset-2">
+                                            <button type="reset" class="btn btn-default" (click)="changeShowAddProducer()">Отмена</button>
+                                            <button type="submit" class="btn btn-primary" (click)="addProducer(newProducer)">Сохранить</button>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-12">
+                                    <label>Выберите категорию: </label>
+                                    <!--categories-->
+                                    <p-multiSelect [options]="categoriesItem" [(ngModel)]="newProduct.categories" [style]="{'width': '100%'}"></p-multiSelect>
+                                </div>
+                                <i class="fa fa-plus" aria-hidden="true"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-10">
+                            <!--category-->
+                            <p-dropdown [options]="categoriesItem" [(ngModel)]="newProduct.category" [filter]="true" [style]="{'width':'100%'}"></p-dropdown>
+
+                            <button type="button" class="btn btn-link" (click)="changeShowAddCategory()">
+                                    <i class="fa fa-plus" aria-hidden="true"></i>
+                                    Добавление новой категории:
+                            </button>
+                        </div>
+                        <div class="col-lg-10" *ngIf="showAddCategory">
+                            <div class="form-horizontal container" style="width: 100%">
+                                <fieldset>
+                                    <div class="form-group">
+                                        <div class="col-lg-10">
+                                            <input type="text" class="form-control" id="name" placeholder="Название новой категории" [(ngModel)]="newCategory.name" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-lg-10">
+                                            <p-dropdown [options]="categoriesItem" [(ngModel)]="newCategory.parentCategory" [filter]="true" [style]="{'width':'100%'}"></p-dropdown>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-lg-10">
+                                            <textarea class="form-control" id="description" placeholder="Описание" [(ngModel)]="newCategory.description">
+
+                                            </textarea>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-lg-10">
+                                            <input type="text" class="form-control" id="keywords" placeholder="Ключевые слова через запятую" [(ngModel)]="newCategory.keywords" />
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="col-lg-10 col-lg-offset-2">
+                                            <button type="reset" class="btn btn-default" (click)="changeShowAddCategory()">Отмена</button>
+                                            <button type="submit" class="btn btn-primary" (click)="addCategory(newCategory)">Сохранить</button>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                            <div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-10">
+                            <!--categories-->
+                            <label>Выберите категории где будет показыватся:</label>
+                            <p-multiSelect [options]="categoriesItem" [(ngModel)]="newProduct.categories" [style]="{'width': '100%'}"></p-multiSelect>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                        <button *ngIf="!isEdit" type="button" class="btn btn-primary" (click)="addProduct(fileProduct, newProduct)">Сохранить</button>
+                        <button *ngIf="isEdit" type="button" class="btn btn-primary" (click)="editProduct(fileProduct, newProduct)">Редактировать</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

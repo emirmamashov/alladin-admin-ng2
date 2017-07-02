@@ -1,0 +1,26 @@
+{
+  "name": "alladin-admin-ng2",
+  "description": "admin panel for alladin",
+  "main": "",
+  "authors": [
+    "emirmamashov <emir.mamashov@gmail.com>"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "alladin",
+    "admin"
+  ],
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "4.0.0-alpha.6",
+    "font-awesome": "^4.7.0",
+    "remarkable-bootstrap-notify": "^3.1.3"
+  }
+}
