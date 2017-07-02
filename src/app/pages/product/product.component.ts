@@ -337,6 +337,8 @@ export class ProductComponent implements OnInit, OnDestroy {
             });
             this.notifyService.addNotify(notify);
           }
+          notify.text = response.message;
+          this.notifyService.addNotify(notify);
           return;
         }
 
