@@ -76,7 +76,8 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.cities.push({label: 'Select City', value: null});
+    this.cities.push({ label: 'Select City', value: null });
+    this.categoriesItem.push({ label: 'Выберите категорию', value: '' });
     this.getAll();
     this.getAllCategories();
     this.getAllProducers();
