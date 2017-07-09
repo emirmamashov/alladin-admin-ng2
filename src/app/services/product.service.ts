@@ -65,7 +65,7 @@ export class ProductService {
     const price = product.price ? product.price.toString() : '';
     const priceStock = product.priceStock ? product.priceStock.toString() : '';
 
-    formData.append('category', product.category || '');
+    formData.append('categoryId', product.categoryId || '');
     formData.append('description', product.description || '');
     formData.append('htmlH1', product.htmlH1 || '');
     formData.append('htmlTitle', product.htmlTitle || '');
@@ -75,7 +75,7 @@ export class ProductService {
     formData.append('phone', phone || '');
     formData.append('price', price || '');
     formData.append('priceStock', priceStock || '');
-    formData.append('producer', product.producer || '');
+    formData.append('producerId', product.producerId || '');
     formData.append('promoStickers', product.promoStickers || '');
     formData.append('seoUrl', product.seoUrl || '');
     formData.append('tegs', product.tegs || '');
@@ -94,7 +94,7 @@ export class ProductService {
     for (let j = 0; j < product.categories.length; j++) {
       formData.append('categories', product.categories[j]);
     }
-    formData.append('category', product.category || '');
+    formData.append('categoryId', product.categoryId || '');
     formData.append('description', product.description || '');
     formData.append('htmlH1', product.htmlH1 || '');
     formData.append('htmlTitle', product.htmlTitle || '');
@@ -104,7 +104,7 @@ export class ProductService {
     formData.append('phone', product.phone.toString());
     formData.append('price', product.price.toString());
     formData.append('priceStock', product.priceStock.toString());
-    formData.append('producer', product.producer || '');
+    formData.append('producerId', product.producerId || '');
     formData.append('promoStickers', product.promoStickers || '');
     formData.append('seoUrl', product.seoUrl || '');
     formData.append('tegs', product.tegs || '');

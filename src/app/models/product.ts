@@ -13,7 +13,7 @@ export class Product {
   seoUrl: string;
   promoStickers: string;
   image: string;
-  producer: string;
-  category: string;
+  producerId: string;
+  categoryId: string;
   categories: Array<string>;
 }

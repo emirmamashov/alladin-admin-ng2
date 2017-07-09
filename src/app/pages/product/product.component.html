@@ -154,7 +154,7 @@
                         <div class="col-lg-10">
                             <label>Выберите производителя: </label>
                             <!--producer-->
-                            <p-dropdown [options]="producersItem" [(ngModel)]="newProduct.producer" [filter]="true" [style]="{'width':'100%'}"></p-dropdown>
+                            <p-dropdown [options]="producersItem" [(ngModel)]="newProduct.producerId" [filter]="true" [style]="{'width':'100%'}"></p-dropdown>
 
                             <button type="button" class="btn btn-link" (click)="changeShowAddProducer()">
                                 <i class="fa fa-plus" aria-hidden="true"></i>
@@ -173,7 +173,7 @@
                                         <div class="col-lg-10">
                                             <textarea class="form-control" id="description" placeholder="Описание" [(ngModel)]="newProducer.description">
 
-                        </textarea>
+                                            </textarea>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -204,7 +204,7 @@
                     <div class="form-group">
                         <div class="col-lg-10">
                             <!--category-->
-                            <p-dropdown [options]="categoriesItem" [(ngModel)]="newProduct.category" [filter]="true" [style]="{'width':'100%'}"></p-dropdown>
+                            <p-dropdown [options]="categoriesItem" [(ngModel)]="newProduct.categoryId" [filter]="true" [style]="{'width':'100%'}"></p-dropdown>
 
                             <button type="button" class="btn btn-link" (click)="changeShowAddCategory()">
                                     <i class="fa fa-plus" aria-hidden="true"></i>
