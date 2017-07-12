@@ -33,86 +33,75 @@
 </table>
 
 <div class="modal" id="modal">
-    <div class="modal-dialog">
+    <div class="modal-dialog" style="max-width: 80%">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <h4 class="modal-title">Товар</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="form-horizontal">
-                    <div class="form-group">
-                        <div class="col-lg-12">
-                            <label>Название: </label>
-                            <input type="text" class="form-control" id="name" placeholder="Название" [(ngModel)]="newProduct.name" [value]="newProduct.name">
-                        </div>
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label>Описание товара: </label>
+                        <textarea class="form-control" 
+                            rows="3" id="description" 
+                            [(ngModel)]="newProduct.description" 
+                            placeholder="Описание товара">
+                            {{ newProduct.description }}
+                        </textarea>
                     </div>
-                    <div class="form-group">
-                        <div class="col-lg-12">
-                            <label>HTML-тег H1: </label>
-                            <input type="text" class="form-control" id="htmlH1" placeholder="HTML-тег H1" [(ngModel)]="newProduct.htmlH1" [value]="newProduct.htmlH1">
-                        </div>
+                    <div class="form-group col-md-6">
+                        <label>Теги товара(через запятую): </label>
+                        <input type="text" 
+                            class="form-control" 
+                            id="tegs" 
+                            placeholder="Теги товара" 
+                            [(ngModel)]="newProduct.tegs" 
+                            [value]="newProduct.tegs"/>
                     </div>
-                    <div class="form-group">
-                        <div class="col-lg-12">
-                            <label>HTML-тег title: </label>
-                            <input type="text" class="form-control" id="htmlTitle" placeholder="HTML-тег title" [(ngModel)]="newProduct.htmlTitle" [value]="newProduct.htmlTitle">
-                        </div>
+                    <div class="form-group col-md-6">
+                        <label>Телефон: </label>
+                        <input type="text" 
+                            class="form-control" 
+                            id="phone" 
+                            placeholder="Телефон" 
+                            [(ngModel)]="newProduct.phone" 
+                            [value]="newProduct.phone"/>
                     </div>
-                    <div class="form-group">
-                        <div class="col-lg-12">
-                            <label>META description: </label>
-                            <input type="text" class="form-control" id="metaDescription" placeholder="META description" [(ngModel)]="newProduct.metaDescription" [value]="newProduct.metaDescription">
-                        </div>
+                    <div class="form-group col-md-6">
+                        <label>Цена: </label>
+                        <input type="text" 
+                            class="form-control" 
+                            id="price" 
+                            placeholder="Цена"
+                            [(ngModel)]="newProduct.price"
+                            [value]="newProduct.price"/>
                     </div>
-                    <div class="form-group">
-                        <div class="col-lg-10">
-                            <label>META keywords: </label>
-                            <input type="text" class="form-control" id="metaKeywords" placeholder="META keywords" [(ngModel)]="newProduct.metaKeywords" [value]="newProduct.metaKeywords">
-                        </div>
+                    <div class="form-group col-md-6">
+                        <label>Цена акции: </label>
+                        <input type="text"
+                            class="form-control"
+                            id="priceStock"
+                            placeholder="Цена акции"
+                            [(ngModel)]="newProduct.priceStock" 
+                            [value]="newProduct.priceStock"/>
                     </div>
-                    <div class="form-group">
-                        <div class="col-lg-12">
-                            <label>Описание товара: </label>
-                            <textarea class="form-control" rows="3" id="description" [(ngModel)]="newProduct.description" placeholder="Описание товара">
-                              {{ newProduct.description }}
-                            </textarea>
-                        </div>
+                    <div class="form-group col-md-6">
+                        <label>SEO url: </label>
+                        <input type="text" 
+                            class="form-control" 
+                            id="seoUrl" 
+                            placeholder="SEO Url" 
+                            [(ngModel)]="newProduct.seoUrl" 
+                            [value]="newProduct.seoUrl"/>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group col-md-6">
                         <div class="col-lg-12">
-                            <label>Теги товара(через запятую): </label>
-                            <input type="text" class="form-control" id="tegs" placeholder="Теги товара" [(ngModel)]="newProduct.tegs" [value]="newProduct.tegs">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-lg-12">
-                            <label>Телефон: </label>
-                            <input type="text" class="form-control" id="phone" placeholder="Телефон" [(ngModel)]="newProduct.phone" [value]="newProduct.phone">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-lg-12">
-                            <label>Цена: </label>
-                            <input type="text" class="form-control" id="price" placeholder="Цена" [(ngModel)]="newProduct.price" [value]="newProduct.price">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-lg-12">
-                            <label>Цена акции: </label>
-                            <input type="text" class="form-control" id="priceStock" placeholder="Цена акции" [(ngModel)]="newProduct.priceStock" [value]="newProduct.priceStock">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-lg-12">
-                            <label>SEO url: </label>
-                            <input type="text" class="form-control" id="seoUrl" placeholder="SEO Url" [(ngModel)]="newProduct.seoUrl" [value]="newProduct.seoUrl">
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <div class="col-lg-12">
-                            <label>Выберите промостикер: </label>
-                            <p-dropdown [options]="promoStickersItem" [(ngModel)]="newProduct.promoStickers" [filter]="true" [style]="{'width':'100%'}"></p-dropdown>
+                            <label> Выберите промостикер: </label>
+                            <p-dropdown [options]="promoStickersItem" 
+                                [(ngModel)]="newProduct.promoStickers" 
+                                [filter]="true" [style]="{'width':'100%'}">
+                            </p-dropdown>
 
                             <button type="button" class="btn btn-link" (click)="changeShowAddPromoSticker()">
                               <i class="fa fa-plus" aria-hidden="true"></i>
@@ -142,19 +131,20 @@
                             </div>
                             <div>
                             </div>
-                        </div>
                     </div>
-                    <div class="form-group">
-                        <div class="col-lg-12">
-                            <label><i class="fa fa-picture-o" aria-hidden="true"></i> Выберите изображение товара</label>
-                            <input #fileProduct type="file" class="form-control" id="image" placeholder="Изображение товара" />
-                        </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group col-md-6">
+                        <label><i class="fa fa-picture-o" aria-hidden="true"></i> Выберите изображение товара</label>
+                        <input #fileProduct type="file" class="form-control" id="image" placeholder="Изображение товара" />
+                    </div>
+                    <div class="form-group col-md-6">
                         <div class="col-lg-10">
                             <label>Выберите производителя: </label>
                             <!--producer-->
-                            <p-dropdown [options]="producersItem" [(ngModel)]="newProduct.producerId" [filter]="true" [style]="{'width':'100%'}"></p-dropdown>
+                            <p-dropdown [options]="producersItem" 
+                                [(ngModel)]="newProduct.producerId" 
+                                [filter]="true" [style]="{'width':'100%'}">
+                            </p-dropdown>
 
                             <button type="button" class="btn btn-link" (click)="changeShowAddProducer()">
                                 <i class="fa fa-plus" aria-hidden="true"></i>
@@ -201,10 +191,14 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group col-md-6">
                         <div class="col-lg-10">
                             <!--category-->
-                            <p-dropdown [options]="categoriesItem" [(ngModel)]="newProduct.categoryId" [filter]="true" [style]="{'width':'100%'}"></p-dropdown>
+                            <p-dropdown [options]="categoriesItem" 
+                                [(ngModel)]="newProduct.categoryId" 
+                                [filter]="true" 
+                                [style]="{'width':'100%'}">
+                            </p-dropdown>
 
                             <button type="button" class="btn btn-link" (click)="changeShowAddCategory()">
                                     <i class="fa fa-plus" aria-hidden="true"></i>
@@ -248,14 +242,16 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="form-group col-md-6">
                         <div class="col-lg-10">
                             <!--categories-->
                             <label>Выберите категории где будет показыватся:</label>
-                            <p-multiSelect [options]="categoriesItem" [(ngModel)]="newProduct.categories" [style]="{'width': '100%'}"></p-multiSelect>
+                            <p-multiSelect [options]="categoriesItem" 
+                                [(ngModel)]="newProduct.categories" [style]="{'width': '100%'}">
+                            </p-multiSelect>
                         </div>
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer col-md-6">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
                         <button *ngIf="!isEdit" type="button" class="btn btn-primary" (click)="addProduct(fileProduct, newProduct)">Сохранить</button>
                         <button *ngIf="isEdit" type="button" class="btn btn-primary" (click)="editProduct(fileProduct, newProduct)">Редактировать</button>
