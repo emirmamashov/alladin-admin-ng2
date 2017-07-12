@@ -46,9 +46,11 @@
                         <input type="text" 
                             class="form-control" 
                             id="name" 
-                            placeholder="Теги товара" 
+                            placeholder="Наименование" 
                             [(ngModel)]="newProduct.name" 
-                            [value]="newProduct.name"/>
+                            [value]="newProduct.name"
+                            (keyup)="toTranslitForSeoUrl(newProduct)"
+                        />
                     </div>
                     <div class="form-group col-md-6">
                         <label>Описание товара: </label>

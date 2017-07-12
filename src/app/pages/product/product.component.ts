@@ -374,6 +374,13 @@ export class ProductComponent implements OnInit, OnDestroy {
     return product;
   }
 
+  toTranslitForSeoUrl(product: Product) {
+    console.log('--------------toTranslitForSeoUrl-----------');
+
+    const translit_name = this.translitService.translitToLatinForSeoUrl(product.name);
+    product.seoUrl = translit_name;
+  }
+
   editProduct(file: any, product: Product) {
     console.log(product);
     console.dir(file.files);
