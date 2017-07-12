@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 // config
-import { Notify_config, Api_config } from '../../config';
+import { Notify_config, Api_config, Translit_alhabets } from '../../config';
 
 // models
 import { Product } from '../../models/product';
@@ -18,6 +18,7 @@ import { CategoryService } from '../../services/category.service';
 import { NotifyService } from '../../services/notify.service';
 import { ProducerService } from '../../services/producer.service';
 import { PromoStickerService } from '../../services/promo-sticker.service';
+import { TranslitService } from '../../services/translit.service';
 
 declare var $: any;
 
@@ -29,7 +30,8 @@ declare var $: any;
     ProductService,
     CategoryService,
     ProducerService,
-    PromoStickerService
+    PromoStickerService,
+    TranslitService
   ]
 })
 export class ProductComponent implements OnInit, OnDestroy {
@@ -71,7 +73,8 @@ export class ProductComponent implements OnInit, OnDestroy {
     private categoryService: CategoryService,
     private producerService: ProducerService,
     private promorStickerService: PromoStickerService,
-    private notifyService: NotifyService
+    private notifyService: NotifyService,
+    private translitService: TranslitService
   ) {
   }
 
@@ -325,6 +328,8 @@ export class ProductComponent implements OnInit, OnDestroy {
       return this.notifyService.addNotify(notify);
     }
 
+    product = this.toTranslit(product);
+
     this.addProductConnection = this.productService.add(file.files, product).subscribe(
       (response: ResponseApi) => {
         console.log(response);
@@ -352,6 +357,21 @@ export class ProductComponent implements OnInit, OnDestroy {
         console.log(err);
       }
     );
+  }
+
+  toTranslit(product: Product): Product {
+    console.log('--------------toTranslit-----------');
+
+    const translit_name = this.translitService.translitToLatin(product.name);
+    product.htmlH1 = translit_name;
+    product.htmlTitle = translit_name;
+    product.metaKeywords = translit_name;
+
+    const translit_description = this.translitService.translitToLatin(product.description);
+    product.metaDescription = translit_description;
+
+    console.log(product);
+    return product;
   }
 
   editProduct(file: any, product: Product) {

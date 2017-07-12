@@ -42,6 +42,15 @@
             <div class="modal-body">
                 <div class="row">
                     <div class="form-group col-md-6">
+                        <label>Наименование: </label>
+                        <input type="text" 
+                            class="form-control" 
+                            id="name" 
+                            placeholder="Теги товара" 
+                            [(ngModel)]="newProduct.name" 
+                            [value]="newProduct.name"/>
+                    </div>
+                    <div class="form-group col-md-6">
                         <label>Описание товара: </label>
                         <textarea class="form-control" 
                             rows="3" id="description" 
