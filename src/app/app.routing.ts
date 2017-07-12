@@ -7,7 +7,7 @@ import { ProductComponent } from './pages/product/product.component';
 const APP_ROUTES: Routes = [
   {
     path: '',
-    component: IndexComponent
+    component: ProductComponent
   },
   {
     path: 'products',
@@ -15,7 +15,7 @@ const APP_ROUTES: Routes = [
   },
   {
     path: '**',
-    component: IndexComponent // page not found
+    component: ProductComponent // page not found
   }
 ];
 
