@@ -17,6 +17,8 @@ import { CategoryService } from '../../services/category.service';
 })
 export class CategoryComponent implements OnInit, OnDestroy {
   categories = new Array<Category>();
+  newCategory = new Category();
+  isEdit = false;
 
   getAllConnection: any;
 
