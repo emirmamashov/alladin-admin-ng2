@@ -201,14 +201,14 @@ export class ProductComponent implements OnInit, OnDestroy {
     }
   }
 
-  addCategory(category: Category) {
+  addCategory(file: any, category: Category) {
     console.log(category);
     if (!category) { return console.log('category is null'); }
     const notify = new Notify();
     notify.type = Notify_config.typeMessage.danger;
     notify.text = 'Что то пошло не так';
 
-    this.categoryAddConnection = this.categoryService.add(category).subscribe(
+    this.categoryAddConnection = this.categoryService.add(file.files, category).subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (!response.success) {

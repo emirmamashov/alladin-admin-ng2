@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 // config
-import { Notify_config } from '../../config';
+import { Notify_config, Api_config } from '../../config';
 
 // models
 import { Category } from '../../models/category';
@@ -13,6 +13,7 @@ import { SelectItem } from 'primeng/primeng';
 import { CategoryService } from '../../services/category.service';
 import { NotifyService } from '../../services/notify.service';
 
+declare let $: any;
 @Component({
   selector: 'app-category',
   templateUrl: './category.component.html',
@@ -27,6 +28,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   categoriesItem: SelectItem[] = [];
 
   isEdit = false;
+  apiUrl: string = Api_config.rootUrl;
 
   getAllConnection: any;
   addConnection: any;
@@ -62,23 +64,30 @@ export class CategoryComponent implements OnInit, OnDestroy {
     });
   }
 
-  add(category: Category) {
+  add(file: any, category: Category) {
+    console.dir(category);
+    console.dir(file);
     const notify = new Notify();
     notify.type = Notify_config.typeMessage.danger;
     notify.text = 'Что то пошло не так!';
 
-    this.addConnection = this.categoryService.add(category).subscribe(
+    this.addConnection = this.categoryService.add(file.files, category).subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (!response.success) {
           notify.text = response.message;
           return this.notifyService.addNotify(notify);
         }
-        this.categories.push(response.data.data.category);
+        const newCategory: Category = response.data.data.category;
+        this.categories.push(newCategory);
+        this.categoriesItem.push({ label: newCategory.name, value: newCategory._id });
 
         notify.type = Notify_config.typeMessage.success;
         notify.text = 'Добавлено!';
         this.notifyService.addNotify(notify);
+        this.newCategory = new Category();
+
+        $('#modal').modal('toggle');
       },
       (err) => {
         console.log(err);

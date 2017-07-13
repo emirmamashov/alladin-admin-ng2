@@ -5,6 +5,7 @@
             <th>#</th>
             <th>Id</th>
             <th>Название</th>
+            <th>Изображение</th>
             <th>Категория родитель</th>
             <th>Описание</th>
             <th>Действия</th>
@@ -15,6 +16,9 @@
             <td>{{ i+1 }}</td>
             <td>{{ category._id }}</td>
             <td>{{ category.name }}</td>
+            <td>
+              <img *ngIf="category.image" src="{{ apiUrl }}/{{ category.image }}" width="50%"/>
+            </td>
             <td>{{ category.parentCategory }}</td>
             <td>{{ category.description }}</td>
             <td>{{ category.category }}</td>
@@ -70,11 +74,11 @@
                         <button *ngIf="!isEdit" 
                             type="button" 
                             class="btn btn-primary" 
-                            (click)="add(fileCategory, newProduct)">Сохранить</button>
+                            (click)="add(fileCategory, newCategory)">Сохранить</button>
                         <button *ngIf="isEdit" 
                             type="button" 
                             class="btn btn-primary" 
-                            (click)="edit(fileCategory, newProduct)">Редактировать</button>
+                            (click)="edit(fileCategory, newCategory)">Редактировать</button>
                     </div>
                 </div>
             </div>
