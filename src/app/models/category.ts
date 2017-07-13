@@ -5,4 +5,5 @@ export class Category {
   description: string;
   keywords: string;
   author: string;
+  image: string;
 }
