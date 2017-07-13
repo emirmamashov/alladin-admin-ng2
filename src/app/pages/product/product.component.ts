@@ -427,11 +427,21 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.getAllConnection && this.getAllConnection.unsubscribe) { this.getAllConnection.unsubscribe(); }
-    if (this.categoryAddConnection && this.categoryAddConnection.unsubscribe) { this.categoryAddConnection.unsubscribe(); }
-    if (this.getAllCategoriesConnection && this.getAllCategoriesConnection.unsubscribe) { this.getAllCategoriesConnection.unsubscribe(); }
-    if (this.getAllProducersConnection && this.getAllProducersConnection.unsubscribe) { this.getAllProducersConnection.unsubscribe(); }
-    if (this.addProducerConnection && this.addProducerConnection.unsubscribe) { this.addProducerConnection.unsubscribe(); }
+    if (this.getAllConnection && this.getAllConnection.unsubscribe) {
+      this.getAllConnection.unsubscribe();
+    }
+    if (this.categoryAddConnection && this.categoryAddConnection.unsubscribe) {
+      this.categoryAddConnection.unsubscribe();
+    }
+    if (this.getAllCategoriesConnection && this.getAllCategoriesConnection.unsubscribe) {
+      this.getAllCategoriesConnection.unsubscribe();
+    }
+    if (this.getAllProducersConnection && this.getAllProducersConnection.unsubscribe) {
+      this.getAllProducersConnection.unsubscribe();
+    }
+    if (this.addProducerConnection && this.addProducerConnection.unsubscribe) {
+      this.addProducerConnection.unsubscribe();
+    }
     if (this.getAllPromoStickersConnection && this.getAllPromoStickersConnection.unsubscribe) {
       this.getAllPromoStickersConnection.unsubscribe();
     }

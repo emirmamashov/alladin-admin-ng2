@@ -3,6 +3,7 @@ import { NgModule } from '@angular/core';
 
 import { IndexComponent } from './pages/index.component';
 import { ProductComponent } from './pages/product/product.component';
+import { CategoryComponent } from './pages/category/category.component';
 
 const APP_ROUTES: Routes = [
   {
@@ -12,6 +13,10 @@ const APP_ROUTES: Routes = [
   {
     path: 'products',
     component: ProductComponent
+  },
+  {
+    path: 'categories',
+    component: CategoryComponent
   },
   {
     path: '**',

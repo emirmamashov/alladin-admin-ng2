@@ -22,13 +22,15 @@ import { AppComponent } from './app.component';
 import { IndexComponent } from './pages/index.component';
 import { ProductComponent } from './pages/product/product.component';
 import { ProductDetailComponent } from './components/product-detail/product-detail.component';
+import { CategoryComponent } from './pages/category/category.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     IndexComponent,
     ProductComponent,
-    ProductDetailComponent
+    ProductDetailComponent,
+    CategoryComponent
   ],
   imports: [
     BrowserModule,
