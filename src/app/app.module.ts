@@ -23,6 +23,7 @@ import { IndexComponent } from './pages/index.component';
 import { ProductComponent } from './pages/product/product.component';
 import { ProductDetailComponent } from './components/product-detail/product-detail.component';
 import { CategoryComponent } from './pages/category/category.component';
+import { ProducerComponent } from './pages/producer/producer.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { CategoryComponent } from './pages/category/category.component';
     IndexComponent,
     ProductComponent,
     ProductDetailComponent,
-    CategoryComponent
+    CategoryComponent,
+    ProducerComponent
   ],
   imports: [
     BrowserModule,
