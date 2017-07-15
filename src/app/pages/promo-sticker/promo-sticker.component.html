@@ -1,0 +1,68 @@
+<button class="btn btn-primary" data-toggle="modal" data-target="#modal">Добавить</button>
+<table class="table table-striped table-hover ">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Id</th>
+            <th>Название</th>
+            <th>Изображение</th>
+            <th>Действия</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!--<tr *ngFor="let category of categories; let i=index" data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">-->
+        <tr *ngFor="let promoSticker of promoStickers; let i=index">
+            <td>{{ i+1 }}</td>
+            <td>{{ promoSticker._id }}</td>
+            <td>{{ promoSticker.name }}</td>
+            <td>
+              <img *ngIf="promoSticker.image" src="{{ apiUrl }}/{{ promoSticker.image }}" width="50%"/>
+            </td>
+            <td>{{ promoSticker.description }}</td>
+            <td></td>
+        </tr>
+    </tbody>
+</table>
+
+
+<div class="modal" id="modal">
+    <div class="modal-dialog" style="max-width: 80%">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Добавление новой промо стикер</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="form-group col-md-6">
+                        <label>Наименование: </label>
+                        <input type="text" 
+                            class="form-control" 
+                            id="name" 
+                            placeholder="Наименование" 
+                            [(ngModel)]="newPromoSticker.name" 
+                            [value]="newPromoSticker.name"
+                        />
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label><i class="fa fa-picture-o" aria-hidden="true"></i> Выберите изображение промо стикера</label>
+                        <input #file type="file" class="form-control" id="image" placeholder="Изображение промо стикера" />
+                    </div>
+
+                    <div class="modal-footer col-md-12">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                        <button *ngIf="!isEdit" 
+                            type="button" 
+                            class="btn btn-primary" 
+                            (click)="add(file, newPromoSticker)">Сохранить</button>
+                        <button *ngIf="isEdit" 
+                            type="button" 
+                            class="btn btn-primary" 
+                            (click)="edit(file, newPromoSticker)">Редактировать</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

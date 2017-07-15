@@ -59,6 +59,7 @@ import { ProductComponent } from './pages/product/product.component';
 import { ProductDetailComponent } from './components/product-detail/product-detail.component';
 import { CategoryComponent } from './pages/category/category.component';
 import { ProducerComponent } from './pages/producer/producer.component';
+import { PromoStickerComponent } from './pages/promo-sticker/promo-sticker.component';
 
 
 @NgModule({
@@ -106,7 +107,8 @@ export class PlunkerMaterialModule {}
     ProductComponent,
     ProductDetailComponent,
     CategoryComponent,
-    ProducerComponent
+    ProducerComponent,
+    PromoStickerComponent
   ],
   imports: [
     BrowserModule,
