@@ -19,6 +19,10 @@ export const Api_config = {
     edit: {
       method: 'POST',
       url: apiUrl + '/products/edit'
+    },
+    import: {
+      method: 'POST',
+      url: apiUrl + '/products/import'
     }
   },
   category: {

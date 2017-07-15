@@ -1,0 +1,11 @@
+ <div class="row container">
+    <div class="form-group col-md-6">
+        <label><i class="fa fa-picture-o" aria-hidden="true"></i> Выберите Exel файл для импорта: </label>
+        <input #file type="file" class="form-control" id="exel" accept="application/vnd.ms-excel" placeholder="Изображение категории" />
+    </div>
+    <div class="modal-footer col-md-12">
+        <button type="button" 
+            class="btn btn-primary" 
+            (click)="import(file)">Кеттик!</button>
+    </div>
+</div>

@@ -6,6 +6,7 @@ import { ProductComponent } from './pages/product/product.component';
 import { CategoryComponent } from './pages/category/category.component';
 import { ProducerComponent } from './pages/producer/producer.component';
 import { PromoStickerComponent } from './pages/promo-sticker/promo-sticker.component';
+import { ImportComponent } from './pages/product/import/import.component';
 
 const APP_ROUTES: Routes = [
   {
@@ -15,6 +16,10 @@ const APP_ROUTES: Routes = [
   {
     path: 'products',
     component: ProductComponent
+  },
+  {
+    path: 'products/import',
+    component: ImportComponent
   },
   {
     path: 'categories',
