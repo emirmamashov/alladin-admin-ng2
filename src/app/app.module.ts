@@ -13,6 +13,41 @@ import {
   MultiSelectModule
 } from 'primeng/primeng';
 
+import {
+  MdAutocompleteModule,
+  MdButtonModule,
+  MdButtonToggleModule,
+  MdCardModule,
+  MdCheckboxModule,
+  MdChipsModule,
+  MdCoreModule,
+  MdDatepickerModule,
+  MdDialogModule,
+  MdExpansionModule,
+  MdGridListModule,
+  MdIconModule,
+  MdInputModule,
+  MdListModule,
+  MdMenuModule,
+  MdNativeDateModule,
+  MdPaginatorModule,
+  MdProgressBarModule,
+  MdProgressSpinnerModule,
+  MdRadioModule,
+  MdRippleModule,
+  MdSelectModule,
+  MdSidenavModule,
+  MdSliderModule,
+  MdSlideToggleModule,
+  MdSnackBarModule,
+  MdSortModule,
+  MdTableModule,
+  MdTabsModule,
+  MdToolbarModule,
+  MdTooltipModule,
+} from '@angular/material';
+import {CdkTableModule} from '@angular/cdk';
+
 // services
 import { HandleService } from './services/handle.service';
 import { NotifyService } from './services/notify.service';
@@ -24,6 +59,45 @@ import { ProductComponent } from './pages/product/product.component';
 import { ProductDetailComponent } from './components/product-detail/product-detail.component';
 import { CategoryComponent } from './pages/category/category.component';
 import { ProducerComponent } from './pages/producer/producer.component';
+
+
+@NgModule({
+  exports: [
+    CdkTableModule,
+    MdAutocompleteModule,
+    MdButtonModule,
+    MdButtonToggleModule,
+    MdCardModule,
+    MdCheckboxModule,
+    MdChipsModule,
+    MdCoreModule,
+    MdDatepickerModule,
+    MdDialogModule,
+    MdExpansionModule,
+    MdGridListModule,
+    MdIconModule,
+    MdInputModule,
+    MdListModule,
+    MdMenuModule,
+    MdNativeDateModule,
+    MdPaginatorModule,
+    MdProgressBarModule,
+    MdProgressSpinnerModule,
+    MdRadioModule,
+    MdRippleModule,
+    MdSelectModule,
+    MdSidenavModule,
+    MdSliderModule,
+    MdSlideToggleModule,
+    MdSnackBarModule,
+    MdSortModule,
+    MdTableModule,
+    MdTabsModule,
+    MdToolbarModule,
+    MdTooltipModule,
+  ]
+})
+export class PlunkerMaterialModule {}
 
 @NgModule({
   declarations: [
@@ -40,6 +114,8 @@ import { ProducerComponent } from './pages/producer/producer.component';
     AppRoutingModule,
     HttpModule,
     BrowserAnimationsModule,
+
+    PlunkerMaterialModule,
 
     DropdownModule,
     FileUploadModule,

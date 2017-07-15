@@ -23,6 +23,7 @@
         "../bower_components/tether/dist/css/tether.min.css",
         "../bower_components/tether/dist/css/tether-theme-basic.css",
         "../bower_components/bootstrap/dist/css/bootstrap.min.css",
+        "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
         "../node_modules/primeng/resources/primeng.min.css",
         "../node_modules/primeng/resources/themes/omega/theme.css",
         "../bower_components/font-awesome/css/font-awesome.min.css"
