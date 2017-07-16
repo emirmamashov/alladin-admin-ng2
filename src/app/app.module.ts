@@ -13,40 +13,7 @@ import {
   MultiSelectModule
 } from 'primeng/primeng';
 
-import {
-  MdAutocompleteModule,
-  MdButtonModule,
-  MdButtonToggleModule,
-  MdCardModule,
-  MdCheckboxModule,
-  MdChipsModule,
-  MdCoreModule,
-  MdDatepickerModule,
-  MdDialogModule,
-  MdExpansionModule,
-  MdGridListModule,
-  MdIconModule,
-  MdInputModule,
-  MdListModule,
-  MdMenuModule,
-  MdNativeDateModule,
-  MdPaginatorModule,
-  MdProgressBarModule,
-  MdProgressSpinnerModule,
-  MdRadioModule,
-  MdRippleModule,
-  MdSelectModule,
-  MdSidenavModule,
-  MdSliderModule,
-  MdSlideToggleModule,
-  MdSnackBarModule,
-  MdSortModule,
-  MdTableModule,
-  MdTabsModule,
-  MdToolbarModule,
-  MdTooltipModule,
-} from '@angular/material';
-import {CdkTableModule} from '@angular/cdk';
+import { CKEditorModule } from 'ng2-ckeditor';
 
 // services
 import { HandleService } from './services/handle.service';
@@ -61,45 +28,6 @@ import { CategoryComponent } from './pages/category/category.component';
 import { ProducerComponent } from './pages/producer/producer.component';
 import { PromoStickerComponent } from './pages/promo-sticker/promo-sticker.component';
 import { ImportComponent } from './pages/product/import/import.component';
-
-
-@NgModule({
-  exports: [
-    CdkTableModule,
-    MdAutocompleteModule,
-    MdButtonModule,
-    MdButtonToggleModule,
-    MdCardModule,
-    MdCheckboxModule,
-    MdChipsModule,
-    MdCoreModule,
-    MdDatepickerModule,
-    MdDialogModule,
-    MdExpansionModule,
-    MdGridListModule,
-    MdIconModule,
-    MdInputModule,
-    MdListModule,
-    MdMenuModule,
-    MdNativeDateModule,
-    MdPaginatorModule,
-    MdProgressBarModule,
-    MdProgressSpinnerModule,
-    MdRadioModule,
-    MdRippleModule,
-    MdSelectModule,
-    MdSidenavModule,
-    MdSliderModule,
-    MdSlideToggleModule,
-    MdSnackBarModule,
-    MdSortModule,
-    MdTableModule,
-    MdTabsModule,
-    MdToolbarModule,
-    MdTooltipModule,
-  ]
-})
-export class PlunkerMaterialModule {}
 
 @NgModule({
   declarations: [
@@ -118,8 +46,7 @@ export class PlunkerMaterialModule {}
     AppRoutingModule,
     HttpModule,
     BrowserAnimationsModule,
-
-    PlunkerMaterialModule,
+    CKEditorModule,
 
     DropdownModule,
     FileUploadModule,

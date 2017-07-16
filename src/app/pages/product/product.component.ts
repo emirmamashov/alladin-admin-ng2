@@ -21,11 +21,14 @@ import { PromoStickerService } from '../../services/promo-sticker.service';
 import { TranslitService } from '../../services/translit.service';
 
 declare var $: any;
+declare var CKEDITOR: any;
 
 @Component({
   selector: 'app-product',
   templateUrl: './product.component.html',
-  styleUrls: ['./product.component.css'],
+  styleUrls: ['./product.component.css',
+  '../../../assets/ckeditor/samples/toolbarconfigurator/lib/codemirror/neo.css'
+],
   providers: [
     ProductService,
     CategoryService,
@@ -68,6 +71,8 @@ export class ProductComponent implements OnInit, OnDestroy {
   addPromoStickerConnection: any;
   addProductConnection: any;
 
+  content: any;
+  text: any;
   constructor(
     private productService: ProductService,
     private categoryService: CategoryService,
@@ -76,6 +81,7 @@ export class ProductComponent implements OnInit, OnDestroy {
     private notifyService: NotifyService,
     private translitService: TranslitService
   ) {
+    this.content = '<p>Hello <strong>World !</strong></p>'
   }
 
   ngOnInit() {

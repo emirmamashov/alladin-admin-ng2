@@ -238,12 +238,10 @@
                     </div>
                     <div class="form-group col-md-12">
                         <label>Описание товара: </label>
-                        <textarea class="form-control description" 
-                            rows="3" id="description" 
-                            [(ngModel)]="newProduct.description" 
-                            placeholder="Описание товара">
+                         <ckeditor [(ngModel)]="newProduct.description" debounce="500">
                             {{ newProduct.description }}
-                        </textarea>
+                        </ckeditor>
+                        <div [innerHTML]="newProduct.description"></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
