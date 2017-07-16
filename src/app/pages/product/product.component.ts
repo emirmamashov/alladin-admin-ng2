@@ -329,6 +329,7 @@ export class ProductComponent implements OnInit, OnDestroy {
     }
 
     product = this.toTranslit(product);
+    product = this.toTranslitForSeoUrl(product);
 
     this.addProductConnection = this.productService.add(file.files, product).subscribe(
       (response: ResponseApi) => {
@@ -379,6 +380,7 @@ export class ProductComponent implements OnInit, OnDestroy {
 
     const translit_name = this.translitService.translitToLatinForSeoUrl(product.name);
     product.seoUrl = translit_name;
+    return product;
   }
 
   editProduct(file: any, product: Product) {
