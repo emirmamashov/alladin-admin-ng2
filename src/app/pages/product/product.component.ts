@@ -11,6 +11,7 @@ import { Category } from '../../models/category';
 import { Notify } from '../../models/notify';
 import { Producer } from '../../models/producer';
 import { PromoSticker } from '../../models/promo-sticker';
+import { Photo } from '../../models/photo';
 
 // services
 import { ProductService } from '../../services/product.service';
@@ -19,6 +20,7 @@ import { NotifyService } from '../../services/notify.service';
 import { ProducerService } from '../../services/producer.service';
 import { PromoStickerService } from '../../services/promo-sticker.service';
 import { TranslitService } from '../../services/translit.service';
+import { PhotoService } from '../../services/photo.service';
 
 declare var $: any;
 declare var CKEDITOR: any;
@@ -34,7 +36,8 @@ declare var CKEDITOR: any;
     CategoryService,
     ProducerService,
     PromoStickerService,
-    TranslitService
+    TranslitService,
+    PhotoService
   ]
 })
 export class ProductComponent implements OnInit, OnDestroy {
@@ -42,6 +45,8 @@ export class ProductComponent implements OnInit, OnDestroy {
   producers = new Array<Producer>();
   categories = new Array<Category>();
   promoStickers = new Array<PromoSticker>();
+
+  downloadedPhotos = new Array<Photo>();
 
   newProduct = new Product();
   newCategory = new Category();
@@ -73,13 +78,15 @@ export class ProductComponent implements OnInit, OnDestroy {
 
   content: any;
   text: any;
+
   constructor(
     private productService: ProductService,
     private categoryService: CategoryService,
     private producerService: ProducerService,
     private promorStickerService: PromoStickerService,
     private notifyService: NotifyService,
-    private translitService: TranslitService
+    private translitService: TranslitService,
+    private photoService: PhotoService
   ) {
     this.content = '<p>Hello <strong>World !</strong></p>'
   }
@@ -432,6 +439,34 @@ export class ProductComponent implements OnInit, OnDestroy {
 
   clearNewProcut() {
     this.newProduct = new Product();
+  }
+
+  uploadImage(image: any) {
+    console.dir(image);
+    if (!image || !image.files || image.files.length === 0) {
+      return console.log('image files is not correct!');
+    }
+    const photo = new Photo();
+    photo.name = image.files[0].name;
+    photo.description = photo.name;
+    const photoNameTranslit = this.translitService.translitToLatin(photo.name);
+    photo.htmlH1 = photoNameTranslit;
+    photo.htmlTitle = photoNameTranslit;
+    photo.keywords = photoNameTranslit;
+    photo.metaDescription = photoNameTranslit;
+    photo.metaKeywords = photoNameTranslit;
+    this.photoService.add(image.files, photo).subscribe(
+      (response: ResponseApi) => {
+        console.log(response);
+        if (response.success) {
+          const downloadedPhoto: Photo = response.data.data.photo;
+          this.downloadedPhotos.push(downloadedPhoto);
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
   }
 
   ngOnDestroy() {

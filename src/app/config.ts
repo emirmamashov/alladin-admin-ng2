@@ -58,6 +58,12 @@ export const Api_config = {
       method: 'POST',
       url: apiUrl + '/promo-stickers/add'
     }
+  },
+  photo: {
+    add: {
+      method: 'POST',
+      url: apiUrl + '/photos/add'
+    }
   }
 }
 
