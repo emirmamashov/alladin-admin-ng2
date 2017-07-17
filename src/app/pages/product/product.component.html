@@ -10,7 +10,7 @@
             <th>Цена акции</th>
             <th>SEO Url</th>
             <th>Промо стикеры</th>
-            <th>Изображение товара</th>
+            <th>Изображении товара</th>
             <th>Производитель</th>
             <th>Главная категория</th>
         </tr>
@@ -25,7 +25,7 @@
             <td>{{ product.priceStock }}</td>
             <td>{{ product.seoUrl }}</td>
             <td>{{ product.promoStickers }}</td>
-            <td><img src="{{ apiUrl }}/{{ product.image }}" width="50" height="50" /></td>
+            <td><img *ngFor="let image of product.photosModel" src="{{ apiUrl }}/{{ image.url }}" width="50" height="60" /></td>
             <td>{{ product.producer }}</td>
             <td>{{ product.category }}</td>
         </tr>
@@ -249,8 +249,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
-                        <button *ngIf="!isEdit" type="button" class="btn btn-primary" (click)="addProduct(fileProduct, newProduct)">Сохранить</button>
-                        <button *ngIf="isEdit" type="button" class="btn btn-primary" (click)="editProduct(fileProduct, newProduct)">Редактировать</button>
+                        <button *ngIf="!isEdit" type="button" class="btn btn-primary" (click)="addProduct(newProduct)">Сохранить</button>
+                        <button *ngIf="isEdit" type="button" class="btn btn-primary" (click)="editProduct(newProduct)">Редактировать</button>
                     </div>
                 </div>
             </div>

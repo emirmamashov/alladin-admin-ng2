@@ -1,3 +1,5 @@
+import { Photo } from '../models/photo';
+
 export class Product {
   _id: string;
   name: string;
@@ -12,7 +14,8 @@ export class Product {
   priceStock: number;
   seoUrl: string;
   promoStickers: string;
-  image: string;
+  photos: Array<string>;
+  photosModel: Array<Photo>;
   producerId: string;
   categoryId: string;
   categories: Array<string>;

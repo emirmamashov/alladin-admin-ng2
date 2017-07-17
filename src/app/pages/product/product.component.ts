@@ -47,6 +47,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   promoStickers = new Array<PromoSticker>();
 
   downloadedPhotos = new Array<Photo>();
+  photos = new Array<Photo>();
 
   newProduct = new Product();
   newCategory = new Category();
@@ -105,12 +106,28 @@ export class ProductComponent implements OnInit, OnDestroy {
       (response: ResponseApi) => {
         if (response.success) {
           this.products = response.data.data.products;
+          this.photos = response.data.data.photos;
+          this.setPhotosInProducts(this.products, this.photos);
         }
       },
       (err) => {
         console.log(err);
       }
     );
+  }
+
+  setPhotosInProducts(products: Array<Product>, photos: Array<Photo>) {
+    products.forEach((product) => {
+      product.photos = product.photos || [];
+      const photosModel = [];
+      product.photos.forEach((id) => {
+        const findPhoto = photos.filter(x => x._id === id)[0];
+        if (findPhoto) {
+          photosModel.push(findPhoto);
+        }
+      });
+      product.photosModel = photosModel;
+    });
   }
 
   getAllProducers() {
@@ -328,9 +345,8 @@ export class ProductComponent implements OnInit, OnDestroy {
     );
   }
 
-  addProduct(file: any, product: Product) {
+  addProduct(product: Product) {
     console.log(product);
-    console.dir(file.files);
     const notify = new Notify();
     notify.type = Notify_config.typeMessage.danger;
     notify.text = 'Что то пошло не так';
@@ -343,8 +359,13 @@ export class ProductComponent implements OnInit, OnDestroy {
 
     product = this.toTranslit(product);
     product = this.toTranslitForSeoUrl(product);
+    product.photos = product.photos || [];
+    console.dir(this.downloadedPhotos);
+    this.downloadedPhotos.forEach((photo) => {
+      product.photos.push(photo._id);
+    });
 
-    this.addProductConnection = this.productService.add(file.files, product).subscribe(
+    this.addProductConnection = this.productService.add(product).subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (!response.success) {
@@ -363,6 +384,7 @@ export class ProductComponent implements OnInit, OnDestroy {
         }
 
         const addedProduct: Product = response.data.data.product;
+        addedProduct.photosModel = this.downloadedPhotos;
         this.products.push(addedProduct);
 
         $('#modal').modal('toggle');
