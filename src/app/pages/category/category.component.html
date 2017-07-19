@@ -8,12 +8,12 @@
             <th>Изображение</th>
             <th>Категория родитель</th>
             <th>Описание</th>
+            <th>Показывать в меню</th>
             <th>Действия</th>
         </tr>
     </thead>
     <tbody>
-        <!--<tr *ngFor="let category of categories; let i=index" data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">-->
-            <tr *ngFor="let category of categories; let i=index">
+        <tr *ngFor="let category of categories; let i=index" data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">
             <td>{{ i+1 }}</td>
             <td>{{ category._id }}</td>
             <td>{{ category.name }}</td>
@@ -22,6 +22,7 @@
             </td>
             <td>{{ category.parentCategory }}</td>
             <td>{{ category.description }}</td>
+            <td>{{ category.viewInMenu ? 'да' : 'нет' }}</td>
             <td>{{ category.category }}</td>
         </tr>
     </tbody>
@@ -64,6 +65,25 @@
                                 [style]="{'width':'100%'}">
                         </p-dropdown>
                     </div>
+                    <div class="form-group col-md-6">
+                        <label>Показывать в меню (на первой странице): </label>
+                        <input *ngIf="!isLimitCategoriesViewInMenu" type="checkbox" 
+                            class="form-control" 
+                            id="name" 
+                            placeholder="Наименование" 
+                            [(ngModel)]="newCategory.viewInMenu" 
+                            [value]="newCategory.viewInMenu"
+                        />
+                        <input *ngIf="isLimitCategoriesViewInMenu" type="checkbox" 
+                            class="form-control" 
+                            id="name" 
+                            placeholder="Наименование" 
+                            [(ngModel)]="newCategory.viewInMenu" 
+                            [value]="false"
+                            (change)="doLimitCategoriesViewInMenu()"
+                        />
+
+                    </div>
 
                     <div class="form-group col-md-6">
                         <label><i class="fa fa-picture-o" aria-hidden="true"></i> Выберите изображение категории</label>
@@ -79,7 +99,7 @@
                         <button *ngIf="isEdit" 
                             type="button" 
                             class="btn btn-primary" 
-                            (click)="edit(fileCategory, newCategory)">Редактировать</button>
+                            (click)="update(newCategory)">Редактировать</button>
                     </div>
                 </div>
             </div>

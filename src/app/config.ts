@@ -1,6 +1,7 @@
 import { environment } from '../environments/environment';
 
 const apiUrl: string = environment.apiUrl;
+export const LimitCategoriesViewInMenu = 10;
 export const Api_config = {
   rootUrl: apiUrl,
   product: {
@@ -37,6 +38,10 @@ export const Api_config = {
     addMany: {
       method: 'POST',
       url: apiUrl + '/categories/add-many'
+    },
+    update: {
+      method: 'PUT',
+      url: apiUrl + '/categories/update' // :id
     }
   },
   producer: {

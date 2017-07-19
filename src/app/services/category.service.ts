@@ -50,4 +50,12 @@ export class CategoryService {
           .map(res => res.json())
           .catch(this.handleService.returnError);
   }
+
+  update(category: Category): Observable<any> {
+    const url: string = Api_config.category.update.url + '/' + category._id;
+
+    return this.http.put(url, category)
+        .map(res => res.json())
+        .catch(this.handleService.handleError);
+  }
 }

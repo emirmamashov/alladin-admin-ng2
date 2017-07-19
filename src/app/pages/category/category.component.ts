@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 // config
-import { Notify_config, Api_config } from '../../config';
+import { Notify_config, Api_config, LimitCategoriesViewInMenu } from '../../config';
 
 // models
 import { Category } from '../../models/category';
@@ -28,10 +28,12 @@ export class CategoryComponent implements OnInit, OnDestroy {
   categoriesItem: SelectItem[] = [];
 
   isEdit = false;
+  isLimitCategoriesViewInMenu = false;
   apiUrl: string = Api_config.rootUrl;
 
   getAllConnection: any;
   addConnection: any;
+  updateConnection: any;
 
   constructor(
     private categoryService: CategoryService,
@@ -50,6 +52,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
         if (response.success) {
           this.categories = response.data.data.categories;
           this.setCategoriesItem(this.categories);
+          this.checkToLimitCategoriesViewInMenu(this.categories);
         }
       },
       (err) => {
@@ -96,12 +99,63 @@ export class CategoryComponent implements OnInit, OnDestroy {
     );
   }
 
+  update(category: Category) {
+
+    const notify = new Notify();
+    notify.type = Notify_config.typeMessage.danger;
+    notify.text = 'Что то пошло не так!';
+
+    this.updateConnection = this.categoryService.update(category).subscribe(
+      (response: ResponseApi) => {
+        console.log(response);
+        if (!response.success) {
+          notify.text = response.message;
+          return this.notifyService.addNotify(notify);
+        }
+        this.checkToLimitCategoriesViewInMenu(this.categories);
+        notify.type = Notify_config.typeMessage.success;
+        notify.text = 'Обнавлено!';
+        this.notifyService.addNotify(notify);
+        this.newCategory = new Category();
+
+        $('#modal').modal('toggle');
+      },
+      (err) => {
+        console.log(err);
+        this.notifyService.addNotify(notify);
+      }
+    );
+  }
+
+  checkToLimitCategoriesViewInMenu(categories: Array<Category>) {
+      if (categories.filter(x => x.viewInMenu).length >= LimitCategoriesViewInMenu) {
+        this.isLimitCategoriesViewInMenu = true;
+      } else {
+        this.isLimitCategoriesViewInMenu = false;
+      }
+  }
+
+  changeEditStatus(status: boolean) {
+    this.isEdit = status;
+  }
+
+  doLimitCategoriesViewInMenu() {
+    const notify = new Notify();
+    notify.type = Notify_config.typeMessage.warning;
+    notify.text = 'Только ' + LimitCategoriesViewInMenu +
+    ' категории можно отображат в меню, вы уже выбрали эти ' + LimitCategoriesViewInMenu + ':)';
+    this.notifyService.addNotify(notify);
+  }
+
   ngOnDestroy() {
     if (this.getAllConnection && this.getAllConnection.unsubscribe) {
       this.getAllConnection.unsubscribe();
     }
     if (this.addConnection && this.addConnection.unsubscribe) {
       this.addConnection.unsubscribe();
+    }
+    if (this.updateConnection && this.updateConnection.unsubscribe) {
+      this.updateConnection.unsubscribe();
     }
   }
 
