@@ -68,6 +68,10 @@ export const Api_config = {
     add: {
       method: 'POST',
       url: apiUrl + '/photos/add'
+    },
+    getAll: {
+      method: 'GET',
+      url: apiUrl + '/photos'
     }
   }
 }

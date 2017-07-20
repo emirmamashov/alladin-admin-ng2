@@ -24,7 +24,14 @@ export class PhotoService {
     private handleErrorService: HandleService
   ) { }
 
-  add(files: File[], photo: Photo) {
+  getAll(): Observable<any> {
+    const url: string = Api_config.photo.getAll.url;
+    return this.http.get(url)
+            .map(res => res.json())
+            .catch(this.handleErrorService.handleError);
+  }
+
+  add(files: File[], photo: Photo): Observable<any> {
     const url: string = Api_config.photo.add.url;
     const formData = new FormData();
     for (let i = 0; i < files.length; i++) {
