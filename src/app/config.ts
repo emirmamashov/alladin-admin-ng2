@@ -44,6 +44,20 @@ export const Api_config = {
       url: apiUrl + '/categories/update' // :id
     }
   },
+  banner: {
+    getAll: {
+      method: 'GET',
+      url: apiUrl + '/banners'
+    },
+    add: {
+      method: 'POST',
+      url: apiUrl + '/banners/add'
+    },
+    update: {
+      method: 'PUT',
+      url: apiUrl + '/banners/update' // :id
+    }
+  },
   producer: {
     getAll: {
       method: 'GET',

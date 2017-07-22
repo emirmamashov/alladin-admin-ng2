@@ -66,6 +66,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   categoriesItem: SelectItem[] = [];
   producersItem: SelectItem[] = [];
   promoStickersItem: SelectItem[] = [];
+  photosSelectItems: SelectItem[] = [];
 
   // connections
   getAllConnection: any;
@@ -76,6 +77,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   getAllPromoStickersConnection: any;
   addPromoStickerConnection: any;
   addProductConnection: any;
+  getAllPhotosConnection: any;
 
   content: any;
   text: any;
@@ -99,6 +101,7 @@ export class ProductComponent implements OnInit, OnDestroy {
     this.getAllCategories();
     this.getAllProducers();
     this.getAllPromoStickers();
+    this.getAllPhotos();
   }
 
   getAll() {
@@ -231,14 +234,16 @@ export class ProductComponent implements OnInit, OnDestroy {
     }
   }
 
-  addCategory(file: any, category: Category) {
+  addCategory(category: Category) {
     console.log(category);
     if (!category) { return console.log('category is null'); }
     const notify = new Notify();
     notify.type = Notify_config.typeMessage.danger;
     notify.text = 'Что то пошло не так';
 
-    this.categoryAddConnection = this.categoryService.add(file.files, category).subscribe(
+    category.photo = category.photo.id;
+
+    this.categoryAddConnection = this.categoryService.add(category).subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (!response.success) {
@@ -491,6 +496,27 @@ export class ProductComponent implements OnInit, OnDestroy {
     );
   }
 
+   setPhotosItem(photos: Array<Photo>) {
+    photos.forEach((photo) => {
+      this.photosSelectItems.push({ label: photo.name, value: {id: photo._id, url: Api_config.rootUrl + '/' + photo.url }});
+    });
+  }
+
+  getAllPhotos() {
+    this.getAllPhotosConnection = this.photoService.getAll().subscribe(
+      (response: ResponseApi) => {
+        console.log(response);
+        if (response.success) {
+          this.photos = response.data.data.photos;
+          this.setPhotosItem(this.photos);
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+
   ngOnDestroy() {
     if (this.getAllConnection && this.getAllConnection.unsubscribe) {
       this.getAllConnection.unsubscribe();
@@ -515,6 +541,9 @@ export class ProductComponent implements OnInit, OnDestroy {
     }
     if (this.addProductConnection && this.addProductConnection.unsubscribe) {
       this.addProductConnection.unsubscribe();
+    }
+    if (this.getAllPhotosConnection && this.getAllPhotosConnection.unsubscribe) {
+      this.getAllPhotosConnection.unsubscribe();
     }
   }
 

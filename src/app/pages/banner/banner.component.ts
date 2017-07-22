@@ -1,39 +1,38 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 // config
-import { Notify_config, Api_config, LimitCategoriesViewInMenu } from '../../config';
+import { Notify_config, Api_config } from '../../config';
 
 // models
-import { Category } from '../../models/category';
+import { Banner } from '../../models/banner';
 import { Photo } from '../../models/photo';
 import { ResponseApi } from '../../models/response';
 import { Notify } from '../../models/notify';
 import { SelectItem } from 'primeng/primeng';
 
 // services
-import { CategoryService } from '../../services/category.service';
+import { BannerService } from '../../services/banner.service';
 import { NotifyService } from '../../services/notify.service';
 import { PhotoService } from '../../services/photo.service';
 
 declare let $: any;
 @Component({
-  selector: 'app-category',
-  templateUrl: './category.component.html',
-  styleUrls: ['./category.component.css'],
+  selector: 'app-banner',
+  templateUrl: './banner.component.html',
+  styleUrls: ['./banner.component.css'],
   providers: [
-    CategoryService,
+    BannerService,
     PhotoService
   ]
 })
-export class CategoryComponent implements OnInit, OnDestroy {
-  categories = new Array<Category>();
-  newCategory = new Category();
+export class BannerComponent implements OnInit, OnDestroy {
+  banners = new Array<Banner>();
+  newBanner = new Banner();
   photos = new Array<Photo>();
-  categoriesItem: SelectItem[] = [];
+  bannersItem: SelectItem[] = [];
   photosSelectItems: SelectItem[] = [];
 
   isEdit = false;
-  isLimitCategoriesViewInMenu = false;
   apiUrl: string = Api_config.rootUrl;
 
   getAllConnection: any;
@@ -42,25 +41,24 @@ export class CategoryComponent implements OnInit, OnDestroy {
   getAllPhotosConnection: any;
 
   constructor(
-    private categoryService: CategoryService,
+    private bannerService: BannerService,
     private notifyService: NotifyService,
     private photoService: PhotoService
   ) { }
 
   ngOnInit() {
-    this.categoriesItem.push({ label: 'Выбрите категорию', value: '' });
+    this.bannersItem.push({ label: 'Выбрите категорию', value: '' });
     this.getAll();
     this.getAllPhotos();
   }
 
   getAll() {
-    this.getAllConnection = this.categoryService.getAll().subscribe(
+    this.getAllConnection = this.bannerService.getAll().subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (response.success) {
-          this.categories = response.data.data.categories;
-          this.setCategoriesItem(this.categories);
-          this.checkToLimitCategoriesViewInMenu(this.categories);
+          this.banners = response.data.data.banners;
+          this.setBannersItem(this.banners);
         }
       },
       (err) => {
@@ -84,9 +82,9 @@ export class CategoryComponent implements OnInit, OnDestroy {
     );
   }
 
-  setCategoriesItem(categories: Array<Category>) {
-    categories.forEach((category) => {
-      this.categoriesItem.push({ label: category.name, value: category._id });
+  setBannersItem(banners: Array<Banner>) {
+    banners.forEach((category) => {
+      this.bannersItem.push({ label: category.name, value: category._id });
     });
   }
 
@@ -96,30 +94,30 @@ export class CategoryComponent implements OnInit, OnDestroy {
     });
   }
 
-  add(category: Category) {
-    console.dir(category);
+  add(banner: Banner) {
+    console.dir(banner);
 
     const notify = new Notify();
     notify.type = Notify_config.typeMessage.danger;
     notify.text = 'Что то пошло не так!';
 
-    category.photo = category.photo.id;
+    banner.photo = banner.photo.id;
 
-    this.addConnection = this.categoryService.add(category).subscribe(
+    this.addConnection = this.bannerService.add(banner).subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (!response.success) {
           notify.text = response.message;
           return this.notifyService.addNotify(notify);
         }
-        const newCategory: Category = response.data.data.category;
-        this.categories.push(newCategory);
-        this.categoriesItem.push({ label: newCategory.name, value: newCategory._id });
+        const newBanner: Banner = response.data.data.banner;
+        this.banners.push(newBanner);
+        this.bannersItem.push({ label: newBanner.name, value: newBanner._id });
 
         notify.type = Notify_config.typeMessage.success;
         notify.text = 'Добавлено!';
         this.notifyService.addNotify(notify);
-        this.newCategory = new Category();
+        this.newBanner = new Banner();
 
         $('#modal').modal('toggle');
       },
@@ -130,24 +128,24 @@ export class CategoryComponent implements OnInit, OnDestroy {
     );
   }
 
-  update(category: Category) {
+  update(banner: Banner) {
 
     const notify = new Notify();
     notify.type = Notify_config.typeMessage.danger;
     notify.text = 'Что то пошло не так!';
 
-    this.updateConnection = this.categoryService.update(category).subscribe(
+    this.updateConnection = this.bannerService.update(banner).subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (!response.success) {
           notify.text = response.message;
           return this.notifyService.addNotify(notify);
         }
-        this.checkToLimitCategoriesViewInMenu(this.categories);
+
         notify.type = Notify_config.typeMessage.success;
         notify.text = 'Обнавлено!';
         this.notifyService.addNotify(notify);
-        this.newCategory = new Category();
+        this.newBanner = new Banner();
 
         $('#modal').modal('toggle');
       },
@@ -158,24 +156,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
     );
   }
 
-  checkToLimitCategoriesViewInMenu(categories: Array<Category>) {
-      if (categories.filter(x => x.viewInMenu).length >= LimitCategoriesViewInMenu) {
-        this.isLimitCategoriesViewInMenu = true;
-      } else {
-        this.isLimitCategoriesViewInMenu = false;
-      }
-  }
-
   changeEditStatus(status: boolean) {
     this.isEdit = status;
-  }
-
-  doLimitCategoriesViewInMenu() {
-    const notify = new Notify();
-    notify.type = Notify_config.typeMessage.warning;
-    notify.text = 'Только ' + LimitCategoriesViewInMenu +
-    ' категории можно отображат в меню, вы уже выбрали эти ' + LimitCategoriesViewInMenu + ':)';
-    this.notifyService.addNotify(notify);
   }
 
   ngOnDestroy() {
