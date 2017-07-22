@@ -8,4 +8,5 @@ export class Category {
   image: string;
   viewInMenu: boolean;
   photo: any;
+  banner: any;
 }

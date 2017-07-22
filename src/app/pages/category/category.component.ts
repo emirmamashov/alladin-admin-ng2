@@ -9,11 +9,13 @@ import { Photo } from '../../models/photo';
 import { ResponseApi } from '../../models/response';
 import { Notify } from '../../models/notify';
 import { SelectItem } from 'primeng/primeng';
+import { Banner } from '../../models/banner';
 
 // services
 import { CategoryService } from '../../services/category.service';
 import { NotifyService } from '../../services/notify.service';
 import { PhotoService } from '../../services/photo.service';
+import { BannerService } from '../../services/banner.service';
 
 declare let $: any;
 @Component({
@@ -22,15 +24,18 @@ declare let $: any;
   styleUrls: ['./category.component.css'],
   providers: [
     CategoryService,
-    PhotoService
+    PhotoService,
+    BannerService
   ]
 })
 export class CategoryComponent implements OnInit, OnDestroy {
   categories = new Array<Category>();
   newCategory = new Category();
   photos = new Array<Photo>();
+  banners = new Array<Banner>();
   categoriesItem: SelectItem[] = [];
   photosSelectItems: SelectItem[] = [];
+  bannersSelectItems: SelectItem[] = [];
 
   isEdit = false;
   isLimitCategoriesViewInMenu = false;
@@ -40,17 +45,20 @@ export class CategoryComponent implements OnInit, OnDestroy {
   addConnection: any;
   updateConnection: any;
   getAllPhotosConnection: any;
+  getAllBannersConnection: any;
 
   constructor(
     private categoryService: CategoryService,
     private notifyService: NotifyService,
-    private photoService: PhotoService
+    private photoService: PhotoService,
+    private bannerService: BannerService
   ) { }
 
   ngOnInit() {
     this.categoriesItem.push({ label: 'Выбрите категорию', value: '' });
     this.getAll();
     this.getAllPhotos();
+    this.getAllBanners();
   }
 
   getAll() {
@@ -69,13 +77,27 @@ export class CategoryComponent implements OnInit, OnDestroy {
     );
   }
 
-    getAllPhotos() {
+ getAllPhotos() {
     this.getAllPhotosConnection = this.photoService.getAll().subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (response.success) {
           this.photos = response.data.data.photos;
           this.setPhotosItem(this.photos);
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+  getAllBanners() {
+    this.getAllBannersConnection = this.bannerService.getAll().subscribe(
+      (response: ResponseApi) => {
+        console.log(response);
+        if (response.success) {
+          this.banners = response.data.data.banners;
+          this.setBannersItem(this.banners);
         }
       },
       (err) => {
@@ -96,6 +118,12 @@ export class CategoryComponent implements OnInit, OnDestroy {
     });
   }
 
+  setBannersItem(banners: Array<Banner>) {
+    banners.forEach((banner) => {
+      this.bannersSelectItems.push({ label: banner.name, value: {id: banner._id, url: Api_config.rootUrl + '/' + banner.photo.url || '' }});
+    });
+  }
+
   add(category: Category) {
     console.dir(category);
 
@@ -103,7 +131,12 @@ export class CategoryComponent implements OnInit, OnDestroy {
     notify.type = Notify_config.typeMessage.danger;
     notify.text = 'Что то пошло не так!';
 
-    category.photo = category.photo.id;
+    if (category.photo) {
+      category.photo = category.photo.id;
+    }
+    if (category.banner) {
+      category.banner = category.banner.id;
+    }
 
     this.addConnection = this.categoryService.add(category).subscribe(
       (response: ResponseApi) => {
