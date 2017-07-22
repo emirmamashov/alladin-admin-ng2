@@ -5,6 +5,7 @@ import { Notify_config, Api_config, LimitCategoriesViewInMenu } from '../../conf
 
 // models
 import { Category } from '../../models/category';
+import { Photo } from '../../models/photo';
 import { ResponseApi } from '../../models/response';
 import { Notify } from '../../models/notify';
 import { SelectItem } from 'primeng/primeng';
@@ -12,6 +13,7 @@ import { SelectItem } from 'primeng/primeng';
 // services
 import { CategoryService } from '../../services/category.service';
 import { NotifyService } from '../../services/notify.service';
+import { PhotoService } from '../../services/photo.service';
 
 declare let $: any;
 @Component({
@@ -19,13 +21,16 @@ declare let $: any;
   templateUrl: './category.component.html',
   styleUrls: ['./category.component.css'],
   providers: [
-    CategoryService
+    CategoryService,
+    PhotoService
   ]
 })
 export class CategoryComponent implements OnInit, OnDestroy {
   categories = new Array<Category>();
   newCategory = new Category();
+  photos = new Array<Photo>();
   categoriesItem: SelectItem[] = [];
+  photosSelectItems: SelectItem[] = [];
 
   isEdit = false;
   isLimitCategoriesViewInMenu = false;
@@ -34,15 +39,18 @@ export class CategoryComponent implements OnInit, OnDestroy {
   getAllConnection: any;
   addConnection: any;
   updateConnection: any;
+  getAllPhotosConnection: any;
 
   constructor(
     private categoryService: CategoryService,
-    private notifyService: NotifyService
+    private notifyService: NotifyService,
+    private photoService: PhotoService
   ) { }
 
   ngOnInit() {
     this.categoriesItem.push({ label: 'Выбрите категорию', value: '' });
     this.getAll();
+    this.getAllPhotos();
   }
 
   getAll() {
@@ -61,20 +69,43 @@ export class CategoryComponent implements OnInit, OnDestroy {
     );
   }
 
+    getAllPhotos() {
+    this.getAllPhotosConnection = this.photoService.getAll().subscribe(
+      (response: ResponseApi) => {
+        console.log(response);
+        if (response.success) {
+          this.photos = response.data.data.photos;
+          this.setPhotosItem(this.photos);
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+
   setCategoriesItem(categories: Array<Category>) {
     categories.forEach((category) => {
       this.categoriesItem.push({ label: category.name, value: category._id });
     });
   }
 
-  add(file: any, category: Category) {
+  setPhotosItem(photos: Array<Photo>) {
+    photos.forEach((photo) => {
+      this.photosSelectItems.push({ label: photo.name, value: {id: photo._id, url: Api_config.rootUrl + '/' + photo.url }});
+    });
+  }
+
+  add( category: Category) {
     console.dir(category);
-    console.dir(file);
+
     const notify = new Notify();
     notify.type = Notify_config.typeMessage.danger;
     notify.text = 'Что то пошло не так!';
 
-    this.addConnection = this.categoryService.add(file.files, category).subscribe(
+    category.photo = category.photo.id;
+
+    this.addConnection = this.categoryService.add(category).subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (!response.success) {
@@ -156,6 +187,9 @@ export class CategoryComponent implements OnInit, OnDestroy {
     }
     if (this.updateConnection && this.updateConnection.unsubscribe) {
       this.updateConnection.unsubscribe();
+    }
+    if (this.getAllPhotosConnection && this.getAllPhotosConnection.unsubscribe) {
+      this.getAllPhotosConnection.unsubscribe();
     }
   }
 
