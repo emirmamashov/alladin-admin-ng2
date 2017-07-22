@@ -169,6 +169,13 @@ export class CategoryComponent implements OnInit, OnDestroy {
     notify.type = Notify_config.typeMessage.danger;
     notify.text = 'Что то пошло не так!';
 
+    if (category.photo) {
+      category.photo = category.photo.id;
+    }
+    if (category.banner) {
+      category.banner = category.banner.id;
+    }
+
     this.updateConnection = this.categoryService.update(category).subscribe(
       (response: ResponseApi) => {
         console.log(response);

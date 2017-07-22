@@ -19,10 +19,14 @@
             <td>{{ category._id }}</td>
             <td>{{ category.name }}</td>
             <td>
-              <img *ngIf="category.photo" src="{{ apiUrl }}/{{ category.photo.url }}" width="50%"/>
+                <ng-container *ngIf="category.photo && category.photo.url" >
+                    <img src="{{ apiUrl }}/{{ category.photo.url }}" width="50%"/>
+                </ng-container>
             </td>
             <td>
-              <img *ngIf="category.banner" src="{{ apiUrl }}/{{ category.banner.photo.url }}" width="50%"/>
+                <ng-container *ngIf="category.banner && category.banner.photo && category.banner.photo.url" >
+                    <img src="{{ apiUrl }}/{{ category.banner.photo.url }}" width="50%"/>
+                </ng-container>
             </td>
             <td>{{ category.parentCategory }}</td>
             <td>{{ category.description }}</td>
@@ -86,13 +90,7 @@
                             [value]="false"
                             (change)="doLimitCategoriesViewInMenu()"
                         />
-
                     </div>
-
-                    <!--<div class="form-group col-md-6">
-                        <label><i class="fa fa-picture-o" aria-hidden="true"></i> Выберите изображение категории</label>
-                        <input #fileCategory type="file" class="form-control" id="image" placeholder="Изображение категории" />
-                    </div>-->
 
                     <div class="form-group col-md-6">
                         <label>Выберите фото: </label>

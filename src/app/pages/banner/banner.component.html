@@ -6,6 +6,7 @@
             <th>Id</th>
             <th>Название</th>
             <th>Изображение</th>
+            <th>Кнопка</th>
             <th>Действия</th>
         </tr>
     </thead>
@@ -14,6 +15,10 @@
             <td>{{ i+1 }}</td>
             <td>{{ banner._id }}</td>
             <td>{{ banner.name }}</td>
+            <td>
+                <span>имя кнопки: <b>{{ banner.buttonName }}</b> </span><br/>
+                <span> ссылка: <b>{{ banner.buttonLink }}</b></span>
+            </td>
             <td>
               <img *ngIf="banner.photo" src="{{ apiUrl }}/{{ banner.photo.url }}" width="50%"/>
             </td>
@@ -40,6 +45,27 @@
                             placeholder="Наименование" 
                             [(ngModel)]="newBanner.name" 
                             [value]="newBanner.name"
+                        />
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Кнопка Ссылка: </label>
+                        <input type="text" 
+                            class="form-control" 
+                            id="name" 
+                            placeholder="Кнопка Ссылка" 
+                            [(ngModel)]="newBanner.buttonLink" 
+                            [value]="newBanner.buttonLink"
+                        />
+                    </div>
+
+                    <div class="form-group col-md-6">
+                        <label>Кнопка Имя: </label>
+                        <input type="text" 
+                            class="form-control" 
+                            id="name" 
+                            placeholder="Кнопка Имя" 
+                            [(ngModel)]="newBanner.buttonName" 
+                            [value]="newBanner.buttonName"
                         />
                     </div>
                     <div class="form-group col-md-6">
