@@ -1,8 +1,9 @@
 export class Banner {
     _id: string;
     name: string;
-    photo: any;
-    photos: any;
     buttonLink: string;
     buttonName: string;
+    category: any;
+    image: string;
+    images: Array<string>;
 }

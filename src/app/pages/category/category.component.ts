@@ -97,7 +97,6 @@ export class CategoryComponent implements OnInit, OnDestroy {
         console.log(response);
         if (response.success) {
           this.banners = response.data.data.banners;
-          this.setBannersItem(this.banners);
         }
       },
       (err) => {
@@ -115,12 +114,6 @@ export class CategoryComponent implements OnInit, OnDestroy {
   setPhotosItem(photos: Array<Photo>) {
     photos.forEach((photo) => {
       this.photosSelectItems.push({ label: photo.name, value: {id: photo._id, url: Api_config.rootUrl + '/' + photo.url }});
-    });
-  }
-
-  setBannersItem(banners: Array<Banner>) {
-    banners.forEach((banner) => {
-      this.bannersSelectItems.push({ label: banner.name, value: {id: banner._id, url: Api_config.rootUrl + '/' + banner.photo.url || '' }});
     });
   }
 

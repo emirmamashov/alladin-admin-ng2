@@ -16,11 +16,15 @@
             <td>{{ banner._id }}</td>
             <td>{{ banner.name }}</td>
             <td>
-                <span>имя кнопки: <b>{{ banner.buttonName }}</b> </span><br/>
+                <span> имя кнопки: <b>{{ banner.buttonName }}</b> </span><br/>
                 <span> ссылка: <b>{{ banner.buttonLink }}</b></span>
             </td>
             <td>
-              <img *ngIf="banner.photo" src="{{ apiUrl }}/{{ banner.photo.url }}" width="50%"/>
+              <ng-container *ngIf="banner.images">
+                <span *ngFor="let url of banner.images; let i = index">
+                    <img width="80" height="80" src="{{ apiUrl }}/{{ url }}"/>
+                </span>
+              </ng-container>
             </td>
             <td>{{ banner.banner }}</td>
         </tr>
@@ -47,6 +51,18 @@
                             [value]="newBanner.name"
                         />
                     </div>
+
+                    <div class="form-group col-md-6">
+                        <label>Кнопка Имя: </label>
+                        <input type="text" 
+                            class="form-control" 
+                            id="name" 
+                            placeholder="Кнопка Имя" 
+                            [(ngModel)]="newBanner.buttonName" 
+                            [value]="newBanner.buttonName"
+                        />
+                    </div>
+
                     <div class="form-group col-md-6">
                         <label>Кнопка Ссылка: </label>
                         <input type="text" 
@@ -59,28 +75,14 @@
                     </div>
 
                     <div class="form-group col-md-6">
-                        <label>Кнопка Имя: </label>
-                        <input type="text" 
-                            class="form-control" 
-                            id="name" 
-                            placeholder="Кнопка Имя" 
-                            [(ngModel)]="newBanner.buttonName" 
-                            [value]="newBanner.buttonName"
-                        />
-                    </div>
-                    <div class="form-group col-md-6">
-                        <p-dropdown 
-                            [options]="photosSelectItems" 
-                            [(ngModel)]="newBanner.photo" 
-                            [style]="{'width':'100%'}" 
-                            filter="filter">
-                            <ng-template let-photoSelectItem pTemplate="item">
-                                <div class="ui-helper-clearfix" style="position: relative;height: 80px;">
-                                    <img src="{{ photoSelectItem.value.url }}" style="width: 80px;position:absolute;top:1px;left:10px"/>
-                                    <div style="font-size:14px;float:right;margin-top:4px">{{ photoSelectItem.value.name }}</div>
-                                </div>
-                            </ng-template>
-                        </p-dropdown>
+                        <label><i class="fa fa-picture-o" aria-hidden="true"></i> Выберите изображение</label>
+                        <input #file type="file" class="form-control" accept="image/*" id="images" placeholder="Изображение баннера" multiple (change)="addToListReadyupload(file, $event)"/>
+                        <div class="form-group col-md-12">
+                            <span *ngFor="let photo of filesToReadyUpload; let i = index">
+                                <img width="100" height="100" src="{{photo.data}}" alt="Downloaded photo"/>
+                                <i class="fa fa-trash-o" aria-hidden="true" (click)="removeInListREadyUpload(photo.name)"></i>
+                            </span>
+                        </div>
                     </div>
 
                     <div class="modal-footer col-md-12">

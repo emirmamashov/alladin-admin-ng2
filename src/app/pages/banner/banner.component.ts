@@ -32,6 +32,8 @@ export class BannerComponent implements OnInit, OnDestroy {
   bannersItem: SelectItem[] = [];
   photosSelectItems: SelectItem[] = [];
 
+  filesToReadyUpload = new Array<any>();
+
   isEdit = false;
   apiUrl: string = Api_config.rootUrl;
 
@@ -67,7 +69,7 @@ export class BannerComponent implements OnInit, OnDestroy {
     );
   }
 
-    getAllPhotos() {
+  getAllPhotos() {
     this.getAllPhotosConnection = this.photoService.getAll().subscribe(
       (response: ResponseApi) => {
         console.log(response);
@@ -101,9 +103,12 @@ export class BannerComponent implements OnInit, OnDestroy {
     notify.type = Notify_config.typeMessage.danger;
     notify.text = 'Что то пошло не так!';
 
-    banner.photo = banner.photo.id;
+    const files = new Array<File>();
+    this.filesToReadyUpload.forEach((fileObject) => {
+      files.push(fileObject.file);
+    });
 
-    this.addConnection = this.bannerService.add(banner).subscribe(
+    this.addConnection = this.bannerService.add(files, banner).subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (!response.success) {
@@ -158,6 +163,40 @@ export class BannerComponent implements OnInit, OnDestroy {
 
   changeEditStatus(status: boolean) {
     this.isEdit = status;
+  }
+
+  addToListReadyupload(fileInput: any) {
+    console.dir(fileInput);
+    console.dir(event);
+    const files = fileInput.files;
+    // const files = event.dataTransfer ? event.dataTransfer.files : event.target.files;
+
+    if (files && files.length > 0) {
+      // console.dir(files);
+      for (let i = 0; i < files.length; i++) {
+          const pattern = /image-*/;
+          const reader = new FileReader();
+          if (files[i].type.match(pattern)) {
+            reader.onload = (e: any) => {
+              console.dir('reader.onload');
+              const readerFile = e.target;
+              const fileObject = {
+                name: files[i].name,
+                data: readerFile.result,
+                file: files[i]
+              };
+              this.filesToReadyUpload.push(fileObject);
+            };
+            reader.readAsDataURL(files[i]);
+          } else {
+            console.log('invalid format');
+          }
+      }
+    }
+  }
+
+  removeInListREadyUpload(fileName: string) {
+    this.filesToReadyUpload = this.filesToReadyUpload.filter(x => x.name !== fileName);
   }
 
   ngOnDestroy() {

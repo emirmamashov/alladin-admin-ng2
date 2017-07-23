@@ -35,9 +35,18 @@ export class BannerService {
             .catch(this.handleService.returnError);
   }
 
-  add(banner: Banner): Observable<any> {
+  add(files: File[], banner: Banner): Observable<any> {
     const url: string = Api_config.banner.add.url;
-    return this.http.post(url, banner)
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append('file', file);
+    });
+    formData.append('category', banner.category || '');
+    formData.append('name', banner.name || '');
+    formData.append('buttonLink', banner.buttonLink || '');
+    formData.append('buttonName', banner.buttonName || '');
+
+    return this.http.post(url, formData)
           .map(res => res.json())
           .catch(this.handleService.returnError);
   }
