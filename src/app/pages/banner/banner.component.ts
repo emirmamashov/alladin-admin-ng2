@@ -9,11 +9,13 @@ import { Photo } from '../../models/photo';
 import { ResponseApi } from '../../models/response';
 import { Notify } from '../../models/notify';
 import { SelectItem } from 'primeng/primeng';
+import { Category } from '../../models/category';
 
 // services
 import { BannerService } from '../../services/banner.service';
 import { NotifyService } from '../../services/notify.service';
 import { PhotoService } from '../../services/photo.service';
+import { CategoryService } from '../../services/category.service';
 
 declare let $: any;
 @Component({
@@ -22,17 +24,17 @@ declare let $: any;
   styleUrls: ['./banner.component.css'],
   providers: [
     BannerService,
-    PhotoService
+    PhotoService,
+    CategoryService
   ]
 })
 export class BannerComponent implements OnInit, OnDestroy {
   banners = new Array<Banner>();
   newBanner = new Banner();
   photos = new Array<Photo>();
-  bannersItem: SelectItem[] = [];
-  photosSelectItems: SelectItem[] = [];
-
   filesToReadyUpload = new Array<any>();
+
+  categoriesSelectItems: SelectItem[] = [];
 
   isEdit = false;
   apiUrl: string = Api_config.rootUrl;
@@ -41,17 +43,19 @@ export class BannerComponent implements OnInit, OnDestroy {
   addConnection: any;
   updateConnection: any;
   getAllPhotosConnection: any;
+  getAllCategroiesConnection: any;
 
   constructor(
     private bannerService: BannerService,
     private notifyService: NotifyService,
-    private photoService: PhotoService
+    private photoService: PhotoService,
+    private categoryService: CategoryService
   ) { }
 
   ngOnInit() {
-    this.bannersItem.push({ label: 'Выбрите категорию', value: '' });
     this.getAll();
-    this.getAllPhotos();
+    this.getAllCategroies();
+    this.categoriesSelectItems.push({ label: 'Выберите категорию', value: '' });
   }
 
   getAll() {
@@ -60,7 +64,6 @@ export class BannerComponent implements OnInit, OnDestroy {
         console.log(response);
         if (response.success) {
           this.banners = response.data.data.banners;
-          this.setBannersItem(this.banners);
         }
       },
       (err) => {
@@ -69,31 +72,23 @@ export class BannerComponent implements OnInit, OnDestroy {
     );
   }
 
-  getAllPhotos() {
-    this.getAllPhotosConnection = this.photoService.getAll().subscribe(
+  getAllCategroies() {
+    this.getAllCategroiesConnection = this.categoryService.getAll().subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (response.success) {
-          this.photos = response.data.data.photos;
-          this.setPhotosItem(this.photos);
+          this.setCategoriesSelectItems(response.data.data.categories);
         }
-      },
-      (err) => {
-        console.log(err);
       }
     );
   }
 
-  setBannersItem(banners: Array<Banner>) {
-    banners.forEach((category) => {
-      this.bannersItem.push({ label: category.name, value: category._id });
-    });
-  }
-
-  setPhotosItem(photos: Array<Photo>) {
-    photos.forEach((photo) => {
-      this.photosSelectItems.push({ label: photo.name, value: {id: photo._id, url: Api_config.rootUrl + '/' + photo.url }});
-    });
+  setCategoriesSelectItems(categories: Array<Category>) {
+    if (categories && categories.length > 0) {
+      categories.forEach((category) => {
+        this.categoriesSelectItems.push({ label: category.name, value: category._id });
+      });
+    }
   }
 
   add(banner: Banner) {
@@ -117,8 +112,6 @@ export class BannerComponent implements OnInit, OnDestroy {
         }
         const newBanner: Banner = response.data.data.banner;
         this.banners.push(newBanner);
-        this.bannersItem.push({ label: newBanner.name, value: newBanner._id });
-
         notify.type = Notify_config.typeMessage.success;
         notify.text = 'Добавлено!';
         this.notifyService.addNotify(notify);
@@ -211,6 +204,9 @@ export class BannerComponent implements OnInit, OnDestroy {
     }
     if (this.getAllPhotosConnection && this.getAllPhotosConnection.unsubscribe) {
       this.getAllPhotosConnection.unsubscribe();
+    }
+    if (this.getAllCategroiesConnection && this.getAllCategroiesConnection.unsubscribe) {
+      this.getAllCategroiesConnection.unsubscribe();
     }
   }
 
