@@ -14,9 +14,11 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let banner of banners; let i=index" 
-            data-toggle="modal" data-target="#modal" 
-            (click)="newBanner = banner; filesToReadyUpload=[]; changeEditStatus(true)">
+        <!--<tr *ngFor="let banner of banners; let i=index" 
+             data-toggle="modal" data-target="#modal" 
+            (click)="newBanner = banner; filesToReadyUpload=[]; changeEditStatus(true)">-->
+
+        <tr *ngFor="let banner of banners; let i=index">
             <td>{{ i+1 }}</td>
             <td>{{ banner._id }}</td>
             <td>{{ banner.name }}</td>
@@ -90,11 +92,11 @@
 
                     <div class="form-group col-md-6">
                         <label><i class="fa fa-picture-o" aria-hidden="true"></i> Выберите изображение</label>
-                        <input #file type="file" class="form-control" accept="image/*" id="images" placeholder="Изображение баннера" multiple (change)="addToListReadyupload(file, $event)"/>
+                        <input #file type="file" class="form-control" accept="image/*" id="images" placeholder="Изображение для категории" multiple (change)="addToListReadyupload(file, $event)"/>
                         <div class="form-group col-md-12">
                             <span *ngFor="let photo of filesToReadyUpload; let i = index">
                                 <img width="100" height="100" src="{{photo.data}}" alt="Downloaded photo"/>
-                                <i class="fa fa-trash-o" aria-hidden="true" (click)="removeInListREadyUpload(photo.name)"></i>
+                                <i class="fa fa-trash-o" aria-hidden="true" (click)="removeInListReadyUpload(photo.name)"></i>
                             </span>
                         </div>
                     </div>

@@ -6,7 +6,6 @@
             <th>Id</th>
             <th>Название</th>
             <th>Изображение</th>
-            <th>Баннер Изображение</th>
             <th>Категория родитель</th>
             <th>Описание</th>
             <th>Показывать в меню</th>
@@ -14,19 +13,18 @@
         </tr>
     </thead>
     <tbody>
-        <tr *ngFor="let category of categories; let i=index" data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">
+        <!--<tr *ngFor="let category of categories; let i=index" data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">-->
+    
+        <tr *ngFor="let category of categories; let i=index">
             <td>{{ i+1 }}</td>
             <td>{{ category._id }}</td>
             <td>{{ category.name }}</td>
             <td>
-                <ng-container *ngIf="category.photo && category.photo.url" >
-                    <img src="{{ apiUrl }}/{{ category.photo.url }}" width="50%"/>
-                </ng-container>
-            </td>
-            <td>
-                <ng-container *ngIf="category.banner && category.banner.photo && category.banner.photo.url" >
-                    <img src="{{ apiUrl }}/{{ category.banner.photo.url }}" width="50%"/>
-                </ng-container>
+              <ng-container *ngIf="category.images">
+                <span *ngFor="let url of category.images; let i = index">
+                    <img width="80" height="80" src="{{ apiUrl }}/{{ url }}"/>
+                </span>
+              </ng-container>
             </td>
             <td>{{ category.parentCategory }}</td>
             <td>{{ category.description }}</td>
@@ -93,37 +91,15 @@
                     </div>
 
                     <div class="form-group col-md-6">
-                        <label>Выберите фото: </label>
-                        <p-dropdown 
-                            [options]="photosSelectItems" 
-                            [(ngModel)]="newCategory.photo" 
-                            [style]="{'width':'100%'}" 
-                            filter="filter">
-                            <ng-template let-photoSelectItem pTemplate="item">
-                                <div class="ui-helper-clearfix" style="position: relative;height: 80px;">
-                                    <img src="{{ photoSelectItem.value.url }}" style="width: 80px;position:absolute;top:1px;left:10px"/>
-                                    <div style="font-size:14px;float:right;margin-top:4px">{{ photoSelectItem.label }}</div>
-                                </div>
-                            </ng-template>
-                        </p-dropdown>
+                        <label><i class="fa fa-picture-o" aria-hidden="true"></i> Выберите изображение</label>
+                        <input #file type="file" class="form-control" accept="image/*" id="images" placeholder="Изображение баннера" multiple (change)="addToListReadyupload(file, $event)"/>
+                        <div class="form-group col-md-12">
+                            <span *ngFor="let photo of filesToReadyUpload; let i = index">
+                                <img width="100" height="100" src="{{photo.data}}" alt="Downloaded photo"/>
+                                <i class="fa fa-trash-o" aria-hidden="true" (click)="removeInListReadyUpload(photo.name)"></i>
+                            </span>
+                        </div>
                     </div>
-
-                    <div class="form-group col-md-6">
-                        <label>Выберите баннер: </label>
-                        <p-dropdown 
-                            [options]="bannersSelectItems" 
-                            [(ngModel)]="newCategory.banner" 
-                            [style]="{'width':'100%'}" 
-                            filter="filter">
-                            <ng-template let-bannerSelectItem pTemplate="item">
-                                <div class="ui-helper-clearfix" style="position: relative;height: 80px;">
-                                    <img src="{{ bannerSelectItem.value.url }}" style="width: 80px;position:absolute;top:1px;left:10px"/>
-                                    <div style="font-size:14px;float:right;margin-top:4px">{{ bannerSelectItem.label }}</div>
-                                </div>
-                            </ng-template>
-                        </p-dropdown>
-                    </div>
-
                     <div class="modal-footer col-md-12">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
                         <button *ngIf="!isEdit" 

@@ -14,7 +14,6 @@ import { Category } from '../../models/category';
 // services
 import { BannerService } from '../../services/banner.service';
 import { NotifyService } from '../../services/notify.service';
-import { PhotoService } from '../../services/photo.service';
 import { CategoryService } from '../../services/category.service';
 
 declare let $: any;
@@ -24,14 +23,12 @@ declare let $: any;
   styleUrls: ['./banner.component.css'],
   providers: [
     BannerService,
-    PhotoService,
     CategoryService
   ]
 })
 export class BannerComponent implements OnInit, OnDestroy {
   banners = new Array<Banner>();
   newBanner = new Banner();
-  photos = new Array<Photo>();
   filesToReadyUpload = new Array<any>();
 
   categoriesSelectItems: SelectItem[] = [];
@@ -42,13 +39,11 @@ export class BannerComponent implements OnInit, OnDestroy {
   getAllConnection: any;
   addConnection: any;
   updateConnection: any;
-  getAllPhotosConnection: any;
   getAllCategroiesConnection: any;
 
   constructor(
     private bannerService: BannerService,
     private notifyService: NotifyService,
-    private photoService: PhotoService,
     private categoryService: CategoryService
   ) { }
 
@@ -188,7 +183,7 @@ export class BannerComponent implements OnInit, OnDestroy {
     }
   }
 
-  removeInListREadyUpload(fileName: string) {
+  removeInListReadyUpload(fileName: string) {
     this.filesToReadyUpload = this.filesToReadyUpload.filter(x => x.name !== fileName);
   }
 
@@ -201,9 +196,6 @@ export class BannerComponent implements OnInit, OnDestroy {
     }
     if (this.updateConnection && this.updateConnection.unsubscribe) {
       this.updateConnection.unsubscribe();
-    }
-    if (this.getAllPhotosConnection && this.getAllPhotosConnection.unsubscribe) {
-      this.getAllPhotosConnection.unsubscribe();
     }
     if (this.getAllCategroiesConnection && this.getAllCategroiesConnection.unsubscribe) {
       this.getAllCategroiesConnection.unsubscribe();

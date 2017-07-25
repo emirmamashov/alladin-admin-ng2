@@ -5,17 +5,13 @@ import { Notify_config, Api_config, LimitCategoriesViewInMenu } from '../../conf
 
 // models
 import { Category } from '../../models/category';
-import { Photo } from '../../models/photo';
 import { ResponseApi } from '../../models/response';
 import { Notify } from '../../models/notify';
 import { SelectItem } from 'primeng/primeng';
-import { Banner } from '../../models/banner';
 
 // services
 import { CategoryService } from '../../services/category.service';
 import { NotifyService } from '../../services/notify.service';
-import { PhotoService } from '../../services/photo.service';
-import { BannerService } from '../../services/banner.service';
 
 declare let $: any;
 @Component({
@@ -23,19 +19,14 @@ declare let $: any;
   templateUrl: './category.component.html',
   styleUrls: ['./category.component.css'],
   providers: [
-    CategoryService,
-    PhotoService,
-    BannerService
+    CategoryService
   ]
 })
 export class CategoryComponent implements OnInit, OnDestroy {
   categories = new Array<Category>();
   newCategory = new Category();
-  photos = new Array<Photo>();
-  banners = new Array<Banner>();
   categoriesItem: SelectItem[] = [];
-  photosSelectItems: SelectItem[] = [];
-  bannersSelectItems: SelectItem[] = [];
+  filesToReadyUpload = new Array<any>();
 
   isEdit = false;
   isLimitCategoriesViewInMenu = false;
@@ -49,16 +40,12 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   constructor(
     private categoryService: CategoryService,
-    private notifyService: NotifyService,
-    private photoService: PhotoService,
-    private bannerService: BannerService
+    private notifyService: NotifyService
   ) { }
 
   ngOnInit() {
     this.categoriesItem.push({ label: 'Выбрите категорию', value: '' });
     this.getAll();
-    this.getAllPhotos();
-    this.getAllBanners();
   }
 
   getAll() {
@@ -77,43 +64,9 @@ export class CategoryComponent implements OnInit, OnDestroy {
     );
   }
 
- getAllPhotos() {
-    this.getAllPhotosConnection = this.photoService.getAll().subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (response.success) {
-          this.photos = response.data.data.photos;
-          this.setPhotosItem(this.photos);
-        }
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-  }
-  getAllBanners() {
-    this.getAllBannersConnection = this.bannerService.getAll().subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (response.success) {
-          this.banners = response.data.data.banners;
-        }
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-  }
-
   setCategoriesItem(categories: Array<Category>) {
     categories.forEach((category) => {
       this.categoriesItem.push({ label: category.name, value: category._id });
-    });
-  }
-
-  setPhotosItem(photos: Array<Photo>) {
-    photos.forEach((photo) => {
-      this.photosSelectItems.push({ label: photo.name, value: {id: photo._id, url: Api_config.rootUrl + '/' + photo.url }});
     });
   }
 
@@ -124,14 +77,12 @@ export class CategoryComponent implements OnInit, OnDestroy {
     notify.type = Notify_config.typeMessage.danger;
     notify.text = 'Что то пошло не так!';
 
-    if (category.photo) {
-      category.photo = category.photo.id;
-    }
-    if (category.banner) {
-      category.banner = category.banner.id;
-    }
+    const files = new Array<File>();
+    this.filesToReadyUpload.forEach((fileObject) => {
+      files.push(fileObject.file);
+    });
 
-    this.addConnection = this.categoryService.add(category).subscribe(
+    this.addConnection = this.categoryService.add(files, category).subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (!response.success) {
@@ -161,13 +112,6 @@ export class CategoryComponent implements OnInit, OnDestroy {
     const notify = new Notify();
     notify.type = Notify_config.typeMessage.danger;
     notify.text = 'Что то пошло не так!';
-
-    if (category.photo) {
-      category.photo = category.photo.id;
-    }
-    if (category.banner) {
-      category.banner = category.banner.id;
-    }
 
     this.updateConnection = this.categoryService.update(category).subscribe(
       (response: ResponseApi) => {
@@ -209,6 +153,41 @@ export class CategoryComponent implements OnInit, OnDestroy {
     notify.text = 'Только ' + LimitCategoriesViewInMenu +
     ' категории можно отображат в меню, вы уже выбрали эти ' + LimitCategoriesViewInMenu + ':)';
     this.notifyService.addNotify(notify);
+  }
+
+
+  addToListReadyupload(fileInput: any) {
+    console.dir(fileInput);
+    console.dir(event);
+    const files = fileInput.files;
+    // const files = event.dataTransfer ? event.dataTransfer.files : event.target.files;
+
+    if (files && files.length > 0) {
+      // console.dir(files);
+      for (let i = 0; i < files.length; i++) {
+          const pattern = /image-*/;
+          const reader = new FileReader();
+          if (files[i].type.match(pattern)) {
+            reader.onload = (e: any) => {
+              console.dir('reader.onload');
+              const readerFile = e.target;
+              const fileObject = {
+                name: files[i].name,
+                data: readerFile.result,
+                file: files[i]
+              };
+              this.filesToReadyUpload.push(fileObject);
+            };
+            reader.readAsDataURL(files[i]);
+          } else {
+            console.log('invalid format');
+          }
+      }
+    }
+  }
+
+  removeInListReadyUpload(fileName: string) {
+    this.filesToReadyUpload = this.filesToReadyUpload.filter(x => x.name !== fileName);
   }
 
   ngOnDestroy() {

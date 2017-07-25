@@ -35,9 +35,20 @@ export class CategoryService {
             .catch(this.handleService.returnError);
   }
 
-  add(category: Category): Observable<any> {
+  add(files: File[], category: Category): Observable<any> {
     const url: string = Api_config.category.add.url;
-    return this.http.post(url, category)
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append('file', file);
+    });
+    formData.append('name', category.name || '');
+    formData.append('parentCategory', category.parentCategory || '');
+    formData.append('description', category.description || '');
+    formData.append('keywords', category.keywords || '');
+    formData.append('author', category.author || '');
+    formData.append('viewInMenu', category.viewInMenu ? '1' : '0');
+
+    return this.http.post(url, formData)
           .map(res => res.json())
           .catch(this.handleService.returnError);
   }

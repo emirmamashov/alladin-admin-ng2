@@ -234,41 +234,6 @@ export class ProductComponent implements OnInit, OnDestroy {
     }
   }
 
-  addCategory(category: Category) {
-    console.log(category);
-    if (!category) { return console.log('category is null'); }
-    const notify = new Notify();
-    notify.type = Notify_config.typeMessage.danger;
-    notify.text = 'Что то пошло не так';
-
-    category.photo = category.photo.id;
-
-    this.categoryAddConnection = this.categoryService.add(category).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (!response.success) {
-          const validates: Array<string> = response.message.validates || [];
-          this.showValidateErrorMessages(notify, validates);
-          return;
-        }
-
-        const addedCategory: Category = response.data.data.category || new Category();
-        this.addToCategories(addedCategory);
-        this.addToCategoriesItem(addedCategory);
-
-        notify.type = Notify_config.typeMessage.success;
-        notify.text = 'Сохранено!';
-        this.notifyService.addNotify(notify);
-        this.changeShowAddCategory();
-        this.newCategory = new Category();
-      },
-      (err) => {
-        console.log(err);
-        this.notifyService.addNotify(notify);
-      }
-    );
-  }
-
   addToProducers(producer: Producer) {
     if (producer) {
       this.producers.push(producer);
