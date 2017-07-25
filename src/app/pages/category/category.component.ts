@@ -72,38 +72,33 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
 
   add(category: Category) {
-    console.dir(category);
-
-    const notify = new Notify();
-    notify.type = Notify_config.typeMessage.danger;
-    notify.text = 'Что то пошло не так!';
-
     const files = new Array<File>();
     this.filesToReadyUpload.forEach((fileObject) => {
       files.push(fileObject.file);
     });
 
+    if (!category || !category.name) {
+      return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите наименование категории');
+    }
+
     this.addConnection = this.categoryService.add(files, category).subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (!response.success) {
-          notify.text = response.message;
-          return this.notifyService.addNotify(notify);
+          return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
         }
         const newCategory: Category = response.data.data.category;
         this.categories.push(newCategory);
         this.categoriesItem.push({ label: newCategory.name, value: newCategory._id });
 
-        notify.type = Notify_config.typeMessage.success;
-        notify.text = 'Добавлено!';
-        this.notifyService.addNotify(notify);
+        this.showMessageForUser(Notify_config.typeMessage.success, 'Добавлено!');
         this.newCategory = new Category();
 
         $('#modal').modal('toggle');
       },
       (err) => {
         console.log(err);
-        this.notifyService.addNotify(notify);
+        this.showMessageForUser(Notify_config.typeMessage.danger, 'Что пошло не так!');
       }
     );
   }
