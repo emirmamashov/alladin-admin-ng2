@@ -30,6 +30,11 @@
             <td>{{ category.description }}</td>
             <td>{{ category.viewInMenu ? 'да' : 'нет' }}</td>
             <td>{{ category.category }}</td>
+            <td> 
+                <a (click)="remove(category._id)">
+                    <i class="fa fa-trash-o" aria-hidden="true"></i>
+                </a>
+            </td>
         </tr>
     </tbody>
 </table>

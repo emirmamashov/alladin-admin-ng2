@@ -42,6 +42,10 @@ export const Api_config = {
     update: {
       method: 'PUT',
       url: apiUrl + '/categories/update' // :id
+    },
+    remove: {
+      method: 'DELETE',
+      url: apiUrl + '/categories/remove' // :id
     }
   },
   banner: {

@@ -60,4 +60,12 @@ export class CategoryService {
         .map(res => res.json())
         .catch(this.handleService.handleError);
   }
+
+  remove(_id: string): Observable<any> {
+    const url: string = Api_config.category.remove.url + '/' + _id;
+
+    return this.http.delete(url)
+        .map(res => res.json())
+        .catch(this.handleService.handleError);
+  }
 }

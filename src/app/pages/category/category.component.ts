@@ -37,6 +37,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   updateConnection: any;
   getAllPhotosConnection: any;
   getAllBannersConnection: any;
+  removeConnection: any;
 
   constructor(
     private categoryService: CategoryService,
@@ -190,6 +191,36 @@ export class CategoryComponent implements OnInit, OnDestroy {
     this.filesToReadyUpload = this.filesToReadyUpload.filter(x => x.name !== fileName);
   }
 
+  remove(_id: string) {
+    this.removeConnection = this.categoryService.remove(_id).subscribe(
+      (response: ResponseApi) => {
+        console.log(response);
+        if (!response.success) {
+          this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+          return;
+        }
+        this.removeInListCategories(response.data.data.category);
+        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+
+  removeInListCategories(category: Category) {
+    if (category && category._id) {
+      this.categories = this.categories.filter(x => x._id !== category._id);
+    }
+  }
+
+   showMessageForUser(typeMessage: string, text: string) {
+    const notify = new Notify();
+    notify.type = typeMessage;
+    notify.text = text;
+    this.notifyService.addNotify(notify);
+  }
+
   ngOnDestroy() {
     if (this.getAllConnection && this.getAllConnection.unsubscribe) {
       this.getAllConnection.unsubscribe();
@@ -202,6 +233,9 @@ export class CategoryComponent implements OnInit, OnDestroy {
     }
     if (this.getAllPhotosConnection && this.getAllPhotosConnection.unsubscribe) {
       this.getAllPhotosConnection.unsubscribe();
+    }
+    if (this.removeConnection && this.removeConnection.unsubscribe) {
+      this.removeConnection.unsubscribe();
     }
   }
 
