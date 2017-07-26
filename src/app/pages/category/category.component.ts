@@ -57,12 +57,19 @@ export class CategoryComponent implements OnInit, OnDestroy {
           this.categories = response.data.data.categories;
           this.setCategoriesItem(this.categories);
           this.checkToLimitCategoriesViewInMenu(this.categories);
+          this.setParentCategoriesModel();
         }
       },
       (err) => {
         console.log(err);
       }
     );
+  }
+
+  setParentCategoriesModel() {
+    this.categories.forEach((category) => {
+      category.parentCategoryModel = this.categories.filter(x => x._id === category.parentCategory)[0] || new Category();
+    });
   }
 
   setCategoriesItem(categories: Array<Category>) {
@@ -88,6 +95,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
           return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
         }
         const newCategory: Category = response.data.data.category;
+        newCategory.parentCategoryModel = this.categories.filter(x => x._id === newCategory.parentCategory)[0] || new Category();
         this.categories.push(newCategory);
         this.categoriesItem.push({ label: newCategory.name, value: newCategory._id });
 
@@ -125,7 +133,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
         const updateCategory: Category = response.data.data.category;
         if (updateCategory) {
           category.images = updateCategory.images;
-          this.newCategory.images = updateCategory.images;
+          category.parentCategoryModel = this.categories.filter(x => x._id === updateCategory.parentCategory)[0] || new Category();
         }
         this.newCategory = new Category();
         this.showMessageForUser(Notify_config.typeMessage.success, response.message);

@@ -2,6 +2,7 @@ export class Category {
   _id: string;
   name: string;
   parentCategory: string;
+  parentCategoryModel: Category;
   description: string;
   keywords: string;
   author: string;
