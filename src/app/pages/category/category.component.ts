@@ -93,7 +93,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
         this.showMessageForUser(Notify_config.typeMessage.success, 'Добавлено!');
         this.newCategory = new Category();
-        this.filesToReadyUpload = [];
+        this.clearFilesToReadUpload();
 
         $('#modal').modal('toggle');
       },
@@ -122,8 +122,14 @@ export class CategoryComponent implements OnInit, OnDestroy {
           return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
         }
         this.checkToLimitCategoriesViewInMenu(this.categories);
+        const updateCategory: Category = response.data.data.category;
+        if (updateCategory) {
+          category.images = updateCategory.images;
+          this.newCategory.images = updateCategory.images;
+        }
         this.newCategory = new Category();
         this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+        this.clearFilesToReadUpload();
         $('#modal').modal('toggle');
       },
       (err) => {
@@ -131,6 +137,10 @@ export class CategoryComponent implements OnInit, OnDestroy {
         this.showMessageForUser(Notify_config.typeMessage.warning, 'Что то пошло не так');
       }
     );
+  }
+
+  clearFilesToReadUpload() {
+    this.filesToReadyUpload = [];
   }
 
   checkToLimitCategoriesViewInMenu(categories: Array<Category>) {
