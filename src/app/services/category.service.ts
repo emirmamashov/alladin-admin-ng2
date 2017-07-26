@@ -53,12 +53,29 @@ export class CategoryService {
           .catch(this.handleService.returnError);
   }
 
-  update(category: Category): Observable<any> {
+  update(files: File[], category: Category): Observable<any> {
     const url: string = Api_config.category.update.url + '/' + category._id;
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append('file', file);
+    });
+    formData.append('name', category.name || '');
+    formData.append('parentCategory', category.parentCategory || '');
+    formData.append('description', category.description || '');
+    formData.append('keywords', category.keywords || '');
+    formData.append('author', category.author || '');
+    formData.append('viewInMenu', category.viewInMenu ? '1' : '0');
 
-    return this.http.put(url, category)
-        .map(res => res.json())
-        .catch(this.handleService.handleError);
+    let imagesString = '';
+    category.images.forEach((image) => {
+      imagesString += image + ',';
+    });
+    formData.append('imagesString', imagesString || '');
+    formData.append('image', category.image || '');
+
+    return this.http.put(url, formData)
+          .map(res => res.json())
+          .catch(this.handleService.returnError);
   }
 
   remove(_id: string): Observable<any> {

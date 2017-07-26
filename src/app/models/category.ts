@@ -6,5 +6,6 @@ export class Category {
   keywords: string;
   author: string;
   image: string;
+  images: any;
   viewInMenu: boolean;
 }

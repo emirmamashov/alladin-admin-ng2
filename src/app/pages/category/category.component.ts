@@ -93,6 +93,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
         this.showMessageForUser(Notify_config.typeMessage.success, 'Добавлено!');
         this.newCategory = new Category();
+        this.filesToReadyUpload = [];
 
         $('#modal').modal('toggle');
       },
@@ -104,29 +105,30 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
 
   update(category: Category) {
+    const files = new Array<File>();
+    console.log(category);
+    this.filesToReadyUpload.forEach((fileObject) => {
+      files.push(fileObject.file);
+    });
 
-    const notify = new Notify();
-    notify.type = Notify_config.typeMessage.danger;
-    notify.text = 'Что то пошло не так!';
+    if (!category || !category.name) {
+      return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите наименование категории');
+    }
 
-    this.updateConnection = this.categoryService.update(category).subscribe(
+    this.updateConnection = this.categoryService.update(files, category).subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (!response.success) {
-          notify.text = response.message;
-          return this.notifyService.addNotify(notify);
+          return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
         }
         this.checkToLimitCategoriesViewInMenu(this.categories);
-        notify.type = Notify_config.typeMessage.success;
-        notify.text = 'Обнавлено!';
-        this.notifyService.addNotify(notify);
         this.newCategory = new Category();
-
+        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
         $('#modal').modal('toggle');
       },
       (err) => {
         console.log(err);
-        this.notifyService.addNotify(notify);
+        this.showMessageForUser(Notify_config.typeMessage.warning, 'Что то пошло не так');
       }
     );
   }
@@ -206,6 +208,12 @@ export class CategoryComponent implements OnInit, OnDestroy {
   removeInListCategories(category: Category) {
     if (category && category._id) {
       this.categories = this.categories.filter(x => x._id !== category._id);
+    }
+  }
+
+  removeInCategoryImages(category: Category, url: string) {
+    if (category && category.images && category.images.length > 0 && url) {
+      category.images = category.images.filter(x => x !== url);
     }
   }
 
