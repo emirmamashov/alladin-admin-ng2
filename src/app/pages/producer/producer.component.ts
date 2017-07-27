@@ -24,6 +24,7 @@ declare let $: any;
 export class ProducerComponent implements OnInit, OnDestroy {
   producers = new Array<Producer>();
   newProducer = new Producer();
+  filesToReadyUpload = [];
 
   isEdit = false;
   apiUrl: string = Api_config.rootUrl;
@@ -53,34 +54,89 @@ export class ProducerComponent implements OnInit, OnDestroy {
       }
     );
   }
-  add(category: Producer) {
-    console.dir(category);
-    const notify = new Notify();
-    notify.type = Notify_config.typeMessage.danger;
-    notify.text = 'Что то пошло не так!';
+  add(producer: Producer) {
+    console.dir(producer);
 
-    this.addConnection = this.producerService.add(category).subscribe(
+    const files = new Array<File>();
+    this.filesToReadyUpload.forEach((fileObject) => {
+      files.push(fileObject.file);
+    });
+
+    if (!producer || !producer.name) {
+      return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите наименование категории');
+    }
+
+
+    this.addConnection = this.producerService.add(files, producer).subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (!response.success) {
-          notify.text = response.message;
-          return this.notifyService.addNotify(notify);
+          return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
         }
         const newProducer: Producer = response.data.data.producer;
         this.producers.push(newProducer);
 
-        notify.type = Notify_config.typeMessage.success;
-        notify.text = 'Добавлено!';
-        this.notifyService.addNotify(notify);
+        this.showMessageForUser(Notify_config.typeMessage.success, 'Добавлено');
         this.newProducer = new Producer();
 
         $('#modal').modal('toggle');
       },
       (err) => {
         console.log(err);
-        this.notifyService.addNotify(notify);
+        this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
       }
     );
+  }
+
+
+
+  addToListReadyupload(fileInput: any) {
+    console.dir(fileInput);
+    console.dir(event);
+    const files = fileInput.files;
+    // const files = event.dataTransfer ? event.dataTransfer.files : event.target.files;
+
+    if (files && files.length > 0) {
+      // console.dir(files);
+      for (let i = 0; i < files.length; i++) {
+          const pattern = /image-*/;
+          const reader = new FileReader();
+          if (files[i].type.match(pattern)) {
+            reader.onload = (e: any) => {
+              console.dir('reader.onload');
+              const readerFile = e.target;
+              const fileObject = {
+                name: files[i].name,
+                data: readerFile.result,
+                file: files[i]
+              };
+              this.filesToReadyUpload.push(fileObject);
+            };
+            reader.readAsDataURL(files[i]);
+          } else {
+            console.log('invalid format');
+          }
+      }
+    }
+  }
+
+  showMessageForUser(typeMessage: string, text: string) {
+    const notify = new Notify();
+    notify.type = typeMessage;
+    notify.text = text;
+    this.notifyService.addNotify(notify);
+  }
+
+  removeInListProducers(producer: Producer) {
+    if (producer && producer._id) {
+      this.producers = this.producers.filter(x => x._id !== producer._id);
+    }
+  }
+
+  removeInProducerImages(producer: Producer, url: string) {
+    if (producer && producer.images && producer.images.length > 0 && url) {
+      producer.images = producer.images.filter(x => x !== url);
+    }
   }
 
   ngOnDestroy() {

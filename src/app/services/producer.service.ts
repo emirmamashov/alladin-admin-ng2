@@ -35,10 +35,19 @@ export class ProducerService {
             .catch(this.handleService.returnError);
   }
 
-  add(producer: Producer): Observable<any> {
+  add(files: File[], producer: Producer): Observable<any> {
     const url: string = Api_config.producer.add.url;
-    return this.http.post(url, producer)
-            .map(res => res.json())
-            .catch(this.handleService.returnError);
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append('file', file);
+    });
+    formData.append('name', producer.name || '');
+    formData.append('description', producer.description || '');
+    formData.append('keywords', producer.keywords || '');
+    formData.append('author', producer.author || '');
+
+    return this.http.post(url, formData)
+          .map(res => res.json())
+          .catch(this.handleService.returnError);
   }
 }

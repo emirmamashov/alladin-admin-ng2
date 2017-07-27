@@ -4,4 +4,6 @@ export class Producer {
   description: string;
   keywords: string;
   author: string;
+  images: any;
+  image: string;
 }
