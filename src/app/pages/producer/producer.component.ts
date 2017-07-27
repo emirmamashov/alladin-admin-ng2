@@ -31,6 +31,7 @@ export class ProducerComponent implements OnInit, OnDestroy {
 
   getAllConnection: any;
   addConnection: any;
+  updateConnection: any;
 
   constructor(
     private producerService: ProducerService,
@@ -88,8 +89,6 @@ export class ProducerComponent implements OnInit, OnDestroy {
     );
   }
 
-
-
   addToListReadyupload(fileInput: any) {
     console.dir(fileInput);
     console.dir(event);
@@ -120,6 +119,47 @@ export class ProducerComponent implements OnInit, OnDestroy {
     }
   }
 
+  update(producer: Producer) {
+    const files = new Array<File>();
+    console.log(producer);
+    this.filesToReadyUpload.forEach((fileObject) => {
+      files.push(fileObject.file);
+    });
+
+    if (!producer || !producer.name) {
+      return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите наименование категории');
+    }
+
+    this.updateConnection = this.producerService.update(files, producer).subscribe(
+      (response: ResponseApi) => {
+        console.log(response);
+        if (!response.success) {
+          return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+        }
+        const updateProducer: Producer = response.data.data.producer;
+        if (updateProducer) {
+          producer.images = updateProducer.images;
+        }
+        this.newProducer = new Producer();
+        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+        this.clearFilesToReadUpload();
+        $('#modal').modal('toggle');
+      },
+      (err) => {
+        console.log(err);
+        this.showMessageForUser(Notify_config.typeMessage.warning, 'Что то пошло не так');
+      }
+    );
+  }
+
+  clearFilesToReadUpload() {
+    this.filesToReadyUpload = [];
+  }
+
+  removeInListReadyUpload(fileName: string) {
+    this.filesToReadyUpload = this.filesToReadyUpload.filter(x => x.name !== fileName);
+  }
+
   showMessageForUser(typeMessage: string, text: string) {
     const notify = new Notify();
     notify.type = typeMessage;
@@ -139,12 +179,18 @@ export class ProducerComponent implements OnInit, OnDestroy {
     }
   }
 
+  changeEditStatus(status: boolean) {
+    this.isEdit = status;
+  }
   ngOnDestroy() {
     if (this.getAllConnection && this.getAllConnection.unsubscribe) {
       this.getAllConnection.unsubscribe();
     }
     if (this.addConnection && this.addConnection.unsubscribe) {
       this.addConnection.unsubscribe();
+    }
+    if (this.updateConnection && this.updateConnection.unsubscribe) {
+      this.updateConnection.unsubscribe();
     }
   }
 

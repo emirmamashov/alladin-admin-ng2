@@ -13,17 +13,17 @@
     <tbody>
         <!--<tr *ngFor="let category of categories; let i=index" data-toggle="modal" data-target="#modal" (click)="newProducer = product; changeEditStatus(true)">-->
           <tr *ngFor="let producer of producers; let i=index">
-            <td>{{ i+1 }}</td>
-            <td>{{ producer._id }}</td>
-            <td>{{ producer.name }}</td>
-            <td>
+            <td data-toggle="modal" data-target="#modal" (click)="newProducer = producer; changeEditStatus(true)">{{ i+1 }}</td>
+            <td data-toggle="modal" data-target="#modal" (click)="newProducer = producer; changeEditStatus(true)">{{ producer._id }}</td>
+            <td data-toggle="modal" data-target="#modal" (click)="newProducer = producer; changeEditStatus(true)">{{ producer.name }}</td>
+            <td data-toggle="modal" data-target="#modal" (click)="newProducer = producer; changeEditStatus(true)">
               <ng-container *ngIf="producer.images">
                 <span *ngFor="let url of producer.images; let i = index">
                     <img width="80" height="80" src="{{ apiUrl }}/{{ url }}"/>
                 </span>
               </ng-container>
             </td>
-            <td>{{ producer.description }}</td>
+            <td data-toggle="modal" data-target="#modal" (click)="newProducer = producer; changeEditStatus(true)">{{ producer.description }}</td>
             <td></td>
         </tr>
     </tbody>
@@ -73,7 +73,7 @@
                             <ng-container *ngIf="newProducer.images">
                                 <span *ngFor="let url of newProducer.images; let i = index">
                                     <img width="80" height="80" src="{{ apiUrl }}/{{ url }}"/>
-                                    <i class="fa fa-trash-o" aria-hidden="true" (click)="removeInCategoryImages(newCategory, url)"></i>
+                                    <i class="fa fa-trash-o" aria-hidden="true" (click)="removeInProducerImages(newProducer, url)"></i>
                                 </span>
                             </ng-container>
                         </div>
@@ -87,7 +87,7 @@
                         <button *ngIf="isEdit" 
                             type="button" 
                             class="btn btn-primary" 
-                            (click)="edit(newProducer)">Редактировать</button>
+                            (click)="update(newProducer)">Редактировать</button>
                     </div>
                 </div>
             </div>

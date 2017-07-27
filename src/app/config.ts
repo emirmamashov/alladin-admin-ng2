@@ -70,6 +70,10 @@ export const Api_config = {
     add: {
       method: 'POST',
       url: apiUrl + '/producers/add'
+    },
+    update: {
+      method: 'PUT',
+      url: apiUrl + '/producers/update'
     }
   },
   promoSticker: {
