@@ -246,33 +246,6 @@ export class ProductComponent implements OnInit, OnDestroy {
     }
   }
 
-  addProducer(producer: Producer) {
-    console.log(producer);
-    const notify = new Notify();
-    notify.type = Notify_config.typeMessage.danger;
-    notify.text = 'Что то пошло не так';
-
-    this.addProducerConnection = this.producerService.add(producer).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (!response.success) {
-          const validates: Array<string> = response.message.validates || [];
-          this.showValidateErrorMessages(notify, validates);
-          return;
-        }
-
-        const addedProducer: Producer = response.data.data.producer || new Producer();
-        this.addToProducers(addedProducer);
-        this.addToProducersItem(addedProducer);
-
-        notify.type = Notify_config.typeMessage.success;
-        notify.text = 'Успешно добавлено';
-        this.notifyService.addNotify(notify);
-        this.changeShowAddProducer();
-        this.newProducer = new Producer();
-      }
-    );
-  }
 
   addToPromoStickers(promoSticker: PromoSticker) {
     if (promoSticker) {
