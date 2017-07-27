@@ -32,6 +32,7 @@ export class ProducerComponent implements OnInit, OnDestroy {
   getAllConnection: any;
   addConnection: any;
   updateConnection: any;
+  removeConnection: any;
 
   constructor(
     private producerService: ProducerService,
@@ -152,6 +153,24 @@ export class ProducerComponent implements OnInit, OnDestroy {
     );
   }
 
+  remove(_id: string) {
+    this.removeConnection = this.producerService.remove(_id).subscribe(
+      (response: ResponseApi) => {
+        console.log(response);
+        if (!response.success) {
+          this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+          return;
+        }
+        this.removeInListProducers(response.data.data.producer);
+        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+      },
+      (err) => {
+        console.log(err);
+        this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
+      }
+    );
+  }
+
   clearFilesToReadUpload() {
     this.filesToReadyUpload = [];
   }
@@ -191,6 +210,9 @@ export class ProducerComponent implements OnInit, OnDestroy {
     }
     if (this.updateConnection && this.updateConnection.unsubscribe) {
       this.updateConnection.unsubscribe();
+    }
+    if (this.removeConnection && this.removeConnection.unsubscribe) {
+      this.removeConnection.unsubscribe();
     }
   }
 

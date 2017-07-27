@@ -74,6 +74,10 @@ export const Api_config = {
     update: {
       method: 'PUT',
       url: apiUrl + '/producers/update'
+    },
+    remove: {
+      method: 'DELETE',
+      url: apiUrl + '/producers/remove'
     }
   },
   promoSticker: {

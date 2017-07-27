@@ -73,4 +73,12 @@ export class ProducerService {
           .map(res => res.json())
           .catch(this.handleService.returnError);
   }
+
+  remove(_id: string): Observable<any> {
+    const url: string = Api_config.producer.remove.url + '/' + _id;
+
+    return this.http.delete(url)
+        .map(res => res.json())
+        .catch(this.handleService.handleError);
+  }
 }
