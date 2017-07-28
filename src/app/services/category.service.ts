@@ -56,9 +56,11 @@ export class CategoryService {
   update(files: File[], category: Category): Observable<any> {
     const url: string = Api_config.category.update.url + '/' + category._id;
     const formData = new FormData();
-    files.forEach((file) => {
-      formData.append('file', file);
-    });
+    if (files && files.length > 0) {
+      files.forEach((file) => {
+        formData.append('file', file);
+      });
+    }
     formData.append('name', category.name || '');
     formData.append('parentCategory', category.parentCategory || '');
     formData.append('description', category.description || '');
@@ -67,9 +69,11 @@ export class CategoryService {
     formData.append('viewInMenu', category.viewInMenu ? '1' : '0');
 
     let imagesString = '';
-    category.images.forEach((image) => {
-      imagesString += image + ',';
-    });
+    if (category && category.images && category.images.length > 0) {
+      category.images.forEach((image) => {
+        imagesString += image + ',';
+      });
+    }
     formData.append('imagesString', imagesString || '');
     formData.append('image', category.image || '');
 
