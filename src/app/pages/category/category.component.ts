@@ -80,10 +80,11 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   add(category: Category) {
     const files = new Array<File>();
-    this.filesToReadyUpload.forEach((fileObject) => {
+    if (this.filesToReadyUpload && this.filesToReadyUpload.length > 0) {
+      this.filesToReadyUpload.forEach((fileObject) => {
       files.push(fileObject.file);
     });
-
+    }
     if (!category || !category.name) {
       return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите наименование категории');
     }
@@ -115,9 +116,11 @@ export class CategoryComponent implements OnInit, OnDestroy {
   update(category: Category) {
     const files = new Array<File>();
     console.log(category);
-    this.filesToReadyUpload.forEach((fileObject) => {
-      files.push(fileObject.file);
-    });
+    if (this.filesToReadyUpload && this.filesToReadyUpload.length > 0) {
+      this.filesToReadyUpload.forEach((fileObject) => {
+        files.push(fileObject.file);
+      });
+    }
 
     if (!category || !category.name) {
       return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите наименование категории');
