@@ -81,9 +81,9 @@ export class CategoryComponent implements OnInit, OnDestroy {
   add(category: Category) {
     const files = new Array<File>();
     if (this.filesToReadyUpload && this.filesToReadyUpload.length > 0) {
-      this.filesToReadyUpload.forEach((fileObject) => {
-      files.push(fileObject.file);
-    });
+        this.filesToReadyUpload.forEach((fileObject) => {
+        files.push(fileObject.file);
+      });
     }
     if (!category || !category.name) {
       return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите наименование категории');
@@ -173,7 +173,6 @@ export class CategoryComponent implements OnInit, OnDestroy {
     ' категории можно отображат в меню, вы уже выбрали эти ' + LimitCategoriesViewInMenu + ':)';
     this.notifyService.addNotify(notify);
   }
-
 
   addToListReadyupload(fileInput: any) {
     console.dir(fileInput);

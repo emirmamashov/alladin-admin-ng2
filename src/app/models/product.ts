@@ -13,10 +13,10 @@ export class Product {
   price: number;
   priceStock: number;
   seoUrl: string;
-  promoStickers: string;
-  photos: Array<string>;
-  photosModel: Array<Photo>;
   producerId: string;
   categoryId: string;
+  promoStickerId: string;
   categories: Array<string>;
+  images: any;
+  image: string;
 }

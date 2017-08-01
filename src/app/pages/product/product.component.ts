@@ -50,13 +50,8 @@ export class ProductComponent implements OnInit, OnDestroy {
   photos = new Array<Photo>();
 
   newProduct = new Product();
-  newCategory = new Category();
-  newProducer = new Producer();
-  newPromoSticker = new PromoSticker();
+  filesToReadyUpload = [];
 
-  showAddCategory = false;
-  showAddProducer = false;
-  showAddPromoSticker = false;
   isEdit = false;
 
   apiUrl: string = Api_config.rootUrl;
@@ -70,14 +65,11 @@ export class ProductComponent implements OnInit, OnDestroy {
 
   // connections
   getAllConnection: any;
-  categoryAddConnection: any;
   getAllCategoriesConnection: any;
   getAllProducersConnection: any;
-  addProducerConnection: any;
   getAllPromoStickersConnection: any;
-  addPromoStickerConnection: any;
-  addProductConnection: any;
   getAllPhotosConnection: any;
+  addProductConnection: any;
 
   content: any;
   text: any;
@@ -97,6 +89,9 @@ export class ProductComponent implements OnInit, OnDestroy {
   ngOnInit() {
     this.cities.push({ label: 'Select City', value: null });
     this.categoriesItem.push({ label: 'Выберите категорию', value: '' });
+    this.producersItem.push({ label: 'Выберите производителя', value: '' });
+    this.promoStickersItem.push({ label: 'Выберите промостикер', value: '' });
+    this.getAll();
     this.getAll();
     this.getAllCategories();
     this.getAllProducers();
@@ -110,27 +105,12 @@ export class ProductComponent implements OnInit, OnDestroy {
         if (response.success) {
           this.products = response.data.data.products;
           this.photos = response.data.data.photos;
-          this.setPhotosInProducts(this.products, this.photos);
         }
       },
       (err) => {
         console.log(err);
       }
     );
-  }
-
-  setPhotosInProducts(products: Array<Product>, photos: Array<Photo>) {
-    products.forEach((product) => {
-      product.photos = product.photos || [];
-      const photosModel = [];
-      product.photos.forEach((id) => {
-        const findPhoto = photos.filter(x => x._id === id)[0];
-        if (findPhoto) {
-          photosModel.push(findPhoto);
-        }
-      });
-      product.photosModel = photosModel;
-    });
   }
 
   getAllProducers() {
@@ -160,18 +140,6 @@ export class ProductComponent implements OnInit, OnDestroy {
         console.log(err);
       }
     );
-  }
-
-  changeShowAddCategory() {
-    this.showAddCategory = !this.showAddCategory;
-  }
-
-  changeShowAddProducer() {
-    this.showAddProducer = !this.showAddProducer;
-  }
-
-  changeShowAddPromoSticker() {
-    this.showAddPromoSticker = !this.showAddPromoSticker;
   }
 
   changeEditStatus(status: boolean) {
@@ -259,81 +227,45 @@ export class ProductComponent implements OnInit, OnDestroy {
     }
   }
 
-  addPromoSticker(file: any, promoSticker: PromoSticker) {
-    console.log(promoSticker);
-    const notify = new Notify();
-    notify.type = Notify_config.typeMessage.danger;
-    notify.text = 'Что то пошла не так';
-
-    console.log(file);
-
-    this.addPromoStickerConnection = this.promorStickerService.add(file.files, promoSticker).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (!response.success) {
-          const validates: Array<string> = response.message.validates || [];
-          this.showValidateErrorMessages(notify, validates);
-          return;
-        }
-        const addedPromoSticker: PromoSticker = response.data.data.promoSticker || new PromoSticker();
-        this.addToPromoStickers(addedPromoSticker);
-        this.addToPromoStickersItem(addedPromoSticker);
-
-        notify.type = Notify_config.typeMessage.success;
-        notify.text = response.message;
-        this.notifyService.addNotify(notify);
-        this.changeShowAddPromoSticker();
-        this.newPromoSticker = new PromoSticker();
-      }
-    );
-  }
-
   addProduct(product: Product) {
     console.log(product);
-    const notify = new Notify();
-    notify.type = Notify_config.typeMessage.danger;
-    notify.text = 'Что то пошло не так';
+    const files = new Array<File>();
+    if (this.filesToReadyUpload && this.filesToReadyUpload.length > 0) {
+        this.filesToReadyUpload.forEach((fileObject) => {
+        files.push(fileObject.file);
+      });
+    }
 
     if (!product) {
-      notify.text = 'Пожалуйста заполните поля!';
-      console.log('product is null');
-      return this.notifyService.addNotify(notify);
+      return this.showMessageForUser(Notify_config.typeMessage.danger, 'Пожалуйста заполните поля!');
     }
 
     product = this.toTranslit(product);
     product = this.toTranslitForSeoUrl(product);
-    product.photos = product.photos || [];
-    console.dir(this.downloadedPhotos);
-    this.downloadedPhotos.forEach((photo) => {
-      product.photos.push(photo._id);
-    });
-
-    this.addProductConnection = this.productService.add(product).subscribe(
+    this.addProductConnection = this.productService.add(files, product).subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (!response.success) {
           const validates: Array<string> = response.message.validates || [];
           console.log(validates);
           if (validates.length > 0) {
-            notify.text = '';
+            let text = '';
             validates.forEach((message) => {
-              notify.text += message + '<br/>';
+              text += message + '<br/>';
             });
-            this.notifyService.addNotify(notify);
+            return this.showMessageForUser(Notify_config.typeMessage.danger, text);
           }
-          notify.text = response.message;
-          this.notifyService.addNotify(notify);
-          return;
+          return this.showMessageForUser(Notify_config.typeMessage.danger,  response.message);
         }
 
         const addedProduct: Product = response.data.data.product;
-        addedProduct.photosModel = this.downloadedPhotos;
         this.products.push(addedProduct);
 
         $('#modal').modal('toggle');
       },
       (err) => {
         console.log(err);
+        this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
       }
     );
   }
@@ -360,31 +292,31 @@ export class ProductComponent implements OnInit, OnDestroy {
     product.seoUrl = translit_name;
     return product;
   }
-
-  editProduct(file: any, product: Product) {
+  update(product: Product) {
     console.log(product);
-    console.dir(file.files);
-    const notify = new Notify();
-    notify.type = Notify_config.typeMessage.danger;
-    notify.text = 'Что то пошло не так';
-
-    if (!product) {
-      notify.text = 'Пожалуйста заполните поля!';
-      return this.notifyService.addNotify(notify);
+    const files = new Array<File>();
+    if (this.filesToReadyUpload && this.filesToReadyUpload.length > 0) {
+        this.filesToReadyUpload.forEach((fileObject) => {
+        files.push(fileObject.file);
+      });
     }
 
-    this.addProductConnection = this.productService.edit(file.files, product).subscribe(
+    if (!product) {
+      return this.showMessageForUser(Notify_config.typeMessage.danger, 'Пожалуйста заполните поля!');
+    }
+
+    this.addProductConnection = this.productService.update(files, product).subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (!response.success) {
           const validates: Array<string> = response.message.validates || [];
           console.log(validates);
           if (validates.length > 0) {
-            notify.text = '';
+            let text = '';
             validates.forEach((message) => {
-              notify.text += message + '<br/>';
+              text += message + '<br/>';
             });
-            this.notifyService.addNotify(notify);
+            this.showMessageForUser(Notify_config.typeMessage.danger, text);
           }
           return;
         }
@@ -405,36 +337,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   clearNewProcut() {
     this.newProduct = new Product();
   }
-
-  uploadImage(image: any) {
-    console.dir(image);
-    if (!image || !image.files || image.files.length === 0) {
-      return console.log('image files is not correct!');
-    }
-    const photo = new Photo();
-    photo.name = image.files[0].name;
-    photo.description = photo.name;
-    const photoNameTranslit = this.translitService.translitToLatin(photo.name);
-    photo.htmlH1 = photoNameTranslit;
-    photo.htmlTitle = photoNameTranslit;
-    photo.keywords = photoNameTranslit;
-    photo.metaDescription = photoNameTranslit;
-    photo.metaKeywords = photoNameTranslit;
-    this.photoService.add(image.files, photo).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (response.success) {
-          const downloadedPhoto: Photo = response.data.data.photo;
-          this.downloadedPhotos.push(downloadedPhoto);
-        }
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
-  }
-
-   setPhotosItem(photos: Array<Photo>) {
+  setPhotosItem(photos: Array<Photo>) {
     photos.forEach((photo) => {
       this.photosSelectItems.push({ label: photo.name, value: {id: photo._id, url: Api_config.rootUrl + '/' + photo.url }});
     });
@@ -454,28 +357,63 @@ export class ProductComponent implements OnInit, OnDestroy {
       }
     );
   }
+  addToListReadyupload(fileInput: any) {
+    console.dir(fileInput);
+    console.dir(event);
+    const files = fileInput.files;
+    // const files = event.dataTransfer ? event.dataTransfer.files : event.target.files;
 
-  ngOnDestroy() {
+    if (files && files.length > 0) {
+      // console.dir(files);
+      for (let i = 0; i < files.length; i++) {
+          const pattern = /image-*/;
+          const reader = new FileReader();
+          if (files[i].type.match(pattern)) {
+            reader.onload = (e: any) => {
+              console.dir('reader.onload');
+              const readerFile = e.target;
+              const fileObject = {
+                name: files[i].name,
+                data: readerFile.result,
+                file: files[i]
+              };
+              this.filesToReadyUpload.push(fileObject);
+            };
+            reader.readAsDataURL(files[i]);
+          } else {
+            console.log('invalid format');
+          }
+      }
+    }
+  }
+
+  removeInListReadyUpload(fileName: string) {
+    this.filesToReadyUpload = this.filesToReadyUpload.filter(x => x.name !== fileName);
+  }
+
+removeInProductImages(product: Product, url: string) {
+  console.log('-------removeInProductImages------');
+    if (product && product.images && product.images.length > 0 && url) {
+      product.images = product.images.filter(x => x !== url);
+    }
+  }
+
+  showMessageForUser(typeMessage: string, text: string) {
+    const notify = new Notify();
+    notify.type = typeMessage;
+    notify.text = text;
+    this.notifyService.addNotify(notify);
+  }
+
+ngOnDestroy() {
     if (this.getAllConnection && this.getAllConnection.unsubscribe) {
       this.getAllConnection.unsubscribe();
-    }
-    if (this.categoryAddConnection && this.categoryAddConnection.unsubscribe) {
-      this.categoryAddConnection.unsubscribe();
     }
     if (this.getAllCategoriesConnection && this.getAllCategoriesConnection.unsubscribe) {
       this.getAllCategoriesConnection.unsubscribe();
     }
     if (this.getAllProducersConnection && this.getAllProducersConnection.unsubscribe) {
       this.getAllProducersConnection.unsubscribe();
-    }
-    if (this.addProducerConnection && this.addProducerConnection.unsubscribe) {
-      this.addProducerConnection.unsubscribe();
-    }
-    if (this.getAllPromoStickersConnection && this.getAllPromoStickersConnection.unsubscribe) {
-      this.getAllPromoStickersConnection.unsubscribe();
-    }
-    if (this.addPromoStickerConnection && this.addPromoStickerConnection.unsubscribe) {
-      this.addPromoStickerConnection.unsubscribe();
     }
     if (this.addProductConnection && this.addProductConnection.unsubscribe) {
       this.addProductConnection.unsubscribe();

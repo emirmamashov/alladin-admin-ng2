@@ -13,21 +13,29 @@
             <th>Изображении товара</th>
             <th>Производитель</th>
             <th>Главная категория</th>
+            <th>Действия</th>
         </tr>
     </thead>
     <tbody>
         <tr *ngFor="let product of products; let i=index" data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">
-            <td>{{ i+1 }}</td>
+            <td>{{ i + 1 }}</td>
             <td>{{ product.name }}</td>
             <td>{{ product.description }}</td>
             <td>{{ product.phone }}</td>
             <td>{{ product.price }}</td>
             <td>{{ product.priceStock }}</td>
             <td>{{ product.seoUrl }}</td>
-            <td>{{ product.promoStickers }}</td>
-            <td><img *ngFor="let image of product.photosModel" src="{{ apiUrl }}/{{ image.url }}" width="50" height="60" /></td>
+            <td>{{ product.promoStickerId }}</td>
+            <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">
+              <ng-container *ngIf="product.images">
+                <span *ngFor="let url of product.images; let i = index">
+                    <img width="80" height="80" src="{{ apiUrl }}/{{ url }}"/>
+                </span>
+              </ng-container>
+            </td>
             <td>{{ product.producer }}</td>
             <td>{{ product.category }}</td>
+            <td></td>
         </tr>
     </tbody>
 </table>
@@ -80,102 +88,39 @@
                     </div>
                     <div class="form-group col-md-6">
                         <div class="col-lg-12">
-                            <label> Выберите промостикер: </label>
+                            <!--<label> Выберите промостикер: </label>-->
                             <p-dropdown [options]="promoStickersItem" 
-                                [(ngModel)]="newProduct.promoStickers" 
+                                [(ngModel)]="newProduct.promoStickerId" 
                                 [filter]="true" [style]="{'width':'100%'}">
                             </p-dropdown>
-
-                            <button type="button" class="btn btn-link" (click)="changeShowAddPromoSticker()">
-                              <i class="fa fa-plus" aria-hidden="true"></i>
-                              Добавления промостикера:
-                            </button>
                         </div>
-                        <div class="col-lg-10" *ngIf="showAddPromoSticker">
-                            <div class="form-horizontal container" style="width: 100%">
-                                <fieldset>
-                                    <div class="form-group">
-                                        <div class="col-lg-10">
-                                            <input type="text" class="form-control" id="name" placeholder="Название" [(ngModel)]="newPromoSticker.name" />
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-lg-10">
-                                            <input #file type="file" class="form-control" id="image" placeholder="Изображение" [(ngModel)]="newPromoSticker.image" />
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-lg-10 col-lg-offset-2">
-                                            <button type="reset" class="btn btn-default" (click)="changeShowAddPromoSticker()">Отмена</button>
-                                            <button type="submit" class="btn btn-primary" (click)="addPromoSticker(file, newPromoSticker)">Сохранить</button>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                            </div>
-                            <div>
-                            </div>
-                    </div>
                     </div>
                     <div class="form-group col-md-6">
                         <label><i class="fa fa-picture-o" aria-hidden="true"></i> Выберите изображение товара</label>
-                        <input #image type="file" class="form-control" accept="image/*" (change)="uploadImage(image); image.value=''"/>
+                        <input #file type="file" class="form-control" accept="image/*" (change)="addToListReadyupload(file)" multiple/>
                         Загруженные фотки:
-                        <div class="col-md-12">
-                            <img *ngFor="let image of downloadedPhotos" width="70px" height="80px" src="{{apiUrl}}/{{ image.url }}"/>
+                        <div class="form-group col-md-12">
+                            <span *ngFor="let photo of filesToReadyUpload">
+                                <img width="100" height="100" src="{{photo.data}}" alt="Downloaded photo"/>
+                                <i class="fa fa-trash-o" aria-hidden="true" (click)="removeInListReadyUpload(photo.name)"></i>
+                            </span>
+
+                            <ng-container *ngIf="newProduct.images">
+                                <span *ngFor="let url of newProduct.images; let i = index">
+                                    <img width="80" height="80" src="{{ apiUrl }}/{{ url }}"/>
+                                    <i class="fa fa-trash-o" aria-hidden="true" (click)="removeInProductImages(newProduct, url)"></i>
+                                </span>
+                            </ng-container>
                         </div>
                     </div>
                     <div class="form-group col-md-6">
                         <div class="col-lg-10">
-                            <label>Выберите производителя: </label>
+                            <!--<label>Выберите производителя: </label>-->
                             <!--producer-->
                             <p-dropdown [options]="producersItem" 
                                 [(ngModel)]="newProduct.producerId" 
                                 [filter]="true" [style]="{'width':'100%'}">
                             </p-dropdown>
-
-                            <button type="button" class="btn btn-link" (click)="changeShowAddProducer()">
-                                <i class="fa fa-plus" aria-hidden="true"></i>
-                                Добавления производителя:
-                            </button>
-                        </div>
-                        <div class="col-lg-10" *ngIf="showAddProducer">
-                            <div class="form-horizontal container" style="width: 100%">
-                                <fieldset>
-                                    <div class="form-group">
-                                        <div class="col-lg-10">
-                                            <input type="text" class="form-control" id="name" placeholder="Название" [(ngModel)]="newProducer.name" />
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-lg-10">
-                                            <textarea class="form-control" id="description" placeholder="Описание" [(ngModel)]="newProducer.description">
-
-                                            </textarea>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-lg-10">
-                                            <input type="text" class="form-control" id="keywords" placeholder="Ключевые слова через запятую" [(ngModel)]="newProducer.keywords" />
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-lg-10 col-lg-offset-2">
-                                            <button type="reset" class="btn btn-default" (click)="changeShowAddProducer()">Отмена</button>
-                                            <button type="submit" class="btn btn-primary" (click)="addProducer(newProducer)">Сохранить</button>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                            </div>
-                            <div>
-                            </div>
-                            <div class="form-group">
-                                <div class="col-lg-12">
-                                    <label>Выберите категорию: </label>
-                                    <!--categories-->
-                                    <p-multiSelect [options]="categoriesItem" [(ngModel)]="newProduct.categories" [style]="{'width': '100%'}"></p-multiSelect>
-                                </div>
-                                <i class="fa fa-plus" aria-hidden="true"></i>
-                            </div>
                         </div>
                     </div>
                     <div class="form-group col-md-6">
@@ -186,59 +131,6 @@
                                 [filter]="true" 
                                 [style]="{'width':'100%'}">
                             </p-dropdown>
-
-                            <button type="button" class="btn btn-link" (click)="changeShowAddCategory()">
-                                    <i class="fa fa-plus" aria-hidden="true"></i>
-                                    Добавление новой категории:
-                            </button>
-                        </div>
-                        <div class="col-lg-10" *ngIf="showAddCategory">
-                            <div class="form-horizontal container" style="width: 100%">
-                                <fieldset>
-                                    <div class="form-group">
-                                        <div class="col-lg-10">
-                                            <input type="text" class="form-control" id="name" placeholder="Название новой категории" [(ngModel)]="newCategory.name" />
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-lg-10">
-                                            <p-dropdown [options]="categoriesItem" [(ngModel)]="newCategory.parentCategory" [filter]="true" [style]="{'width':'100%'}"></p-dropdown>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-lg-10">
-                                            <textarea class="form-control" id="description" placeholder="Описание" [(ngModel)]="newCategory.description">
-
-                                            </textarea>
-                                        </div>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label><i class="fa fa-picture-o" aria-hidden="true">
-                                        </i> Выберите изображение категории</label>
-                                        <p-dropdown 
-                                            [options]="photosSelectItems" 
-                                            [(ngModel)]="newCategory.photo" 
-                                            [style]="{'width':'100%'}" 
-                                            filter="filter">
-                                            <ng-template let-photoSelectItem pTemplate="item">
-                                                <div class="ui-helper-clearfix" style="position: relative;height: 80px;">
-                                                    <img src="{{ photoSelectItem.value.url }}" style="width: 80px;position:absolute;top:1px;left:10px"/>
-                                                    <div style="font-size:14px;float:right;margin-top:4px">{{ photoSelectItem.value.name }}</div>
-                                                </div>
-                                            </ng-template>
-                                        </p-dropdown>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-lg-10 col-lg-offset-2">
-                                            <button type="reset" class="btn btn-default" (click)="changeShowAddCategory()">Отмена</button>
-                                            <button type="submit" class="btn btn-primary" (click)="addCategory(newCategory)">Сохранить</button>
-                                        </div>
-                                    </div>
-                                </fieldset>
-                            </div>
-                            <div>
-                            </div>
                         </div>
                     </div>
                     <div class="form-group col-md-6">
@@ -260,7 +152,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
                         <button *ngIf="!isEdit" type="button" class="btn btn-primary" (click)="addProduct(newProduct)">Сохранить</button>
-                        <button *ngIf="isEdit" type="button" class="btn btn-primary" (click)="editProduct(newProduct)">Редактировать</button>
+                        <button *ngIf="isEdit" type="button" class="btn btn-primary" (click)="update(newProduct)">Редактировать</button>
                     </div>
                 </div>
             </div>

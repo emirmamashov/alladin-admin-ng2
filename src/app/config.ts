@@ -19,7 +19,7 @@ export const Api_config = {
     },
     edit: {
       method: 'POST',
-      url: apiUrl + '/products/edit'
+      url: apiUrl + '/products/update'
     },
     import: {
       method: 'POST',

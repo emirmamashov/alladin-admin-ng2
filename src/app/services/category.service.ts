@@ -68,13 +68,14 @@ export class CategoryService {
     formData.append('author', category.author || '');
     formData.append('viewInMenu', category.viewInMenu ? '1' : '0');
 
-    let imagesString = '';
     if (category && category.images && category.images.length > 0) {
+      if (category.images.length === 1) {
+        formData.append('images', '');
+      }
       category.images.forEach((image) => {
-        imagesString += image + ',';
+        formData.append('images', image);
       });
     }
-    formData.append('imagesString', imagesString || '');
     formData.append('image', category.image || '');
 
     return this.http.put(url, formData)

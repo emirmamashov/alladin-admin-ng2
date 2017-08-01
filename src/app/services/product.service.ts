@@ -47,15 +47,40 @@ export class ProductService {
           .catch(this.handleService.handleError);
   }
 
-  add(product: Product): Observable<any> {
+  add(files: File[], product: Product): Observable<any> {
     const url: string = Api_config.product.add.url;
+    const formData = new FormData();
+    for (let i = 0; i < files.length; i++) {
+      formData.append('file', files[i]);
+    }
 
-    return this.http.post(url, product)
+    if (product.categories && product.categories.length > 0) {
+      for (let j = 0; j < product.categories.length; j++) {
+        formData.append('categories', product.categories[j]);
+      }
+    }
+    
+    formData.append('categoryId', product.categoryId || '');
+    formData.append('description', product.description || '');
+    formData.append('htmlH1', product.htmlH1 || '');
+    formData.append('htmlTitle', product.htmlTitle || '');
+    formData.append('metaDescription', product.metaDescription || '');
+    formData.append('metaKeywords', product.metaKeywords || '');
+    formData.append('name', product.name || '');
+    formData.append('phone', product.phone.toString());
+    formData.append('price', product.price.toString());
+    formData.append('priceStock', product.priceStock.toString());
+    formData.append('producerId', product.producerId || '');
+    formData.append('promoStickerId', product.promoStickerId || '');
+    formData.append('seoUrl', product.seoUrl || '');
+    formData.append('tegs', product.tegs || '');
+
+    return this.http.post(url, formData)
           .map(res => res.json())
           .catch(this.handleService.handleError);
   }
 
-    edit(files: File[], product: Product): Observable<any> {
+    update(files: File[], product: Product): Observable<any> {
     const url: string = Api_config.product.edit.url;
     const formData = new FormData();
     for (let i = 0; i < files.length; i++) {
@@ -63,6 +88,14 @@ export class ProductService {
     }
     for (let j = 0; j < product.categories.length; j++) {
       formData.append('categories', product.categories[j]);
+    }
+    if (product && product.images && product.images.length > 0) {
+      if (product.images.length === 1) {
+        formData.append('images', '');
+      }
+      product.images.forEach((image) => {
+        formData.append('images', image);
+      });
     }
     formData.append('categoryId', product.categoryId || '');
     formData.append('description', product.description || '');
@@ -75,7 +108,7 @@ export class ProductService {
     formData.append('price', product.price.toString());
     formData.append('priceStock', product.priceStock.toString());
     formData.append('producerId', product.producerId || '');
-    formData.append('promoStickers', product.promoStickers || '');
+    formData.append('promoStickerId', product.promoStickerId || '');
     formData.append('seoUrl', product.seoUrl || '');
     formData.append('tegs', product.tegs || '');
     formData.append('_id', product._id || '');
