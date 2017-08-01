@@ -24,6 +24,10 @@ export const Api_config = {
     import: {
       method: 'POST',
       url: apiUrl + '/products/import'
+    },
+    remove: {
+      method: 'DELETE',
+      url: apiUrl + '/products/remove' // :id
     }
   },
   category: {

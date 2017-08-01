@@ -118,4 +118,12 @@ export class ProductService {
           .catch(this.handleService.handleError);
   }
 
+  remove(_id: string): Observable<any> {
+    const url: string = Api_config.product.remove.url + '/' + _id;
+
+    return this.http.delete(url)
+        .map(res => res.json())
+        .catch(this.handleService.handleError);
+  }
+
 }

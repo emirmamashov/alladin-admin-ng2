@@ -70,6 +70,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   getAllPromoStickersConnection: any;
   getAllPhotosConnection: any;
   addProductConnection: any;
+  removeConnection: any;
 
   content: any;
   text: any;
@@ -387,6 +388,29 @@ export class ProductComponent implements OnInit, OnDestroy {
     }
   }
 
+  remove(_id: string) {
+    this.removeConnection = this.productService.remove(_id).subscribe(
+      (response: ResponseApi) => {
+        console.log(response);
+        if (!response.success) {
+          this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+          return;
+        }
+        this.removeInListProducts(response.data.data.product);
+        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+
+  removeInListProducts(product: Product) {
+    if (product && product._id) {
+      this.products = this.products.filter(x => x._id !== product._id);
+    }
+  }
+
   removeInListReadyUpload(fileName: string) {
     this.filesToReadyUpload = this.filesToReadyUpload.filter(x => x.name !== fileName);
   }
@@ -420,6 +444,9 @@ ngOnDestroy() {
     }
     if (this.getAllPhotosConnection && this.getAllPhotosConnection.unsubscribe) {
       this.getAllPhotosConnection.unsubscribe();
+    }
+    if (this.removeConnection && this.removeConnection.unsubscribe) {
+      this.removeConnection.unsubscribe();
     }
   }
 
