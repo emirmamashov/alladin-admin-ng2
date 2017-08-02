@@ -8,7 +8,7 @@
             <th>Телефон</th>
             <th>Цена</th>
             <th>Цена акции</th>
-            <th>SEO Url</th>
+            <th>Горячая</th>
             <th>Промо стикеры</th>
             <th>Изображении товара</th>
             <th>Производитель</th>
@@ -26,7 +26,7 @@
             <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.phone }}</td>
             <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.price }}</td>
             <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.priceStock }}</td>
-            <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.seoUrl }}</td>
+            <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.isHot ? 'да' : 'нет' }}</td>
             <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.promoStickerId }}</td>
             <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">
               <ng-container *ngIf="product.images">
@@ -147,6 +147,24 @@
                                 [(ngModel)]="newProduct.categories" [style]="{'width': '100%'}">
                             </p-multiSelect>
                         </div>
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label>Горячая: </label>
+                        <input *ngIf="!isLimitHot" type="checkbox" 
+                            class="form-control" 
+                            id="name" 
+                            placeholder="Наименование" 
+                            [(ngModel)]="newProduct.isHot" 
+                            [value]="newProduct.isHot"
+                        />
+                        <input *ngIf="isLimitHot" type="checkbox" 
+                            class="form-control" 
+                            id="name" 
+                            placeholder="Наименование" 
+                            [(ngModel)]="newProduct.isHot" 
+                            [value]="false"
+                            (change)="doLimitIsHotProduct()"
+                        />
                     </div>
                     <div class="form-group col-md-12">
                         <label>Описание товара: </label>

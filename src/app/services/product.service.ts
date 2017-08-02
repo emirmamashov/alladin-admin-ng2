@@ -67,13 +67,14 @@ export class ProductService {
     formData.append('metaDescription', product.metaDescription || '');
     formData.append('metaKeywords', product.metaKeywords || '');
     formData.append('name', product.name || '');
-    formData.append('phone', product.phone.toString());
-    formData.append('price', product.price.toString());
-    formData.append('priceStock', product.priceStock.toString());
+    formData.append('phone', product.phone ? product.phone.toString() : '');
+    formData.append('price', product.price ? product.price.toString() : '');
+    formData.append('priceStock', product.priceStock ? product.priceStock.toString() : '');
     formData.append('producerId', product.producerId || '');
     formData.append('promoStickerId', product.promoStickerId || '');
     formData.append('seoUrl', product.seoUrl || '');
     formData.append('tegs', product.tegs || '');
+    formData.append('isHot', product.isHot ? '1' : '0');
 
     return this.http.post(url, formData)
           .map(res => res.json())
@@ -104,14 +105,15 @@ export class ProductService {
     formData.append('metaDescription', product.metaDescription || '');
     formData.append('metaKeywords', product.metaKeywords || '');
     formData.append('name', product.name || '');
-    formData.append('phone', product.phone.toString());
-    formData.append('price', product.price.toString());
-    formData.append('priceStock', product.priceStock.toString());
+    formData.append('phone', product.phone ? product.phone.toString() : '');
+    formData.append('price', product.price ? product.price.toString() : '');
+    formData.append('priceStock', product.priceStock ? product.priceStock.toString() : '');
     formData.append('producerId', product.producerId || '');
     formData.append('promoStickerId', product.promoStickerId || '');
     formData.append('seoUrl', product.seoUrl || '');
     formData.append('tegs', product.tegs || '');
     formData.append('_id', product._id || '');
+    formData.append('isHot', product.isHot ? '1' : '0');
 
     return this.http.put(url, formData)
           .map(res => res.json())

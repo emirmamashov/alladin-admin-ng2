@@ -2,6 +2,7 @@ import { environment } from '../environments/environment';
 
 const apiUrl: string = environment.apiUrl;
 export const LimitCategoriesViewInMenu = 10;
+export const LimitHotProduct = 20;
 export const Api_config = {
   rootUrl: apiUrl,
   product: {

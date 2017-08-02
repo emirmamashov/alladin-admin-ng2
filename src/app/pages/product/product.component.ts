@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 // config
-import { Notify_config, Api_config, Translit_alhabets } from '../../config';
+import { Notify_config, Api_config, Translit_alhabets, LimitHotProduct } from '../../config';
 
 // models
 import { Product } from '../../models/product';
@@ -53,6 +53,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   filesToReadyUpload = [];
 
   isEdit = false;
+  isLimitHot = false;
 
   apiUrl: string = Api_config.rootUrl;
 
@@ -106,6 +107,7 @@ export class ProductComponent implements OnInit, OnDestroy {
         if (response.success) {
           this.products = response.data.data.products;
           this.photos = response.data.data.photos;
+          this.checkToLimitIsHotProduct(this.products);
         }
       },
       (err) => {
@@ -429,6 +431,18 @@ removeInProductImages(product: Product, url: string) {
     this.notifyService.addNotify(notify);
   }
 
+  doLimitIsHotProduct() {
+    const text = 'Только ' + LimitHotProduct +
+    ' категории можно отображат в меню, вы уже выбрали эти ' + LimitHotProduct + ':)';
+    this.showMessageForUser(Notify_config.typeMessage.info, text);
+  }
+  checkToLimitIsHotProduct(products: Array<Product>) {
+      if (products.filter(x => x.isHot).length >= LimitHotProduct) {
+        this.isLimitHot = true;
+      } else {
+        this.isLimitHot = false;
+      }
+  }
 ngOnDestroy() {
     if (this.getAllConnection && this.getAllConnection.unsubscribe) {
       this.getAllConnection.unsubscribe();

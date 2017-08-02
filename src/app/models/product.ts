@@ -19,4 +19,5 @@ export class Product {
   categories: Array<string>;
   images: any;
   image: string;
+  isHot: boolean;
 }
