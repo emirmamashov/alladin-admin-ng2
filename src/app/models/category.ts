@@ -9,4 +9,5 @@ export class Category {
   image: string;
   images: any;
   viewInMenu: boolean;
+  viewInLikeBlock: boolean;
 }

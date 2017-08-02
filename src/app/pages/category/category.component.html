@@ -9,6 +9,7 @@
             <th>Категория родитель</th>
             <th>Описание</th>
             <th>Показывать в меню</th>
+            <th>Показывается в "Вам понравиться"</th>
             <th>Действия</th>
         </tr>
     </thead>
@@ -29,6 +30,7 @@
             <td data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">{{ category.parentCategoryModel?.name }}</td>
             <td data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">{{ category.description }}</td>
             <td data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">{{ category.viewInMenu ? 'да' : 'нет' }}</td>
+            <td data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">{{ category.viewInLikeBlock ? 'да' : 'нет' }}</td>
             <td data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">{{ category.category }}</td>
             <td> 
                 <a (click)="remove(category._id)">
@@ -77,6 +79,17 @@
                         </p-dropdown>
                     </div>
                     <div class="form-group col-md-6">
+                        <label>Показывать в разделе "Вам понравиться" (на первой странице): </label>
+                        <input type="checkbox" 
+                            class="form-control" 
+                            id="name" 
+                            placeholder="Вам понравиться" 
+                            [(ngModel)]="newCategory.viewInLikeBlock" 
+                            [value]="newCategory.viewInLikeBlock"
+                        />
+                    </div>
+
+                    <div class="form-group col-md-6">
                         <label>Показывать в меню (на первой странице): </label>
                         <input *ngIf="!isLimitCategoriesViewInMenu" type="checkbox" 
                             class="form-control" 
@@ -88,7 +101,7 @@
                         <input *ngIf="isLimitCategoriesViewInMenu" type="checkbox" 
                             class="form-control" 
                             id="name" 
-                            placeholder="Наименование" 
+                            placeholder="Показывать в меню" 
                             [(ngModel)]="newCategory.viewInMenu" 
                             [value]="false"
                             (change)="doLimitCategoriesViewInMenu()"
