@@ -93,6 +93,10 @@ export const Api_config = {
     add: {
       method: 'POST',
       url: apiUrl + '/promo-stickers/add'
+    },
+    update: {
+      method: 'PUT',
+      url: apiUrl + '/promo-stickers/update' // :id
     }
   },
   photo: {

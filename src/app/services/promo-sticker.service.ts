@@ -49,4 +49,16 @@ export class PromoStickerService {
             .map(res => res.json())
             .catch(this.handleService.returnError);
   }
+
+  update(file: File, promoSticker: PromoSticker): Observable<any> {
+    const url: string = Api_config.promoSticker.update.url + '/' + promoSticker._id;
+    const formData = new FormData();
+    formData.append('file', file || '');
+    formData.append('name', promoSticker.name || '');
+    formData.append('image', promoSticker.image || '');
+
+    return this.http.put(url, formData)
+          .map(res => res.json())
+          .catch(this.handleService.returnError);
+  }
 }

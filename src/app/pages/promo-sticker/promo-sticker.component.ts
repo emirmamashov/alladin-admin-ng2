@@ -25,8 +25,11 @@ export class PromoStickerComponent implements OnInit, OnDestroy {
   isEdit = false;
   apiUrl: string = Api_config.rootUrl;
 
+  fileToReadyUpload: any;
+
   private addConnection: any;
   private getAllConnection: any;
+  private updateConnection: any;
 
   constructor(
     private promoStickerService: PromoStickerService,
@@ -36,6 +39,7 @@ export class PromoStickerComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.getAll();
+    this.clearFilesToReadUpload();
   }
 
   getAll() {
@@ -51,7 +55,11 @@ export class PromoStickerComponent implements OnInit, OnDestroy {
       }
     );
   }
-    add(file: any, promoSticker: PromoSticker) {
+
+  changeEditStatus(status: boolean) {
+    this.isEdit = status;
+  }
+add(file: any, promoSticker: PromoSticker) {
     console.dir(file);
     const notify = new Notify();
     notify.type = Notify_config.typeMessage.danger;
@@ -80,12 +88,87 @@ export class PromoStickerComponent implements OnInit, OnDestroy {
     );
   }
 
+update(file: any, promoSticker: PromoSticker) {
+    if (!promoSticker || !promoSticker.name) {
+      return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите наименование категории');
+    }
+
+    this.updateConnection = this.promoStickerService.update(this.fileToReadyUpload.file, promoSticker).subscribe(
+      (response: ResponseApi) => {
+        console.log(response);
+        if (!response.success) {
+          return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+        }
+        const updatePromoSticker: PromoSticker = response.data.data.promoSticker;
+        if (updatePromoSticker) {
+          promoSticker.image = updatePromoSticker.image;
+        }
+        this.newPromoSticker = new PromoSticker();
+        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+        this.clearFilesToReadUpload();
+        $('#modal').modal('toggle');
+      },
+      (err) => {
+        console.log(err);
+        this.showMessageForUser(Notify_config.typeMessage.warning, 'Что то пошло не так');
+      }
+    );
+  }
+
+   clearFilesToReadUpload() {
+    this.fileToReadyUpload = {
+                name: '',
+                data: '',
+                file: ''
+    };
+  }
+
+  addToListReadyupload(fileInput: any) {
+    console.dir(fileInput);
+    console.dir(event);
+    const files = fileInput.files;
+    // const files = event.dataTransfer ? event.dataTransfer.files : event.target.files;
+
+    if (files && files.length > 0) {
+      // console.dir(files);
+      for (let i = 0; i < files.length; i++) {
+          const pattern = /image-*/;
+          const reader = new FileReader();
+          if (files[i].type.match(pattern)) {
+            reader.onload = (e: any) => {
+              console.dir('reader.onload');
+              const readerFile = e.target;
+              const fileObject = {
+                name: files[i].name,
+                data: readerFile.result,
+                file: files[i]
+              };
+              this.fileToReadyUpload = fileObject;
+            };
+            reader.readAsDataURL(files[i]);
+          } else {
+            console.log('invalid format');
+          }
+      }
+    }
+  }
+
+  showMessageForUser(typeMessage: string, text: string) {
+    const notify = new Notify();
+    notify.type = typeMessage;
+    notify.text = text;
+    this.notifyService.addNotify(notify);
+  }
+
   ngOnDestroy() {
     if (this.addConnection && this.addConnection.unsubscribe) {
       this.addConnection.unsubscribe();
     }
     if (this.getAllConnection && this.getAllConnection.unsubscribe) {
       this.getAllConnection.unsubscribe();
+    }
+    if (this.updateConnection && this.updateConnection.unsubscribe) {
+      this.updateConnection.unsubscribe();
     }
   }
 }

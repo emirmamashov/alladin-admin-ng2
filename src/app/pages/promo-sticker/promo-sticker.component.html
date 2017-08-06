@@ -10,15 +10,14 @@
         </tr>
     </thead>
     <tbody>
-        <!--<tr *ngFor="let category of categories; let i=index" data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">-->
         <tr *ngFor="let promoSticker of promoStickers; let i=index">
-            <td>{{ i+1 }}</td>
-            <td>{{ promoSticker._id }}</td>
-            <td>{{ promoSticker.name }}</td>
-            <td>
+            <td data-toggle="modal" data-target="#modal" (click)="newPromoSticker = promoSticker; fileToReadyUpload.data = apiUrl + '/' + promoSticker.image; changeEditStatus(true)">{{ i+1 }}</td>
+            <td data-toggle="modal" data-target="#modal" (click)="newPromoSticker = promoSticker; fileToReadyUpload.data = apiUrl + '/' + promoSticker.image; changeEditStatus(true)">{{ promoSticker._id }}</td>
+            <td data-toggle="modal" data-target="#modal" (click)="newPromoSticker = promoSticker; fileToReadyUpload.data = apiUrl + '/' + promoSticker.image; changeEditStatus(true)">{{ promoSticker.name }}</td>
+            <td data-toggle="modal" data-target="#modal" (click)="newPromoSticker = promoSticker; fileToReadyUpload.data = apiUrl + '/' + promoSticker.image; changeEditStatus(true)">
               <img *ngIf="promoSticker.image" src="{{ apiUrl }}/{{ promoSticker.image }}" width="50%"/>
             </td>
-            <td>{{ promoSticker.description }}</td>
+            <td data-toggle="modal" data-target="#modal" (click)="newPromoSticker = promoSticker; fileToReadyUpload.data = apiUrl + '/' + promoSticker.image; changeEditStatus(true)">{{ promoSticker.description }}</td>
             <td></td>
         </tr>
     </tbody>
@@ -46,8 +45,16 @@
                     </div>
 
                     <div class="form-group col-md-6">
-                        <label><i class="fa fa-picture-o" aria-hidden="true"></i> Выберите изображение промо стикера</label>
-                        <input #file type="file" class="form-control" id="image" placeholder="Изображение промо стикера" />
+                        <label><i class="fa fa-picture-o" aria-hidden="true"></i> Выберите изображение</label>
+                        <input #file type="file" class="form-control" 
+                        accept="image/*" 
+                        placeholder="Изображение" 
+                        (change)="addToListReadyupload(file)" multiple />
+                        <div class="form-group col-md-12">
+                            <span *ngIf="fileToReadyUpload && fileToReadyUpload.data">
+                                <img width="100" height="100" src="{{ fileToReadyUpload.data }}" alt="Downloaded photo"/>
+                            </span>
+                        </div>
                     </div>
 
                     <div class="modal-footer col-md-12">
@@ -59,7 +66,7 @@
                         <button *ngIf="isEdit" 
                             type="button" 
                             class="btn btn-primary" 
-                            (click)="edit(file, newPromoSticker)">Редактировать</button>
+                            (click)="update(file, newPromoSticker)">Редактировать</button>
                     </div>
                 </div>
             </div>
