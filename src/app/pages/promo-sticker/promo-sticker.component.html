@@ -18,7 +18,11 @@
               <img *ngIf="promoSticker.image" src="{{ apiUrl }}/{{ promoSticker.image }}" width="50%"/>
             </td>
             <td data-toggle="modal" data-target="#modal" (click)="newPromoSticker = promoSticker; fileToReadyUpload.data = apiUrl + '/' + promoSticker.image; changeEditStatus(true)">{{ promoSticker.description }}</td>
-            <td></td>
+            <td>
+                <a (click)="remove(promoSticker._id)">
+                    <i class="fa fa-trash-o" aria-hidden="true" style="cursor: pointer;"></i>
+                </a>
+            </td>
         </tr>
     </tbody>
 </table>

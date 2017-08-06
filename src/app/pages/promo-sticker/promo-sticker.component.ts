@@ -30,6 +30,7 @@ export class PromoStickerComponent implements OnInit, OnDestroy {
   private addConnection: any;
   private getAllConnection: any;
   private updateConnection: any;
+  private removeConnection: any;
 
   constructor(
     private promoStickerService: PromoStickerService,
@@ -59,7 +60,7 @@ export class PromoStickerComponent implements OnInit, OnDestroy {
   changeEditStatus(status: boolean) {
     this.isEdit = status;
   }
-add(file: any, promoSticker: PromoSticker) {
+ add(file: any, promoSticker: PromoSticker) {
     console.dir(file);
     const notify = new Notify();
     notify.type = Notify_config.typeMessage.danger;
@@ -115,7 +116,7 @@ update(file: any, promoSticker: PromoSticker) {
     );
   }
 
-   clearFilesToReadUpload() {
+  clearFilesToReadUpload() {
     this.fileToReadyUpload = {
                 name: '',
                 data: '',
@@ -153,6 +154,29 @@ update(file: any, promoSticker: PromoSticker) {
     }
   }
 
+  remove(_id: string) {
+    this.removeConnection = this.promoStickerService.remove(_id).subscribe(
+      (response: ResponseApi) => {
+        console.log(response);
+        if (!response.success) {
+          this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+          return;
+        }
+        this.removeInListPromoSticker(response.data.data.promoSticker);
+        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+
+  removeInListPromoSticker(promoSticker: PromoSticker) {
+    if (promoSticker && promoSticker._id) {
+      this.promoStickers = this.promoStickers.filter(x => x._id !== promoSticker._id);
+    }
+  }
+
   showMessageForUser(typeMessage: string, text: string) {
     const notify = new Notify();
     notify.type = typeMessage;
@@ -169,6 +193,9 @@ update(file: any, promoSticker: PromoSticker) {
     }
     if (this.updateConnection && this.updateConnection.unsubscribe) {
       this.updateConnection.unsubscribe();
+    }
+    if (this.removeConnection && this.removeConnection.unsubscribe) {
+      this.removeConnection.unsubscribe();
     }
   }
 }

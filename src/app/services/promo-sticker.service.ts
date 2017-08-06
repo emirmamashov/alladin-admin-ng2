@@ -61,4 +61,12 @@ export class PromoStickerService {
           .map(res => res.json())
           .catch(this.handleService.returnError);
   }
+
+  remove(_id: string): Observable<any> {
+    const url: string = Api_config.promoSticker.remove.url + '/' + _id;
+
+    return this.http.delete(url)
+        .map(res => res.json())
+        .catch(this.handleService.handleError);
+  }
 }

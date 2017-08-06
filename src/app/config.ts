@@ -97,6 +97,10 @@ export const Api_config = {
     update: {
       method: 'PUT',
       url: apiUrl + '/promo-stickers/update' // :id
+    },
+    remove: {
+      method: 'DELETE',
+      url: apiUrl + '/promo-stickers/remove' // :id
     }
   },
   photo: {
