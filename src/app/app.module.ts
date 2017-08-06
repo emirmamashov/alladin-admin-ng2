@@ -28,7 +28,6 @@ import { CategoryComponent } from './pages/category/category.component';
 import { ProducerComponent } from './pages/producer/producer.component';
 import { PromoStickerComponent } from './pages/promo-sticker/promo-sticker.component';
 import { ImportComponent } from './pages/product/import/import.component';
-import { PhotoComponent } from './pages/photo/photo.component';
 import { BannerComponent } from './pages/banner/banner.component';
 
 @NgModule({
@@ -41,7 +40,6 @@ import { BannerComponent } from './pages/banner/banner.component';
     ProducerComponent,
     PromoStickerComponent,
     ImportComponent,
-    PhotoComponent,
     BannerComponent
   ],
   imports: [
