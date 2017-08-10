@@ -77,7 +77,7 @@ export class UsersComponent implements OnInit, OnDestroy {
               });
             }
           }
-          return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+          return this.showMessageForUser(Notify_config.typeMessage.danger, messages);
         }
         const newUser: User = response.data.data.user;
         this.users.push(newUser);
