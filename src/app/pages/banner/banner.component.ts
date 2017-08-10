@@ -187,6 +187,10 @@ export class BannerComponent implements OnInit, OnDestroy {
     this.filesToReadyUpload = this.filesToReadyUpload.filter(x => x.name !== fileName);
   }
 
+  clearNewBanner() {
+    this.newBanner = new Banner();
+  }
+
   ngOnDestroy() {
     if (this.getAllConnection && this.getAllConnection.unsubscribe) {
       this.getAllConnection.unsubscribe();

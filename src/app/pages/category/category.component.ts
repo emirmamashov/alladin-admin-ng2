@@ -237,6 +237,10 @@ export class CategoryComponent implements OnInit, OnDestroy {
     }
   }
 
+  clearNewCategory() {
+    this.newCategory = new Category();
+  }
+
    showMessageForUser(typeMessage: string, text: string) {
     const notify = new Notify();
     notify.type = typeMessage;

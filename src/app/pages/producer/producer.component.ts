@@ -201,6 +201,10 @@ export class ProducerComponent implements OnInit, OnDestroy {
   changeEditStatus(status: boolean) {
     this.isEdit = status;
   }
+
+  clearNewProducer() {
+    this.newProducer = new Producer();
+  }
   ngOnDestroy() {
     if (this.getAllConnection && this.getAllConnection.unsubscribe) {
       this.getAllConnection.unsubscribe();

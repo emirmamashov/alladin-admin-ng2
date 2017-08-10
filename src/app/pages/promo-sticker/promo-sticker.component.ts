@@ -177,6 +177,10 @@ update(file: any, promoSticker: PromoSticker) {
     }
   }
 
+  clearNewPromoSticker() {
+    this.newPromoSticker = new PromoSticker();
+  }
+
   showMessageForUser(typeMessage: string, text: string) {
     const notify = new Notify();
     notify.type = typeMessage;
