@@ -85,6 +85,24 @@ export const Api_config = {
       url: apiUrl + '/producers/remove'
     }
   },
+  users: {
+    getAll: {
+      method: 'GET',
+      url: apiUrl + '/users'
+    },
+    add: {
+      method: 'POST',
+      url: apiUrl + '/users/add'
+    },
+    update: {
+      method: 'PUT',
+      url: apiUrl + '/users/update'
+    },
+    remove: {
+      method: 'DELETE',
+      url: apiUrl + '/users/remove'
+    }
+  },
   promoSticker: {
     getAll: {
       method: 'GET',

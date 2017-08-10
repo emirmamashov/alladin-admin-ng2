@@ -1,0 +1,60 @@
+import { Injectable } from '@angular/core';
+import { Http, Headers, RequestOptions } from '@angular/http';
+
+// rxjs
+import { Observable } from 'rxjs/Observable';
+import 'rxjs/add/operator/catch';
+import 'rxjs/add/operator/map';
+
+// config
+import { Api_config } from '../config';
+
+// models
+import { User } from '../models/user';
+
+// services
+import { HandleService } from './handle.service';
+
+@Injectable()
+export class UsersService {
+
+  constructor(
+    private http: Http,
+    private handleService: HandleService
+  ) { }
+
+  getAll(): Observable<any> {
+    const url: string = Api_config.users.getAll.url;
+    const headers = new Headers({
+      'Content-type': 'json/application'
+    });
+    const options = new RequestOptions({headers: headers});
+
+    return this.http.get(url, options)
+            .map(res => res.json())
+            .catch(this.handleService.returnError);
+  }
+
+  add(user: User): Observable<any> {
+    const url: string = Api_config.users.add.url;
+    return this.http.post(url, user)
+          .map(res => res.json())
+          .catch(this.handleService.returnError);
+  }
+
+  update(user: User): Observable<any> {
+    const url: string = Api_config.users.update.url + '/' + user._id;
+
+    return this.http.put(url, user)
+          .map(res => res.json())
+          .catch(this.handleService.returnError);
+  }
+
+  remove(_id: string): Observable<any> {
+    const url: string = Api_config.users.remove.url + '/' + _id;
+
+    return this.http.delete(url)
+        .map(res => res.json())
+        .catch(this.handleService.handleError);
+  }
+}
