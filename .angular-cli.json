@@ -19,18 +19,14 @@
       "testTsconfig": "tsconfig.spec.json",
       "prefix": "app",
       "styles": [
-        "styles.css",
-        "../bower_components/tether/dist/css/tether.min.css",
-        "../bower_components/tether/dist/css/tether-theme-basic.css",
-        "../bower_components/bootstrap/dist/css/bootstrap.min.css",
-        "../node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
+        "../bower_components/font-awesome/css/font-awesome.min.css",
+        "assets/styles/bootstrap.theme.min.css",
+        "../node_modules/primeng/resources/themes/bootstrap/theme.css",
         "../node_modules/primeng/resources/primeng.min.css",
-        "../node_modules/primeng/resources/themes/omega/theme.css",
-        "../bower_components/font-awesome/css/font-awesome.min.css"
+        "styles.css"
       ],
       "scripts": [
         "../bower_components/jquery/dist/jquery.min.js",
-        "../bower_components/tether/dist/js/tether.min.js",
         "../bower_components/bootstrap/dist/js/bootstrap.min.js",
         "../bower_components/remarkable-bootstrap-notify/dist/bootstrap-notify.min.js"
       ],
