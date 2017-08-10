@@ -327,6 +327,7 @@ export class ProductComponent implements OnInit, OnDestroy {
         const editProduct: Product = response.data.data.product;
         let productFind: Product = this.products.filter(x => x._id === editProduct._id)[0];
         productFind = editProduct;
+        this.checkToLimitIsHotProduct(this.products);
         console.log(productFind);
 
         $('#modal').modal('toggle');
@@ -431,10 +432,15 @@ removeInProductImages(product: Product, url: string) {
     this.notifyService.addNotify(notify);
   }
 
-  doLimitIsHotProduct() {
+  doLimitIsHotProduct(product: Product) {
+    this.checkToLimitIsHotProduct(this.products);
+    if (!product.isHot) {
+      return console.log('not checked');
+    }
     const text = 'Только ' + LimitHotProduct +
     ' категории можно отображат в меню, вы уже выбрали эти ' + LimitHotProduct + ':)';
     this.showMessageForUser(Notify_config.typeMessage.info, text);
+    product.isHot = false;
   }
   checkToLimitIsHotProduct(products: Array<Product>) {
       if (products.filter(x => x.isHot).length >= LimitHotProduct) {
