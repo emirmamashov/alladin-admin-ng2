@@ -24,6 +24,8 @@ declare let $: any;
 })
 export class CategoryComponent implements OnInit, OnDestroy {
   categories = new Array<Category>();
+  viewCaregories = new Array<Category>();
+
   newCategory = new Category();
   categoriesItem: SelectItem[] = [];
   filesToReadyUpload = new Array<any>();
@@ -55,6 +57,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
         console.log(response);
         if (response.success) {
           this.categories = response.data.data.categories;
+          this.viewCaregories = this.categories;
           this.setCategoriesItem(this.categories);
           this.checkToLimitCategoriesViewInMenu(this.categories);
           this.setParentCategoriesModel();
@@ -246,6 +249,15 @@ export class CategoryComponent implements OnInit, OnDestroy {
     notify.type = typeMessage;
     notify.text = text;
     this.notifyService.addNotify(notify);
+  }
+
+  searchCategory(text: string) {
+    console.log(text);
+    if (!text) {
+      return this.viewCaregories = this.categories;
+    }
+    const regex = new RegExp(text, 'i');
+    this.viewCaregories = this.categories.filter(x => regex.test(x.name) || regex.test(x.description));
   }
 
   ngOnDestroy() {
