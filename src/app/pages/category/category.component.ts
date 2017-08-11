@@ -76,9 +76,35 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
 
   setCategoriesItem(categories: Array<Category>) {
+    categories = categories.filter(x => !x.parentCategory);
+    if (categories.length === 0) {
+      return;
+    }
     categories.forEach((category) => {
+      const firstChildrenCategory = this.knowedChildrenCategory(category);
+
+      const secondChildrenCategory = this.knowedChildrenCategory(firstChildrenCategory);
+
+      const threeChildrenCategory = this.knowedChildrenCategory(secondChildrenCategory);
+
       this.categoriesItem.push({ label: category.name, value: category._id });
+      if (firstChildrenCategory) {
+        this.categoriesItem.push({ label: '-' + firstChildrenCategory.name, value: firstChildrenCategory._id });
+        if (secondChildrenCategory) {
+          this.categoriesItem.push({ label: '--' + secondChildrenCategory.name, value: category._id });
+          if (threeChildrenCategory) {
+            this.categoriesItem.push({ label: '---' + threeChildrenCategory.name, value: category._id });
+          }
+        }
+      }
     });
+  }
+
+  knowedChildrenCategory(category: Category) {
+    if (!category || !category._id) {
+      return;
+    }
+    return this.categories.filter(x => x.parentCategory === category._id)[0];
   }
 
   add(category: Category) {
@@ -106,6 +132,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
         this.showMessageForUser(Notify_config.typeMessage.success, 'Добавлено!');
         this.newCategory = new Category();
         this.clearFilesToReadUpload();
+
+        this.setCategoriesItem(this.categories);
 
         $('#modal').modal('toggle');
       },
@@ -144,6 +172,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
         this.newCategory = new Category();
         this.showMessageForUser(Notify_config.typeMessage.success, response.message);
         this.clearFilesToReadUpload();
+
+        this.setCategoriesItem(this.categories);
         $('#modal').modal('toggle');
       },
       (err) => {
@@ -221,6 +251,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
         }
         this.removeInListCategories(response.data.data.category);
         this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+
+        this.setCategoriesItem(this.categories);
       },
       (err) => {
         console.log(err);
@@ -231,6 +263,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
   removeInListCategories(category: Category) {
     if (category && category._id) {
       this.categories = this.categories.filter(x => x._id !== category._id);
+      this.viewCaregories = this.categories;
+      this.categoriesItem = this.categoriesItem.filter(x => x.value !== category._id);
     }
   }
 
