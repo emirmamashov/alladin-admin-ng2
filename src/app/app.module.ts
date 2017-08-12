@@ -30,6 +30,8 @@ import { PromoStickerComponent } from './pages/promo-sticker/promo-sticker.compo
 import { ImportComponent } from './pages/product/import/import.component';
 import { BannerComponent } from './pages/banner/banner.component';
 import { UsersComponent } from './pages/users/users.component';
+import { LoginComponent } from './pages/account/login/login.component';
+import { TopBarComponent } from './components/nav-bars/top-bar/top-bar.component';
 
 @NgModule({
   declarations: [
@@ -42,7 +44,9 @@ import { UsersComponent } from './pages/users/users.component';
     PromoStickerComponent,
     ImportComponent,
     BannerComponent,
-    UsersComponent
+    UsersComponent,
+    LoginComponent,
+    TopBarComponent
   ],
   imports: [
     BrowserModule,

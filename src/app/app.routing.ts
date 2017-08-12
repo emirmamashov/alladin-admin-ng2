@@ -9,6 +9,7 @@ import { PromoStickerComponent } from './pages/promo-sticker/promo-sticker.compo
 import { ImportComponent } from './pages/product/import/import.component';
 import { BannerComponent } from './pages/banner/banner.component';
 import { UsersComponent } from './pages/users/users.component';
+import { LoginComponent } from './pages/account/login/login.component';
 
 const APP_ROUTES: Routes = [
   {
@@ -42,6 +43,10 @@ const APP_ROUTES: Routes = [
   {
     path: 'users',
     component: UsersComponent
+  },
+  {
+    path: 'login',
+    component: LoginComponent
   },
   {
     path: '**',
