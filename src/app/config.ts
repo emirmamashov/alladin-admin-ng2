@@ -104,9 +104,9 @@ export const Api_config = {
     }
   },
   auth: {
-    login: {
+    loginAdmin: {
       method: 'POST',
-      url: apiUrl + '/auth/login'
+      url: apiUrl + '/auth/login/admin'
     }
   },
   promoSticker: {

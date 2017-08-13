@@ -1,5 +1,6 @@
 // core
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 
 // config
 import { Notify_config } from '../../../config';
@@ -26,7 +27,8 @@ export class LoginComponent implements OnInit, OnDestroy {
   constructor(
     private authService: AuthService,
     private notifySerivce: NotifyService,
-    private localStorage: MyLocalStorageService
+    private localStorage: MyLocalStorageService,
+    private router: Router
   ) { }
 
   ngOnInit() {
@@ -54,6 +56,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         }
         this.localStorage.setToken(response.data.data.token);
         this.localStorage.setUser(response.data.data.user);
+        this.router.navigate(['/products']);
       },
       (err) => {
         console.log(err);

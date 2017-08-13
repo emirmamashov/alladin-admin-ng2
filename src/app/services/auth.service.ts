@@ -43,7 +43,6 @@ export class AuthService {
     console.log('-----------проверка что пользователь авторизован-------------------');
     const user = this.localStorage.getUser();
     const token = this.localStorage.getToken();
-    console.log(token);
 
     if (!token) { // if (!user || !user._id || !token) {
       console.log('Вы не авторизованы');
@@ -56,19 +55,19 @@ export class AuthService {
 
   isCheckAuthRedirectToProfile(): Boolean { // проверка что пользователь авторизован
     console.log('-----------isCheckAuthRedirectToProfile----------');
-    const user = this.localStorage.get('user');
-    const token = this.localStorage.get('token');
+    const user = this.localStorage.getUser();
+    const token = this.localStorage.getToken();
 
-    if (user && user.id && token) { // if (user && user._id && token) {
+    if (user && token) { // if (user && user._id && token) {
       console.log('Вы авторизованы');
       this.router.navigate(['/profile']);
       return true;
     }
-    console.log('авторизован');
+    console.log('не авторизован');
     return false;
   }
   login(email: string, password: string): Observable<any> {
-    const url: string = Api_config.auth.login.url;
+    const url: string = Api_config.auth.loginAdmin.url;
     const body = {
       email: email,
       password: password
