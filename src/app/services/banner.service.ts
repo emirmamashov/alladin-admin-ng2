@@ -14,19 +14,26 @@ import { Banner } from '../models/banner';
 
 // services
 import { HandleService } from './handle.service';
+import { MyLocalStorageService } from './local-storage.service';
 
 @Injectable()
 export class BannerService {
 
   constructor(
     private http: Http,
-    private handleService: HandleService
+    private handleService: HandleService,
+    private localStorage: MyLocalStorageService
   ) { }
 
   getAll(): Observable<any> {
     const url: string = Api_config.banner.getAll.url;
+    const token = this.localStorage.getToken();
+    if (!token) {
+      return this.handleService.returnError('token is null');
+    }
     const headers = new Headers({
-      'Content-type': 'json/application'
+      'Content-type': 'json/application',
+      'alladin-access-token': token
     });
     const options = new RequestOptions({ headers: headers });
 
@@ -37,6 +44,10 @@ export class BannerService {
 
   add(files: File[], banner: Banner): Observable<any> {
     const url: string = Api_config.banner.add.url;
+    const token = this.localStorage.getToken();
+    if (!token) {
+      return this.handleService.returnError('token is null');
+    }
     const formData = new FormData();
     files.forEach((file) => {
       formData.append('file', file);
@@ -45,6 +56,8 @@ export class BannerService {
     formData.append('name', banner.name || '');
     formData.append('buttonLink', banner.buttonLink || '');
     formData.append('buttonName', banner.buttonName || '');
+
+    // formData.append('token', String(token));
 
     return this.http.post(url, formData)
           .map(res => res.json())

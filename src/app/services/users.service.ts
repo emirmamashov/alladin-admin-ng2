@@ -14,19 +14,26 @@ import { User } from '../models/user';
 
 // services
 import { HandleService } from './handle.service';
+import { MyLocalStorageService } from './local-storage.service';
 
 @Injectable()
 export class UsersService {
 
   constructor(
     private http: Http,
-    private handleService: HandleService
+    private handleService: HandleService,
+    private localStorage: MyLocalStorageService
   ) { }
 
   getAll(): Observable<any> {
     const url: string = Api_config.users.getAll.url;
+    const token = this.localStorage.getToken();
+    if (!token) {
+      return this.handleService.returnError('token is null');
+    }
     const headers = new Headers({
-      'Content-type': 'json/application'
+      'Content-type': 'json/application',
+      'alladin-access-token': token
     });
     const options = new RequestOptions({headers: headers});
 
