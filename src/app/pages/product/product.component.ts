@@ -21,6 +21,7 @@ import { ProducerService } from '../../services/producer.service';
 import { PromoStickerService } from '../../services/promo-sticker.service';
 import { TranslitService } from '../../services/translit.service';
 import { PhotoService } from '../../services/photo.service';
+import { AuthService } from '../../services/auth.service';
 
 declare var $: any;
 declare var CKEDITOR: any;
@@ -56,6 +57,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   isLimitHot = false;
 
   apiUrl: string = Api_config.rootUrl;
+  loadContent = false;
 
   // select items
   cities: SelectItem[] = [];
@@ -83,22 +85,26 @@ export class ProductComponent implements OnInit, OnDestroy {
     private promorStickerService: PromoStickerService,
     private notifyService: NotifyService,
     private translitService: TranslitService,
-    private photoService: PhotoService
+    private photoService: PhotoService,
+    private authService: AuthService
   ) {
     this.content = '<p>Hello <strong>World !</strong></p>'
   }
 
   ngOnInit() {
-    this.cities.push({ label: 'Select City', value: null });
-    this.categoriesItem.push({ label: 'Выберите категорию', value: '' });
-    this.producersItem.push({ label: 'Выберите производителя', value: '' });
-    this.promoStickersItem.push({ label: 'Выберите промостикер', value: '' });
-    this.getAll();
-    this.getAll();
-    this.getAllCategories();
-    this.getAllProducers();
-    this.getAllPromoStickers();
-    this.getAllPhotos();
+    if (!this.authService.isCheckAuthRedirectToLogin()) {
+      this.cities.push({ label: 'Select City', value: null });
+      this.categoriesItem.push({ label: 'Выберите категорию', value: '' });
+      this.producersItem.push({ label: 'Выберите производителя', value: '' });
+      this.promoStickersItem.push({ label: 'Выберите промостикер', value: '' });
+      this.getAll();
+      this.getAll();
+      this.getAllCategories();
+      this.getAllProducers();
+      this.getAllPromoStickers();
+      this.getAllPhotos();
+      this.loadContent = true;
+    }
   }
 
   getAll() {

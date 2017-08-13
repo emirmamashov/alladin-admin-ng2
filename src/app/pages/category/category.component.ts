@@ -12,6 +12,7 @@ import { SelectItem } from 'primeng/primeng';
 // services
 import { CategoryService } from '../../services/category.service';
 import { NotifyService } from '../../services/notify.service';
+import { AuthService } from '../../services/auth.service';
 
 declare let $: any;
 @Component({
@@ -33,6 +34,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   isEdit = false;
   isLimitCategoriesViewInMenu = false;
   apiUrl: string = Api_config.rootUrl;
+  loadContent = false;
 
   getAllConnection: any;
   addConnection: any;
@@ -43,12 +45,16 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   constructor(
     private categoryService: CategoryService,
-    private notifyService: NotifyService
+    private notifyService: NotifyService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
-    this.categoriesItem.push({ label: 'Выбрите категорию', value: '' });
-    this.getAll();
+    if (!this.authService.isCheckAuthRedirectToLogin()) {
+      this.categoriesItem.push({ label: 'Выбрите категорию', value: '' });
+      this.getAll();
+      this.loadContent = true;
+    }
   }
 
   getAll() {

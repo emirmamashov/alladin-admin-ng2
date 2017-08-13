@@ -103,6 +103,12 @@ export const Api_config = {
       url: apiUrl + '/users/remove'
     }
   },
+  auth: {
+    login: {
+      method: 'POST',
+      url: apiUrl + '/auth/login'
+    }
+  },
   promoSticker: {
     getAll: {
       method: 'GET',

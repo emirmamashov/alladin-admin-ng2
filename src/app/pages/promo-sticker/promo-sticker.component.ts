@@ -11,6 +11,7 @@ import { Notify } from '../../models/notify';
 // services
 import { PromoStickerService } from '../../services/promo-sticker.service';
 import { NotifyService } from '../../services/notify.service';
+import { AuthService } from '../../services/auth.service';
 
 declare let $: any;
 @Component({
@@ -24,6 +25,7 @@ export class PromoStickerComponent implements OnInit, OnDestroy {
   newPromoSticker = new PromoSticker();
   isEdit = false;
   apiUrl: string = Api_config.rootUrl;
+  loadContent = false;
 
   fileToReadyUpload: any;
 
@@ -34,13 +36,17 @@ export class PromoStickerComponent implements OnInit, OnDestroy {
 
   constructor(
     private promoStickerService: PromoStickerService,
-    private notifyService: NotifyService
+    private notifyService: NotifyService,
+    private authService: AuthService
   ) { }
 
 
   ngOnInit() {
-    this.getAll();
-    this.clearFilesToReadUpload();
+    if (!this.authService.isCheckAuthRedirectToLogin()) {
+      this.getAll();
+      this.clearFilesToReadUpload();
+      this.loadContent = true;
+    }
   }
 
   getAll() {

@@ -59,7 +59,7 @@ export class ProductService {
         formData.append('categories', product.categories[j]);
       }
     }
-    
+
     formData.append('categoryId', product.categoryId || '');
     formData.append('description', product.description || '');
     formData.append('htmlH1', product.htmlH1 || '');

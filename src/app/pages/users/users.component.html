@@ -1,113 +1,115 @@
-<app-top-bar></app-top-bar>
+<ng-container *ngIf="loadContent">
+    <app-top-bar></app-top-bar>
 
-<button class="btn btn-primary" data-toggle="modal" data-target="#modal" (click)="clearNewUser(); changeEditStatus(false);">Добавить</button>
-<table class="table table-striped table-hover ">
-    <thead>
-        <tr>
-            <th>#</th>
-            <th>Id</th>
-            <th>Имя</th>
-            <th>Фамилия</th>
-            <th>Телефон</th>
-            <th>Адрес</th>
-            <th>Email</th>
-        </tr>
-    </thead>
-    <tbody>
-        <!--<tr *ngFor="let category of categories; let i=index" data-toggle="modal" data-target="#modal" (click)="newUser = product; changeEditStatus(true)">-->
-          <tr *ngFor="let user of users; let i=index">
-            <td data-toggle="modal" data-target="#modal" (click)="newUser = user; changeEditStatus(true)">{{ i+1 }}</td>
-            <td data-toggle="modal" data-target="#modal" (click)="newUser = user; changeEditStatus(true)">{{ user._id }}</td>
-            <td data-toggle="modal" data-target="#modal" (click)="newUser = user; changeEditStatus(true)">{{ user.first_name }}</td>
-            <td data-toggle="modal" data-target="#modal" (click)="newUser = user; changeEditStatus(true)">{{ user.last_name }}</td>
-            <td data-toggle="modal" data-target="#modal" (click)="newUser = user; changeEditStatus(true)">{{ user.phone }}</td>
-            <td data-toggle="modal" data-target="#modal" (click)="newUser = user; changeEditStatus(true)">{{ user.address }}</td>
-            <td data-toggle="modal" data-target="#modal" (click)="newUser = user; changeEditStatus(true)">{{ user.email }}</td>
-            <td>
-                <a (click)="remove(user._id)">
-                    <i class="fa fa-trash-o" aria-hidden="true" style="cursor: pointer;"></i>
-                </a>
-            </td>
-        </tr>
-    </tbody>
-</table>
+    <button class="btn btn-primary" data-toggle="modal" data-target="#modal" (click)="clearNewUser(); changeEditStatus(false);">Добавить</button>
+    <table class="table table-striped table-hover ">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Id</th>
+                <th>Имя</th>
+                <th>Фамилия</th>
+                <th>Телефон</th>
+                <th>Адрес</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!--<tr *ngFor="let category of categories; let i=index" data-toggle="modal" data-target="#modal" (click)="newUser = product; changeEditStatus(true)">-->
+            <tr *ngFor="let user of users; let i=index">
+                <td data-toggle="modal" data-target="#modal" (click)="newUser = user; changeEditStatus(true)">{{ i+1 }}</td>
+                <td data-toggle="modal" data-target="#modal" (click)="newUser = user; changeEditStatus(true)">{{ user._id }}</td>
+                <td data-toggle="modal" data-target="#modal" (click)="newUser = user; changeEditStatus(true)">{{ user.first_name }}</td>
+                <td data-toggle="modal" data-target="#modal" (click)="newUser = user; changeEditStatus(true)">{{ user.last_name }}</td>
+                <td data-toggle="modal" data-target="#modal" (click)="newUser = user; changeEditStatus(true)">{{ user.phone }}</td>
+                <td data-toggle="modal" data-target="#modal" (click)="newUser = user; changeEditStatus(true)">{{ user.address }}</td>
+                <td data-toggle="modal" data-target="#modal" (click)="newUser = user; changeEditStatus(true)">{{ user.email }}</td>
+                <td>
+                    <a (click)="remove(user._id)">
+                        <i class="fa fa-trash-o" aria-hidden="true" style="cursor: pointer;"></i>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
 
-<div class="modal" id="modal">
-    <div class="modal-dialog" style="max-width: 80%">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h4 class="modal-title">Добавление нового пользователя</h4>
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="row">
-                    <div class="form-group col-md-6">
-                        <label>Имя: </label>
-                        <input type="text" 
-                            class="form-control" 
-                            id="first_name" 
-                            placeholder="Имя" 
-                            [(ngModel)]="newUser.first_name"
-                        />
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label>Фамилия: </label>
-                        <input type="text" 
-                            class="form-control" 
-                            id="last_name" 
-                            placeholder="Фамилия" 
-                            [(ngModel)]="newUser.last_name"
-                        />
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label>Телефон: </label>
-                        <input type="text" 
-                            class="form-control" 
-                            id="phone" 
-                            placeholder="Телефон" 
-                            [(ngModel)]="newUser.phone"
-                        />
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label>Адрес: </label>
-                        <input type="text" 
-                            class="form-control" 
-                            id="address" 
-                            placeholder="Адрес" 
-                            [(ngModel)]="newUser.address"
-                        />
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label>Email: </label>
-                        <input type="text" 
-                            class="form-control" 
-                            id="email" 
-                            placeholder="Email" 
-                            [(ngModel)]="newUser.email"
-                        />
-                    </div>
-                    <div class="form-group col-md-6">
-                        <label>Пароль: </label>
-                        <input type="text" 
-                            class="form-control" 
-                            id="password" 
-                            placeholder="password" 
-                            [(ngModel)]="newUser.password"
-                        />
-                    </div>
-                    <div class="modal-footer col-md-12">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
-                        <button *ngIf="!isEdit" 
-                            type="button" 
-                            class="btn btn-primary" 
-                            (click)="add(newUser)">Сохранить</button>
-                        <button *ngIf="isEdit" 
-                            type="button" 
-                            class="btn btn-primary" 
-                            (click)="update(newUser)">Редактировать</button>
+    <div class="modal" id="modal">
+        <div class="modal-dialog" style="max-width: 80%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Добавление нового пользователя</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label>Имя: </label>
+                            <input type="text" 
+                                class="form-control" 
+                                id="first_name" 
+                                placeholder="Имя" 
+                                [(ngModel)]="newUser.first_name"
+                            />
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Фамилия: </label>
+                            <input type="text" 
+                                class="form-control" 
+                                id="last_name" 
+                                placeholder="Фамилия" 
+                                [(ngModel)]="newUser.last_name"
+                            />
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Телефон: </label>
+                            <input type="text" 
+                                class="form-control" 
+                                id="phone" 
+                                placeholder="Телефон" 
+                                [(ngModel)]="newUser.phone"
+                            />
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Адрес: </label>
+                            <input type="text" 
+                                class="form-control" 
+                                id="address" 
+                                placeholder="Адрес" 
+                                [(ngModel)]="newUser.address"
+                            />
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Email: </label>
+                            <input type="text" 
+                                class="form-control" 
+                                id="email" 
+                                placeholder="Email" 
+                                [(ngModel)]="newUser.email"
+                            />
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label>Пароль: </label>
+                            <input type="text" 
+                                class="form-control" 
+                                id="password" 
+                                placeholder="password" 
+                                [(ngModel)]="newUser.password"
+                            />
+                        </div>
+                        <div class="modal-footer col-md-12">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Отмена</button>
+                            <button *ngIf="!isEdit" 
+                                type="button" 
+                                class="btn btn-primary" 
+                                (click)="add(newUser)">Сохранить</button>
+                            <button *ngIf="isEdit" 
+                                type="button" 
+                                class="btn btn-primary" 
+                                (click)="update(newUser)">Редактировать</button>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</ng-container>

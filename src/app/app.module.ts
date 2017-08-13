@@ -6,6 +6,11 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app.routing';
 
+// localstorage
+import { LocalStorageModule, LocalStorageService } from 'angular-2-local-storage';
+import { WindowRef } from './services/window.service';
+import { MyLocalStorageService } from './services/local-storage.service';
+
 // primng
 import {
   DropdownModule,
@@ -18,6 +23,7 @@ import { CKEditorModule } from 'ng2-ckeditor';
 // services
 import { HandleService } from './services/handle.service';
 import { NotifyService } from './services/notify.service';
+import { AuthService } from './services/auth.service';
 
 // component
 import { AppComponent } from './app.component';
@@ -56,13 +62,22 @@ import { TopBarComponent } from './components/nav-bars/top-bar/top-bar.component
     BrowserAnimationsModule,
     CKEditorModule,
 
+    LocalStorageModule.withConfig({
+      prefix: 'app-root',
+      storageType: 'localStorage'
+    }),
+
     DropdownModule,
     FileUploadModule,
     MultiSelectModule
   ],
   providers: [
+    LocalStorageService,
+    MyLocalStorageService,
+    WindowRef,
     HandleService,
-    NotifyService
+    NotifyService,
+    AuthService
   ],
   bootstrap: [AppComponent]
 })

@@ -11,22 +11,30 @@ import { Notify } from '../../../models/notify';
 // services
 import { ExelService } from '../../../services/exel.service';
 import { NotifyService } from '../../../services/notify.service';
+import { AuthService } from '../../../services/auth.service';
 
 @Component({
   selector: 'app-import',
   templateUrl: './import.component.html',
   styleUrls: ['./import.component.css'],
-  providers: [ExelService]
+  providers: [ ExelService ]
 })
 export class ImportComponent implements OnInit, OnDestroy {
   private importConnection: any;
+
+  loadContent = false;
+
   constructor(
     private exelService: ExelService,
     private notifyService: NotifyService,
-    private router: Router
+    private router: Router,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
+    if (!this.authService.isCheckAuthRedirectToLogin()) {
+      this.loadContent = true;
+    }
   }
 
   import(file: any) {

@@ -1,3 +1,4 @@
+<ng-container *ngIf="loadContent">
 <app-top-bar></app-top-bar>
 
 <button class="btn btn-primary" data-toggle="modal" data-target="#modal" (click)="clearNewProcut(); changeEditStatus(false);">Добавить</button>
@@ -185,3 +186,4 @@
         </div>
     </div>
 </div>
+</ng-container>

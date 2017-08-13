@@ -11,6 +11,7 @@ import { Notify } from '../../models/notify';
 // services
 import { UsersService } from '../../services/users.service';
 import { NotifyService } from '../../services/notify.service';
+import { AuthService } from '../../services/auth.service';
 
 declare let $: any;
 @Component({
@@ -27,6 +28,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   isEdit = false;
   apiUrl: string = Api_config.rootUrl;
+  loadContent = false;
 
   getAllConnection: any;
   addConnection: any;
@@ -35,11 +37,15 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   constructor(
     private usersService: UsersService,
-    private notifyService: NotifyService
+    private notifyService: NotifyService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
-    this.getAll();
+    if (!this.authService.isCheckAuthRedirectToLogin()) {
+      this.getAll();
+      this.loadContent = true;
+    }
   }
 
   getAll() {

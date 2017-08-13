@@ -11,6 +11,7 @@ import { Notify } from '../../models/notify';
 // services
 import { ProducerService } from '../../services/producer.service';
 import { NotifyService } from '../../services/notify.service';
+import { AuthService } from '../../services/auth.service';
 
 declare let $: any;
 @Component({
@@ -28,6 +29,7 @@ export class ProducerComponent implements OnInit, OnDestroy {
 
   isEdit = false;
   apiUrl: string = Api_config.rootUrl;
+  loadContent = false;
 
   getAllConnection: any;
   addConnection: any;
@@ -36,11 +38,15 @@ export class ProducerComponent implements OnInit, OnDestroy {
 
   constructor(
     private producerService: ProducerService,
-    private notifyService: NotifyService
+    private notifyService: NotifyService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
-    this.getAll();
+    if (!this.authService.isCheckAuthRedirectToProfile()) {
+      this.getAll();
+      this.loadContent = true;
+    }
   }
 
   getAll() {
