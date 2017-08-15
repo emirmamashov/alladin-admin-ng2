@@ -60,6 +60,12 @@ export class ProductService {
       }
     }
 
+    if (product.filters && product.filters.length > 0) {
+      for (let j = 0; j < product.filters.length; j++) {
+        formData.append('filters', product.filters[j]);
+      }
+    }
+
     formData.append('categoryId', product.categoryId || '');
     formData.append('description', product.description || '');
     formData.append('htmlH1', product.htmlH1 || '');
@@ -87,8 +93,15 @@ export class ProductService {
     for (let i = 0; i < files.length; i++) {
       formData.append('file', files[i]);
     }
-    for (let j = 0; j < product.categories.length; j++) {
-      formData.append('categories', product.categories[j]);
+    if (product.categories && product.categories.length > 0) {
+      for (let j = 0; j < product.categories.length; j++) {
+        formData.append('categories', product.categories[j]);
+      }
+    }
+    if (product.filters && product.filters.length > 0) {
+      for (let j = 0; j < product.filters.length; j++) {
+        formData.append('filters', product.filters[j]);
+      }
     }
     if (product && product.images && product.images.length > 0) {
       if (product.images.length === 1) {
