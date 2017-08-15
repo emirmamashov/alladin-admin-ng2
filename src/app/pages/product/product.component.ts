@@ -12,6 +12,7 @@ import { Notify } from '../../models/notify';
 import { Producer } from '../../models/producer';
 import { PromoSticker } from '../../models/promo-sticker';
 import { Photo } from '../../models/photo';
+import { Filter } from '../../models/filter';
 
 // services
 import { ProductService } from '../../services/product.service';
@@ -22,6 +23,7 @@ import { PromoStickerService } from '../../services/promo-sticker.service';
 import { TranslitService } from '../../services/translit.service';
 import { PhotoService } from '../../services/photo.service';
 import { AuthService } from '../../services/auth.service';
+import { FiltersService } from '../../services/filters.service';
 
 declare var $: any;
 declare var CKEDITOR: any;
@@ -38,7 +40,8 @@ declare var CKEDITOR: any;
     ProducerService,
     PromoStickerService,
     TranslitService,
-    PhotoService
+    PhotoService,
+    FiltersService
   ]
 })
 export class ProductComponent implements OnInit, OnDestroy {
@@ -46,11 +49,13 @@ export class ProductComponent implements OnInit, OnDestroy {
   producers = new Array<Producer>();
   categories = new Array<Category>();
   promoStickers = new Array<PromoSticker>();
+  filters = new Array<Filter>();
 
   downloadedPhotos = new Array<Photo>();
   photos = new Array<Photo>();
 
   newProduct = new Product();
+  newFilter = new Filter();
   filesToReadyUpload = [];
 
   isEdit = false;
@@ -65,6 +70,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   producersItem: SelectItem[] = [];
   promoStickersItem: SelectItem[] = [];
   photosSelectItems: SelectItem[] = [];
+  filtersSelectItems: SelectItem[] = [];
 
   // connections
   getAllConnection: any;
@@ -74,8 +80,8 @@ export class ProductComponent implements OnInit, OnDestroy {
   getAllPhotosConnection: any;
   addProductConnection: any;
   removeConnection: any;
+  getAllFiltersConnection: any;
 
-  content: any;
   text: any;
 
   constructor(
@@ -86,9 +92,10 @@ export class ProductComponent implements OnInit, OnDestroy {
     private notifyService: NotifyService,
     private translitService: TranslitService,
     private photoService: PhotoService,
-    private authService: AuthService
+    private authService: AuthService,
+    private filtersService: FiltersService
   ) {
-    this.content = '<p>Hello <strong>World !</strong></p>'
+
   }
 
   ngOnInit() {
@@ -97,12 +104,14 @@ export class ProductComponent implements OnInit, OnDestroy {
       this.categoriesItem.push({ label: 'Выберите категорию', value: '' });
       this.producersItem.push({ label: 'Выберите производителя', value: '' });
       this.promoStickersItem.push({ label: 'Выберите промостикер', value: '' });
+      this.filtersSelectItems.push({ label: 'Выберите фильтер', value: '' });
       this.getAll();
       this.getAll();
       this.getAllCategories();
       this.getAllProducers();
       this.getAllPromoStickers();
       this.getAllPhotos();
+      this.getAllFilters();
       this.loadContent = true;
     }
   }
@@ -188,6 +197,21 @@ export class ProductComponent implements OnInit, OnDestroy {
     );
   }
 
+  getAllFilters() {
+    this.getAllFiltersConnection = this.filtersService.getAll().subscribe(
+      (response: ResponseApi) => {
+        console.log(response);
+        if (response.success) {
+          this.filters = response.data.data.filters || this.filters;
+          this.setCategoriesItem();
+        }
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+
   addToCategories(category: Category) {
     if (category) {
       this.categories.push(category);
@@ -222,7 +246,6 @@ export class ProductComponent implements OnInit, OnDestroy {
       this.producersItem.push({ label: producer.name, value: producer._id });
     }
   }
-
 
   addToPromoStickers(promoSticker: PromoSticker) {
     if (promoSticker) {
@@ -396,7 +419,6 @@ export class ProductComponent implements OnInit, OnDestroy {
       }
     }
   }
-
   remove(_id: string) {
     this.removeConnection = this.productService.remove(_id).subscribe(
       (response: ResponseApi) => {
@@ -474,6 +496,9 @@ ngOnDestroy() {
     }
     if (this.removeConnection && this.removeConnection.unsubscribe) {
       this.removeConnection.unsubscribe();
+    }
+    if (this.getAllFiltersConnection && this.getAllFiltersConnection.unsubscribe) {
+      this.getAllFiltersConnection.unsubscribe();
     }
   }
 
