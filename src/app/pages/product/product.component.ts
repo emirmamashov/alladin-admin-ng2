@@ -121,6 +121,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   getAll() {
     this.getAllConnection = this.productService.getAll().subscribe(
       (response: ResponseApi) => {
+        console.log(response);
         if (response.success) {
           this.products = response.data.data.products;
           this.photos = response.data.data.photos;
@@ -311,7 +312,6 @@ export class ProductComponent implements OnInit, OnDestroy {
       }
     );
   }
-
   addFilter(filter: Filter) {
     console.dir(filter);
 
