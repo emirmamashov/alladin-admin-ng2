@@ -103,6 +103,24 @@ export const Api_config = {
       url: apiUrl + '/users/remove'
     }
   },
+  filters: {
+    getAll: {
+      method: 'GET',
+      url: apiUrl + '/filters'
+    },
+    add: {
+      method: 'POST',
+      url: apiUrl + '/filters/add'
+    },
+    update: {
+      method: 'PUT',
+      url: apiUrl + '/filters/update'
+    },
+    remove: {
+      method: 'DELETE',
+      url: apiUrl + '/filters/remove'
+    }
+  },
   auth: {
     loginAdmin: {
       method: 'POST',
