@@ -20,4 +20,5 @@ export class Product {
   images: any;
   image: string;
   isHot: boolean;
+  filters: Array<string>;
 }

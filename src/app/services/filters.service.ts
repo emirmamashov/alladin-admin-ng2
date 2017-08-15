@@ -26,7 +26,7 @@ export class FiltersService {
   ) { }
 
   getAll(): Observable<any> {
-    const url: string = Api_config.users.getAll.url;
+    const url: string = Api_config.filters.getAll.url;
     const token = this.localStorage.getToken();
     if (!token) {
       return this.handleService.returnError('token is null');
@@ -44,15 +44,30 @@ export class FiltersService {
 
   add(filter: Filter): Observable<any> {
     const url: string = Api_config.filters.add.url;
-    return this.http.post(url, filter)
+    const token = this.localStorage.getToken();
+    if (!token) {
+      return this.handleService.returnError('token is null');
+    }
+    const body = {
+      name: filter.name,
+      token: token
+    }
+    return this.http.post(url, body)
           .map(res => res.json())
           .catch(this.handleService.returnError);
   }
 
   update(filter: Filter): Observable<any> {
     const url: string = Api_config.filters.update.url + '/' + filter._id;
-
-    return this.http.put(url, filter)
+    const token = this.localStorage.getToken();
+    if (!token) {
+      return this.handleService.returnError('token is null');
+    }
+    const body = {
+      name: filter.name,
+      token: token
+    }
+    return this.http.put(url, body)
           .map(res => res.json())
           .catch(this.handleService.returnError);
   }

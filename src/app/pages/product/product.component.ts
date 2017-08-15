@@ -70,7 +70,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   producersItem: SelectItem[] = [];
   promoStickersItem: SelectItem[] = [];
   photosSelectItems: SelectItem[] = [];
-  filtersSelectItems: SelectItem[] = [];
+  filtersItems: SelectItem[] = [];
 
   // connections
   getAllConnection: any;
@@ -81,8 +81,10 @@ export class ProductComponent implements OnInit, OnDestroy {
   addProductConnection: any;
   removeConnection: any;
   getAllFiltersConnection: any;
+  addFilterConnection: any;
 
   text: any;
+  isCreateFilter = false;
 
   constructor(
     private productService: ProductService,
@@ -104,7 +106,7 @@ export class ProductComponent implements OnInit, OnDestroy {
       this.categoriesItem.push({ label: 'Выберите категорию', value: '' });
       this.producersItem.push({ label: 'Выберите производителя', value: '' });
       this.promoStickersItem.push({ label: 'Выберите промостикер', value: '' });
-      this.filtersSelectItems.push({ label: 'Выберите фильтер', value: '' });
+      this.filtersItems.push({ label: 'Выберите фильтер', value: '' });
       this.getAll();
       this.getAll();
       this.getAllCategories();
@@ -169,6 +171,13 @@ export class ProductComponent implements OnInit, OnDestroy {
       this.categoriesItem.push({ label: category.name, value: category._id });
     });
   }
+  setFiltersItem(filters: Array<Filter>) {
+    if (filters && filters.length > 0) {
+      filters.forEach((filter) => {
+        this.filtersItems.push({ label: filter.name, value: filter._id });
+      });
+    }
+  }
 
   setProducersItem() {
     this.producers.map((producer) => {
@@ -198,12 +207,13 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   getAllFilters() {
+    console.log('---------getAllFilters---=----');
     this.getAllFiltersConnection = this.filtersService.getAll().subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (response.success) {
           this.filters = response.data.data.filters || this.filters;
-          this.setCategoriesItem();
+          this.setFiltersItem(this.filters);
         }
       },
       (err) => {
@@ -294,6 +304,44 @@ export class ProductComponent implements OnInit, OnDestroy {
         this.products.push(addedProduct);
 
         $('#modal').modal('toggle');
+      },
+      (err) => {
+        console.log(err);
+        this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
+      }
+    );
+  }
+
+  addFilter(filter: Filter) {
+    console.dir(filter);
+
+    if (!filter || !filter.name) {
+      return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите Наименование');
+    }
+
+    this.addFilterConnection = this.filtersService.add(filter).subscribe(
+      (response: ResponseApi) => {
+        console.log(response);
+        if (!response.success) {
+          let messages = response.message;
+          const validatesMessages = response.message.validates;
+          if (validatesMessages) {
+            messages = 'Проблема валидации';
+            if (validatesMessages.length > 0) {
+              messages = '';
+              validatesMessages.forEach((message) => {
+                messages += message + '<br/>';
+              });
+            }
+          }
+          return this.showMessageForUser(Notify_config.typeMessage.danger, messages);
+        }
+        const newFilter: Filter = response.data.data.user;
+        this.filters.push(newFilter);
+        this.filtersItems.push({ label: newFilter.name, value: newFilter._id });
+
+        this.showMessageForUser(Notify_config.typeMessage.success, 'Добавлено');
+        this.newFilter = new Filter();
       },
       (err) => {
         console.log(err);
@@ -499,6 +547,9 @@ ngOnDestroy() {
     }
     if (this.getAllFiltersConnection && this.getAllFiltersConnection.unsubscribe) {
       this.getAllFiltersConnection.unsubscribe();
+    }
+    if (this.addFilterConnection && this.addFilterConnection.unsubscribe) {
+      this.addFilterConnection.unsubscribe();
     }
   }
 
