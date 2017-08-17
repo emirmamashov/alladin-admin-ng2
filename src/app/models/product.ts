@@ -21,4 +21,5 @@ export class Product {
   image: string;
   isHot: boolean;
   filters: Array<string>;
+  priceTrade: number;
 }

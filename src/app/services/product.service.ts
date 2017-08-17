@@ -80,6 +80,7 @@ export class ProductService {
     formData.append('promoStickerId', product.promoStickerId || '');
     formData.append('seoUrl', product.seoUrl || '');
     formData.append('tegs', product.tegs || '');
+    formData.append('priceTrade', product.priceTrade ? product.priceTrade.toString() : '');
     formData.append('isHot', product.isHot ? '1' : '0');
 
     return this.http.post(url, formData)
@@ -126,6 +127,7 @@ export class ProductService {
     formData.append('seoUrl', product.seoUrl || '');
     formData.append('tegs', product.tegs || '');
     formData.append('_id', product._id || '');
+    formData.append('priceTrade', product.priceTrade ? product.priceTrade.toString() : '');
     formData.append('isHot', product.isHot ? '1' : '0');
 
     return this.http.put(url, formData)
