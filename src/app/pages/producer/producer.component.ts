@@ -43,10 +43,8 @@ export class ProducerComponent implements OnInit, OnDestroy {
   ) { }
 
   ngOnInit() {
-    if (!this.authService.isCheckAuthRedirectToProfile()) {
-      this.getAll();
-      this.loadContent = true;
-    }
+    this.getAll();
+    this.loadContent = true;
   }
 
   getAll() {
