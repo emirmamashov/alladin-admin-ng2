@@ -30,6 +30,7 @@ export class ProducerComponent implements OnInit, OnDestroy {
   isEdit = false;
   apiUrl: string = Api_config.rootUrl;
   loadContent = false;
+  isLoad = false;
 
   getAllConnection: any;
   addConnection: any;
@@ -61,6 +62,7 @@ export class ProducerComponent implements OnInit, OnDestroy {
     );
   }
   add(producer: Producer) {
+    this.showLoader(true);
     console.dir(producer);
 
     const files = new Array<File>();
@@ -86,10 +88,12 @@ export class ProducerComponent implements OnInit, OnDestroy {
         this.newProducer = new Producer();
 
         $('#modal').modal('toggle');
+        this.showLoader(false);
       },
       (err) => {
         console.log(err);
         this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
+        this.showLoader(false);
       }
     );
   }
@@ -127,6 +131,7 @@ export class ProducerComponent implements OnInit, OnDestroy {
   update(producer: Producer) {
     const files = new Array<File>();
     console.log(producer);
+    this.showLoader(true);
     this.filesToReadyUpload.forEach((fileObject) => {
       files.push(fileObject.file);
     });
@@ -149,15 +154,18 @@ export class ProducerComponent implements OnInit, OnDestroy {
         this.showMessageForUser(Notify_config.typeMessage.success, response.message);
         this.clearFilesToReadUpload();
         $('#modal').modal('toggle');
+        this.showLoader(false);
       },
       (err) => {
         console.log(err);
         this.showMessageForUser(Notify_config.typeMessage.warning, 'Что то пошло не так');
+        this.showLoader(false);
       }
     );
   }
 
   remove(_id: string) {
+    this.showLoader(true);
     this.removeConnection = this.producerService.remove(_id).subscribe(
       (response: ResponseApi) => {
         console.log(response);
@@ -167,10 +175,12 @@ export class ProducerComponent implements OnInit, OnDestroy {
         }
         this.removeInListProducers(response.data.data.producer);
         this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+        this.showLoader(false);
       },
       (err) => {
         console.log(err);
         this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
+        this.showLoader(false);
       }
     );
   }
@@ -208,6 +218,10 @@ export class ProducerComponent implements OnInit, OnDestroy {
 
   clearNewProducer() {
     this.newProducer = new Producer();
+  }
+
+  showLoader(status: boolean) {
+    this.isLoad = status;
   }
   ngOnDestroy() {
     if (this.getAllConnection && this.getAllConnection.unsubscribe) {

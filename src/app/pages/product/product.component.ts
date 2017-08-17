@@ -85,6 +85,7 @@ export class ProductComponent implements OnInit, OnDestroy {
 
   text: any;
   isCreateFilter = false;
+  isLoad = false;
 
   constructor(
     private productService: ProductService,
@@ -119,6 +120,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   getAll() {
+    this.showLoader(true);
     this.getAllConnection = this.productService.getAll().subscribe(
       (response: ResponseApi) => {
         console.log(response);
@@ -127,9 +129,11 @@ export class ProductComponent implements OnInit, OnDestroy {
           this.photos = response.data.data.photos;
           this.checkToLimitIsHotProduct(this.products);
         }
+        this.showLoader(false);
       },
       (err) => {
         console.log(err);
+        this.showLoader(false);
       }
     );
   }
@@ -271,6 +275,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   addProduct(product: Product) {
+    this.showLoader(true);
     console.log(product);
     const files = new Array<File>();
     if (this.filesToReadyUpload && this.filesToReadyUpload.length > 0) {
@@ -288,6 +293,7 @@ export class ProductComponent implements OnInit, OnDestroy {
     this.addProductConnection = this.productService.add(files, product).subscribe(
       (response: ResponseApi) => {
         console.log(response);
+        this.showLoader(false);
         if (!response.success) {
           const validates: Array<string> = response.message.validates || [];
           console.log(validates);
@@ -309,6 +315,7 @@ export class ProductComponent implements OnInit, OnDestroy {
       (err) => {
         console.log(err);
         this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
+        this.showLoader(false);
       }
     );
   }
@@ -373,6 +380,7 @@ export class ProductComponent implements OnInit, OnDestroy {
     return product;
   }
   update(product: Product) {
+    this.showLoader(true);
     console.log(product);
     const files = new Array<File>();
     if (this.filesToReadyUpload && this.filesToReadyUpload.length > 0) {
@@ -408,9 +416,11 @@ export class ProductComponent implements OnInit, OnDestroy {
         console.log(productFind);
 
         $('#modal').modal('toggle');
+        this.showLoader(false);
       },
       (err) => {
         console.log(err);
+        this.showLoader(false);
       }
     );
   }
@@ -468,6 +478,7 @@ export class ProductComponent implements OnInit, OnDestroy {
     }
   }
   remove(_id: string) {
+    this.showLoader(true);
     this.removeConnection = this.productService.remove(_id).subscribe(
       (response: ResponseApi) => {
         console.log(response);
@@ -477,9 +488,11 @@ export class ProductComponent implements OnInit, OnDestroy {
         }
         this.removeInListProducts(response.data.data.product);
         this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+        this.showLoader(false);
       },
       (err) => {
         console.log(err);
+        this.showLoader(false);
       }
     );
   }
@@ -524,6 +537,10 @@ removeInProductImages(product: Product, url: string) {
       } else {
         this.isLimitHot = false;
       }
+  }
+
+  showLoader(status: boolean) {
+    this.isLoad = status;
   }
 
 ngOnDestroy() {

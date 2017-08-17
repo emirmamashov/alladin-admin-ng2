@@ -29,6 +29,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   isEdit = false;
   apiUrl: string = Api_config.rootUrl;
   loadContent = false;
+  isLoad = false;
 
   getAllConnection: any;
   addConnection: any;
@@ -49,19 +50,23 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   getAll() {
+    this.showLoader(true);
     this.getAllConnection = this.usersService.getAll().subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (response.success) {
           this.users = response.data.data.users;
         }
+        this.showLoader(false);
       },
       (err) => {
         console.log(err);
+        this.showLoader(false);
       }
     );
   }
   add(user: User) {
+    this.showLoader(true);
     console.dir(user);
 
     if (!user || !user.first_name) {
@@ -71,6 +76,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.addConnection = this.usersService.add(user).subscribe(
       (response: ResponseApi) => {
         console.log(response);
+        this.showLoader(false);
         if (!response.success) {
           let messages = response.message;
           const validatesMessages = response.message.validates;
@@ -96,18 +102,21 @@ export class UsersComponent implements OnInit, OnDestroy {
       (err) => {
         console.log(err);
         this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
+        this.showLoader(false);
       }
     );
   }
 
   update(user: User) {
     console.log(user);
+    this.showLoader(true);
     if (!user || !user.first_name) {
       return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите имя');
     }
 
     this.updateConnection = this.usersService.update(user).subscribe(
       (response: ResponseApi) => {
+        this.showLoader(false);
         console.log(response);
         if (!response.success) {
           let messages = response.message;
@@ -132,13 +141,16 @@ export class UsersComponent implements OnInit, OnDestroy {
       (err) => {
         console.log(err);
         this.showMessageForUser(Notify_config.typeMessage.warning, 'Что то пошло не так');
+        this.showLoader(false);
       }
     );
   }
 
   remove(_id: string) {
+    this.showLoader(true);
     this.removeConnection = this.usersService.remove(_id).subscribe(
       (response: ResponseApi) => {
+        this.showLoader(false);
         console.log(response);
         if (!response.success) {
           this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
@@ -150,6 +162,7 @@ export class UsersComponent implements OnInit, OnDestroy {
       (err) => {
         console.log(err);
         this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
+        this.showLoader(false);
       }
     );
   }
@@ -173,6 +186,10 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   changeEditStatus(status: boolean) {
     this.isEdit = status;
+  }
+
+  showLoader(status: boolean) {
+    this.isLoad = status;
   }
   ngOnDestroy() {
     if (this.getAllConnection && this.getAllConnection.unsubscribe) {
