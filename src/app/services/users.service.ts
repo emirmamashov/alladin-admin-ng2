@@ -43,6 +43,11 @@ export class UsersService {
   }
 
   add(user: User): Observable<any> {
+    const token = this.localStorage.getToken();
+    if (!token) {
+      return this.handleService.returnError('token is null');
+    }
+    user['token'] = token;
     const url: string = Api_config.users.add.url;
     return this.http.post(url, user)
           .map(res => res.json())
@@ -51,6 +56,11 @@ export class UsersService {
 
   update(user: User): Observable<any> {
     const url: string = Api_config.users.update.url + '/' + user._id;
+    const token = this.localStorage.getToken();
+    if (!token) {
+      return this.handleService.returnError('token is null');
+    }
+    user['token'] = token;
 
     return this.http.put(url, user)
           .map(res => res.json())
@@ -58,9 +68,18 @@ export class UsersService {
   }
 
   remove(_id: string): Observable<any> {
+    const token = this.localStorage.getToken();
+    if (!token) {
+      return this.handleService.returnError('token is null');
+    }
     const url: string = Api_config.users.remove.url + '/' + _id;
+    const headers = new Headers({
+      'Content-type': 'json/application',
+      'alladin-access-token': token
+    });
+    const options = new RequestOptions({headers: headers});
 
-    return this.http.delete(url)
+    return this.http.delete(url, options)
         .map(res => res.json())
         .catch(this.handleService.handleError);
   }
