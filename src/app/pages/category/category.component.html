@@ -29,10 +29,14 @@
     <tbody>
         <!--<tr *ngFor="let category of categories; let i=index" data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">-->
     
-        <tr *ngFor="let category of viewCaregories; let i=index">
+        <tr *ngFor="let category of viewCaregories; let i=index;">
             <td data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">{{ i+1 }}</td>
-            <td>{{ category._id }}</td>
-            <td data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">{{ category.name }}</td>
+            <td>
+                <input value="{{ category._id }}" type="text"/>
+            </td>
+            <td data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">
+                {{ category.name }}
+            </td>
             <td data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">
               <ng-container *ngIf="category.images">
                 <span *ngFor="let url of category.images; let i = index">
