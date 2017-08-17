@@ -17,7 +17,7 @@
             <!--<tr *ngFor="let category of categories; let i=index" data-toggle="modal" data-target="#modal" (click)="newProducer = product; changeEditStatus(true)">-->
             <tr *ngFor="let producer of producers; let i=index">
                 <td data-toggle="modal" data-target="#modal" (click)="newProducer = producer; changeEditStatus(true)">{{ i+1 }}</td>
-                <td data-toggle="modal" data-target="#modal" (click)="newProducer = producer; changeEditStatus(true)">{{ producer._id }}</td>
+                <td>{{ producer._id }}</td>
                 <td data-toggle="modal" data-target="#modal" (click)="newProducer = producer; changeEditStatus(true)">{{ producer.name }}</td>
                 <td data-toggle="modal" data-target="#modal" (click)="newProducer = producer; changeEditStatus(true)">
                 <ng-container *ngIf="producer.images">
