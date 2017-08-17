@@ -7,7 +7,7 @@
         <tr>
             <th>#</th>
             <th>Название</th>
-            <th>Описание</th>
+            <!--<th>Описание</th>-->
             <th>Телефон</th>
             <th>Цена</th>
             <th>Цена акции</th>
@@ -23,9 +23,9 @@
         <tr *ngFor="let product of products; let i=index">
             <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ i + 1 }}</td>
             <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.name }}</td>
-            <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)"> 
+            <!--<td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)"> 
                 <div [innerHTML] = "product.description"></div>
-            </td>
+            </td>-->
             <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.phone }}</td>
             <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.price }}</td>
             <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.priceStock }}</td>
