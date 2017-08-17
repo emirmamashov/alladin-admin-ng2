@@ -47,10 +47,15 @@ export class ImportComponent implements OnInit, OnDestroy {
       (response: ResponseApi) => {
         console.log(response);
         if (response.success) {
+          let errorMsg = 'нет';
           const import_failed_products = response.data.data.import_failed_products || [];
+          import_failed_products.forEach((importProduct) => {
+            errorMsg += '\n' + importProduct.error;
+          });
           notify.type = Notify_config.typeMessage.success;
           notify.text = 'Операция зынк өттү!\n Импортировано: ' + response.data.data.import_products_count + ';' +
-          '\nПровалено: ' + response.data.data.import_failed_products.length;
+          '\nПровалено: ' + response.data.data.import_failed_products.length +
+          '\nОшибки: ' + errorMsg;
           notify.delay = 10000;
           this.notifyService.addNotify(notify);
           this.router.navigate(['/products']);
