@@ -56,6 +56,7 @@ export class BannerService {
     formData.append('name', banner.name || '');
     formData.append('buttonLink', banner.buttonLink || '');
     formData.append('buttonName', banner.buttonName || '');
+    formData.append('isShowInMainPage', banner.isShowInMainPage ? '1' : '0');
 
     // formData.append('token', String(token));
 
@@ -64,10 +65,39 @@ export class BannerService {
           .catch(this.handleService.returnError);
   }
 
-  update(banner: Banner): Observable<any> {
+  update(files: File[], banner: Banner): Observable<any> {
     const url: string = Api_config.banner.update.url + '/' + banner._id;
+    const formData = new FormData();
+    if (files && files.length > 0) {
+      files.forEach((file) => {
+        formData.append('file', file);
+      });
+    }
+    formData.append('name', banner.name || '');
+    formData.append('category', banner.category || '');
+    formData.append('buttonLink', banner.buttonLink || '');
+    formData.append('buttonName', banner.buttonName || '');
+    formData.append('isShowInMainPage', banner.isShowInMainPage ? '1' : '0');
 
-    return this.http.put(url, banner)
+    if (banner && banner.images && banner.images.length > 0) {
+      if (banner.images.length === 1) {
+        formData.append('images', '');
+      }
+      banner.images.forEach((image) => {
+        formData.append('images', image);
+      });
+    }
+    formData.append('image', banner.image || '');
+
+    return this.http.put(url, formData)
+          .map(res => res.json())
+          .catch(this.handleService.returnError);
+  }
+
+  remove(_id: string): Observable<any> {
+    const url: string = Api_config.banner.remove.url + '/' + _id;
+
+    return this.http.delete(url)
         .map(res => res.json())
         .catch(this.handleService.handleError);
   }

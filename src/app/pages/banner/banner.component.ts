@@ -40,6 +40,7 @@ export class BannerComponent implements OnInit, OnDestroy {
   addConnection: any;
   updateConnection: any;
   getAllCategroiesConnection: any;
+  removeConnection: any;
 
   constructor(
     private bannerService: BannerService,
@@ -122,35 +123,74 @@ export class BannerComponent implements OnInit, OnDestroy {
   }
 
   update(banner: Banner) {
+    const files = new Array<File>();
+    console.log(banner);
+    if (this.filesToReadyUpload && this.filesToReadyUpload.length > 0) {
+      this.filesToReadyUpload.forEach((fileObject) => {
+        files.push(fileObject.file);
+      });
+    }
 
-    const notify = new Notify();
-    notify.type = Notify_config.typeMessage.danger;
-    notify.text = 'Что то пошло не так!';
+    if (!banner || !banner.name) {
+      return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите наименование');
+    }
 
-    this.updateConnection = this.bannerService.update(banner).subscribe(
+    this.updateConnection = this.bannerService.update(files, banner).subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (!response.success) {
-          notify.text = response.message;
-          return this.notifyService.addNotify(notify);
+          return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
         }
-
-        notify.type = Notify_config.typeMessage.success;
-        notify.text = 'Обнавлено!';
-        this.notifyService.addNotify(notify);
+        const updateBanner: Banner = response.data.data.banner;
+        if (updateBanner) {
+          banner.images = updateBanner.images;
+        }
         this.newBanner = new Banner();
+        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+        this.clearFilesToReadUpload();
 
         $('#modal').modal('toggle');
       },
       (err) => {
         console.log(err);
-        this.notifyService.addNotify(notify);
+        this.showMessageForUser(Notify_config.typeMessage.warning, 'Что то пошло не так');
       }
     );
   }
 
+  remove(_id: string) {
+    this.removeConnection = this.bannerService.remove(_id).subscribe(
+      (response: ResponseApi) => {
+        console.log(response);
+        if (!response.success) {
+          this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+          return;
+        }
+        this.removeInListBanners(response.data.data.banner);
+        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+      },
+      (err) => {
+        console.log(err);
+      }
+    );
+  }
+
+  removeInListBanners(banner: Banner) {
+    if (banner && banner._id) {
+      this.banners = this.banners.filter(x => x._id !== banner._id);
+    }
+  }
+
+  clearNewCategory() {
+    this.newBanner = new Banner();
+  }
+
   changeEditStatus(status: boolean) {
     this.isEdit = status;
+  }
+
+  clearFilesToReadUpload() {
+    this.filesToReadyUpload = [];
   }
 
   addToListReadyupload(fileInput: any) {
@@ -191,6 +231,13 @@ export class BannerComponent implements OnInit, OnDestroy {
     this.newBanner = new Banner();
   }
 
+  showMessageForUser(typeMessage: string, text: string) {
+    const notify = new Notify();
+    notify.type = typeMessage;
+    notify.text = text;
+    this.notifyService.addNotify(notify);
+  }
+
   ngOnDestroy() {
     if (this.getAllConnection && this.getAllConnection.unsubscribe) {
       this.getAllConnection.unsubscribe();
@@ -203,6 +250,9 @@ export class BannerComponent implements OnInit, OnDestroy {
     }
     if (this.getAllCategroiesConnection && this.getAllCategroiesConnection.unsubscribe) {
       this.getAllCategroiesConnection.unsubscribe();
+    }
+    if (this.removeConnection && this.removeConnection.unsubscribe) {
+      this.removeConnection.unsubscribe();
     }
   }
 

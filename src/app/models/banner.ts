@@ -6,4 +6,5 @@ export class Banner {
     category: any;
     image: string;
     images: Array<string>;
+    isShowInMainPage: boolean;
 }
