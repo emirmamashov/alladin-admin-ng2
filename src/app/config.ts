@@ -107,6 +107,24 @@ export const Api_config = {
       url: apiUrl + '/users/remove'
     }
   },
+  blogs: {
+    getAll: {
+      method: 'GET',
+      url: apiUrl + '/blogs'
+    },
+    add: {
+      method: 'POST',
+      url: apiUrl + '/blogs/add'
+    },
+    update: {
+      method: 'PUT',
+      url: apiUrl + '/blogs/update'
+    },
+    remove: {
+      method: 'DELETE',
+      url: apiUrl + '/blogs/remove'
+    }
+  },
   filters: {
     getAll: {
       method: 'GET',

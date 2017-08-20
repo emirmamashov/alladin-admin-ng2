@@ -38,6 +38,7 @@ import { BannerComponent } from './pages/banner/banner.component';
 import { UsersComponent } from './pages/users/users.component';
 import { LoginComponent } from './pages/account/login/login.component';
 import { TopBarComponent } from './components/nav-bars/top-bar/top-bar.component';
+import { BlogsComponent } from './pages/blogs/blogs.component';
 
 @NgModule({
   declarations: [
@@ -52,7 +53,8 @@ import { TopBarComponent } from './components/nav-bars/top-bar/top-bar.component
     BannerComponent,
     UsersComponent,
     LoginComponent,
-    TopBarComponent
+    TopBarComponent,
+    BlogsComponent
   ],
   imports: [
     BrowserModule,

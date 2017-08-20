@@ -10,6 +10,7 @@ import { ImportComponent } from './pages/product/import/import.component';
 import { BannerComponent } from './pages/banner/banner.component';
 import { UsersComponent } from './pages/users/users.component';
 import { LoginComponent } from './pages/account/login/login.component';
+import { BlogsComponent } from './pages/blogs/blogs.component';
 
 const APP_ROUTES: Routes = [
   {
@@ -47,6 +48,10 @@ const APP_ROUTES: Routes = [
   {
     path: 'login',
     component: LoginComponent
+  },
+  {
+    path: 'blogs',
+    component: BlogsComponent
   },
   {
     path: '**',
