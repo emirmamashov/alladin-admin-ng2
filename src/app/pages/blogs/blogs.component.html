@@ -11,7 +11,7 @@
               <th>#</th>
               <th>Id</th>
               <th>Название</th>
-              <!--<th>Текст</th>-->
+              <th>Просмотры</th>
               <th>Действия</th>
           </tr>
       </thead>
@@ -21,7 +21,7 @@
               <td data-toggle="modal" data-target="#modal" (click)="newBlog = blog; changeEditStatus(true)">{{ i+1 }}</td>
               <td data-toggle="modal" data-target="#modal" (click)="newBlog = blog; changeEditStatus(true)">{{ blog._id }}</td>
               <td data-toggle="modal" data-target="#modal" (click)="newBlog = blog; changeEditStatus(true)">{{ blog.name }}</td>
-              <!--<td data-toggle="modal" data-target="#modal" (click)="newBlog = blog; changeEditStatus(true)">{{ blog.text }}</td>-->
+              <td data-toggle="modal" data-target="#modal" (click)="newBlog = blog; changeEditStatus(true)">{{ blog.countViewers }}</td>
               <td>
                   <a (click)="remove(blog._id)">
                       <i class="fa fa-trash-o" aria-hidden="true" style="cursor: pointer;"></i>
@@ -49,6 +49,13 @@
                               [(ngModel)]="newBlog.name"
                           />
                       </div>
+                      <!--<div class="form-group col-md-6">
+                        <label>Вывести на главной странице: </label>
+                        <input type="checkbox" 
+                            class="form-control"
+                            [(ngModel)]="newBlog.isShowInMainPage"
+                        />
+                    </div>-->
                       <div class="form-group col-md-12">
                         <label>Описание товара: </label>
                          <ckeditor [(ngModel)]="newBlog.text" debounce="500">

@@ -9,4 +9,6 @@ export class Blog {
     seoUrl: string;
     created_at: string;
     update_at: string;
+    countViewers: number;
+    isShowInMainPage: boolean;
 }

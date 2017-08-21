@@ -218,6 +218,7 @@ export class ProducerComponent implements OnInit, OnDestroy {
 
   clearNewProducer() {
     this.newProducer = new Producer();
+    this.clearFilesToReadUpload();
   }
 
   showLoader(status: boolean) {
