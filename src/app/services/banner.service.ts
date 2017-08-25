@@ -57,6 +57,8 @@ export class BannerService {
     formData.append('buttonLink', banner.buttonLink || '');
     formData.append('buttonName', banner.buttonName || '');
     formData.append('isShowInMainPage', banner.isShowInMainPage ? '1' : '0');
+    formData.append('showInMainPageLeft', banner.showInMainPageLeft ? '1' : '0');
+    formData.append('showInMainPageRight', banner.showInMainPageRight ? '1' : '0');
 
     // formData.append('token', String(token));
 
@@ -78,6 +80,8 @@ export class BannerService {
     formData.append('buttonLink', banner.buttonLink || '');
     formData.append('buttonName', banner.buttonName || '');
     formData.append('isShowInMainPage', banner.isShowInMainPage ? '1' : '0');
+    formData.append('showInMainPageLeft', banner.showInMainPageLeft ? '1' : '0');
+    formData.append('showInMainPageRight', banner.showInMainPageRight ? '1' : '0');
 
     if (banner && banner.images && banner.images.length > 0) {
       if (banner.images.length === 1) {

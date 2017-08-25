@@ -32,6 +32,8 @@ export class BannerComponent implements OnInit, OnDestroy {
   filesToReadyUpload = new Array<any>();
 
   categoriesSelectItems: SelectItem[] = [];
+  optionsShowInMainPageLeft = true;
+  oprtionsShowInMainPageRight = true;
 
   isEdit = false;
   apiUrl: string = Api_config.rootUrl;
@@ -60,12 +62,17 @@ export class BannerComponent implements OnInit, OnDestroy {
         console.log(response);
         if (response.success) {
           this.banners = response.data.data.banners;
+          this.checkOptionsLeftRigthShowBanners(this.banners);
         }
       },
       (err) => {
         console.log(err);
       }
     );
+  }
+  checkOptionsLeftRigthShowBanners(banners: Array<Banner>) {
+    this.optionsShowInMainPageLeft = banners.filter(x => x.showInMainPageLeft)[0] ? false : true;
+    this.oprtionsShowInMainPageRight = banners.filter(x => x.showInMainPageRight)[0] ? false : true;
   }
 
   getAllCategroies() {
@@ -114,6 +121,7 @@ export class BannerComponent implements OnInit, OnDestroy {
         this.newBanner = new Banner();
 
         $('#modal').modal('toggle');
+        this.checkOptionsLeftRigthShowBanners(this.banners);
       },
       (err) => {
         console.log(err);
@@ -150,6 +158,7 @@ export class BannerComponent implements OnInit, OnDestroy {
         this.clearFilesToReadUpload();
 
         $('#modal').modal('toggle');
+        this.checkOptionsLeftRigthShowBanners(this.banners);
       },
       (err) => {
         console.log(err);

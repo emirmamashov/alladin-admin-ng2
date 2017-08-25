@@ -7,4 +7,6 @@ export class Banner {
     image: string;
     images: Array<string>;
     isShowInMainPage: boolean;
+    showInMainPageLeft: boolean;
+    showInMainPageRight: boolean;
 }

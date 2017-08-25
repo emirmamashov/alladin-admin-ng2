@@ -13,6 +13,7 @@
             <th>Кнопка</th>
             <th>Показывать в главной странице</th>
             <th>Изображение</th>
+            <th>Показывается в левой/правой части</th>
             <th>Действия</th>
         </tr>
     </thead>
@@ -42,6 +43,10 @@
                     <img width="80" height="80" src="{{ apiUrl }}/{{ url }}"/>
                 </span>
               </ng-container>
+            </td>
+            <td data-toggle="modal" data-target="#modal" 
+            (click)="newBanner = banner; filesToReadyUpload=[]; changeEditStatus(true)">
+                {{ banner.showInMainPageLeft ? 'левой' : ''}}/{{banner.showInMainPageRight ? 'правой' : ''}} 
             </td>
             <td>
                 <a (click)="remove(banner._id)">
@@ -109,6 +114,24 @@
                             class="form-control" 
                             [(ngModel)]="newBanner.isShowInMainPage" 
                             [value]="newBanner.isShowInMainPage"
+                        />
+                    </div>
+
+                    <div class="form-group col-md-6" *ngIf="optionsShowInMainPageLeft || newBanner.showInMainPageRight || newBanner.showInMainPageLeft">
+                        <label>Показывать на главной странице - левой части: </label>
+                        <input type="checkbox" 
+                            class="form-control" 
+                            [(ngModel)]="newBanner.showInMainPageLeft" 
+                            [value]="newBanner.showInMainPageLeft"
+                        />
+                    </div>
+
+                    <div class="form-group col-md-6" *ngIf="oprtionsShowInMainPageRight || newBanner.showInMainPageRight || newBanner.showInMainPageLeft">
+                        <label>Показывать на главной странице - правой части: </label>
+                        <input type="checkbox" 
+                            class="form-control" 
+                            [(ngModel)]="newBanner.showInMainPageRight" 
+                            [value]="newBanner.showInMainPageRight"
                         />
                     </div>
 
