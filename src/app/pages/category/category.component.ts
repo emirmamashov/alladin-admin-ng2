@@ -72,7 +72,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
         if (response.success) {
           this.categories = response.data.data.categories;
           this.viewCaregories = this.categories;
-          this.setCategoriesItem(this.categories);
+          this.setCategoriesItem(response.data.data.categories);
           this.checkToLimitCategoriesViewInMenu(this.categories);
           this.setParentCategoriesModel();
           this.checkOptionsLeftRigthShowCategories(this.categories);
@@ -97,30 +97,47 @@ export class CategoryComponent implements OnInit, OnDestroy {
       return;
     }
     categories.forEach((category) => {
-      const firstChildrenCategory = this.knowedChildrenCategory(category);
+      const firstChildrenCategories = this.knowedChildrenCategories([category]);
 
-      const secondChildrenCategory = this.knowedChildrenCategory(firstChildrenCategory);
+      const secondChildrenCategories = this.knowedChildrenCategories(firstChildrenCategories);
 
-      const threeChildrenCategory = this.knowedChildrenCategory(secondChildrenCategory);
+      const threeChildrenCategories = this.knowedChildrenCategories(secondChildrenCategories);
 
       this.categoriesItem.push({ label: category.name, value: category._id });
-      if (firstChildrenCategory) {
-        this.categoriesItem.push({ label: '-' + firstChildrenCategory.name, value: firstChildrenCategory._id });
-        if (secondChildrenCategory) {
-          this.categoriesItem.push({ label: '--' + secondChildrenCategory.name, value: category._id });
-          if (threeChildrenCategory) {
-            this.categoriesItem.push({ label: '---' + threeChildrenCategory.name, value: category._id });
+
+      if (firstChildrenCategories && firstChildrenCategories.length > 0) {
+        firstChildrenCategories.forEach((firstCategory) => {
+          this.categoriesItem.push({ label: '-' + firstCategory.name, value: firstCategory._id });
+        });
+
+        if (secondChildrenCategories && secondChildrenCategories.length > 0) {
+          secondChildrenCategories.forEach((secondCategory) => {
+            this.categoriesItem.push({ label: '-' + secondCategory.name, value: secondCategory._id });
+          });
+          if (threeChildrenCategories && threeChildrenCategories.length > 0) {
+            threeChildrenCategories.forEach((threeCategory) => {
+              this.categoriesItem.push({ label: '-' + threeCategory.name, value: threeCategory._id });
+            });
           }
         }
       }
     });
   }
 
-  knowedChildrenCategory(category: Category) {
-    if (!category || !category._id) {
-      return;
+  knowedChildrenCategories(categories: Array<Category>) {
+    if (!categories || categories.length === 0) {
+      return [];
     }
-    return this.categories.filter(x => x.parentCategory === category._id)[0];
+    const resultCategories = new Array<Category>();
+    categories.forEach((category) => {
+      const findCategories = this.categories.filter(x => x.parentCategory === category._id);
+      if (findCategories && findCategories.length > 0) {
+        findCategories.forEach((findCategory) => {
+          resultCategories.push(findCategory);
+        });
+      }
+    });
+    return resultCategories;
   }
 
   add(category: Category) {
