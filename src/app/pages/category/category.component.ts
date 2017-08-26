@@ -37,6 +37,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   loadContent = false;
   optionsShowInMainPageLeft = true;
   oprtionsShowInMainPageRight = true;
+  isLoad = false;
 
   getAllConnection: any;
   addConnection: any;
@@ -59,10 +60,15 @@ export class CategoryComponent implements OnInit, OnDestroy {
     }
   }
 
+  showLoader(status: boolean) {
+    this.isLoad = status;
+  }
   getAll() {
+    this.showLoader(true);
     this.getAllConnection = this.categoryService.getAll().subscribe(
       (response: ResponseApi) => {
         console.log(response);
+        this.showLoader(false);
         if (response.success) {
           this.categories = response.data.data.categories;
           this.viewCaregories = this.categories;
@@ -73,6 +79,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
         }
       },
       (err) => {
+        this.showLoader(false);
         console.log(err);
       }
     );
@@ -117,6 +124,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
 
   add(category: Category) {
+    this.showLoader(true);
     const files = new Array<File>();
     if (this.filesToReadyUpload && this.filesToReadyUpload.length > 0) {
         this.filesToReadyUpload.forEach((fileObject) => {
@@ -130,6 +138,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
     this.addConnection = this.categoryService.add(files, category).subscribe(
       (response: ResponseApi) => {
         console.log(response);
+        this.showLoader(false);
         if (!response.success) {
           return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
         }
@@ -148,6 +157,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
         this.checkOptionsLeftRigthShowCategories(this.categories);
       },
       (err) => {
+        this.showLoader(false);
         console.log(err);
         this.showMessageForUser(Notify_config.typeMessage.danger, 'Что пошло не так!');
       }
@@ -155,6 +165,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
 
   update(category: Category) {
+    this.showLoader(true);
     const files = new Array<File>();
     console.log(category);
     if (this.filesToReadyUpload && this.filesToReadyUpload.length > 0) {
@@ -169,6 +180,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
     this.updateConnection = this.categoryService.update(files, category).subscribe(
       (response: ResponseApi) => {
+        this.showLoader(false);
         console.log(response);
         if (!response.success) {
           return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
@@ -189,6 +201,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
         this.checkOptionsLeftRigthShowCategories(this.categories);
       },
       (err) => {
+        this.showLoader(false);
         console.log(err);
         this.showMessageForUser(Notify_config.typeMessage.warning, 'Что то пошло не так');
       }
@@ -257,8 +270,10 @@ export class CategoryComponent implements OnInit, OnDestroy {
     this.oprtionsShowInMainPageRight = categories.filter(x => x.showInMainPageRight).length >= 4 ? false : true;
   }
   remove(_id: string) {
+    this.showLoader(true);
     this.removeConnection = this.categoryService.remove(_id).subscribe(
       (response: ResponseApi) => {
+        this.showLoader(false);
         console.log(response);
         if (!response.success) {
           this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
@@ -270,6 +285,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
         this.setCategoriesItem(this.categories);
       },
       (err) => {
+        this.showLoader(false);
         console.log(err);
       }
     );
