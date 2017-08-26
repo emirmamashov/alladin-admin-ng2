@@ -10,4 +10,6 @@ export class Category {
   images: any;
   viewInMenu: boolean;
   viewInLikeBlock: boolean;
+  showInMainPageLeft: boolean;
+  showInMainPageRight: boolean;
 }

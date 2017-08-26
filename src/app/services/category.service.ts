@@ -48,6 +48,8 @@ export class CategoryService {
     formData.append('author', category.author || '');
     formData.append('viewInMenu', category.viewInMenu ? '1' : '0');
     formData.append('viewInLikeBlock', category.viewInLikeBlock ? '1' : '0');
+    formData.append('showInMainPageLeft', category.showInMainPageLeft ? '1' : '0');
+    formData.append('showInMainPageRight', category.showInMainPageRight ? '1' : '0');
 
     return this.http.post(url, formData)
           .map(res => res.json())
@@ -69,6 +71,8 @@ export class CategoryService {
     formData.append('author', category.author || '');
     formData.append('viewInMenu', category.viewInMenu ? '1' : '0');
     formData.append('viewInLikeBlock', category.viewInLikeBlock ? '1' : '0');
+    formData.append('showInMainPageLeft', category.showInMainPageLeft ? '1' : '0');
+    formData.append('showInMainPageRight', category.showInMainPageRight ? '1' : '0');
 
     if (category && category.images && category.images.length > 0) {
       if (category.images.length === 1) {

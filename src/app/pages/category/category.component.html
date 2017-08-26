@@ -24,6 +24,7 @@
             <th>Описание</th>
             <th>Показывать в меню</th>
             <th>Показывается в "Вам понравиться"</th>
+            <th>Показывается в левой/правой части</th>
             <th>Действия</th>
         </tr>
     </thead>
@@ -49,7 +50,10 @@
             <td data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">{{ category.description }}</td>
             <td data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">{{ category.viewInMenu ? 'да' : 'нет' }}</td>
             <td data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">{{ category.viewInLikeBlock ? 'да' : 'нет' }}</td>
-            <td data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">{{ category.category }}</td>
+            <!--<td data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">{{ category.category }}</td>-->
+            <td data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">
+                {{ category.showInMainPageLeft ? 'левой' : ''}}/{{category.showInMainPageRight ? 'правой' : ''}} 
+            </td>
             <td> 
                 <a (click)="remove(category._id)">
                     <i class="fa fa-trash-o" aria-hidden="true" style="cursor: pointer;"></i>
@@ -125,6 +129,24 @@
                             (change)="doLimitCategoriesViewInMenu()"
                         />
                     </div>
+
+                    <div class="form-group col-md-6" *ngIf="optionsShowInMainPageLeft || newCategory.showInMainPageRight || newCategory.showInMainPageLeft">
+                            <label>Показывать на главной странице - левой части: </label>
+                            <input type="checkbox" 
+                                class="form-control" 
+                                [(ngModel)]="newCategory.showInMainPageLeft" 
+                                [value]="newCategory.showInMainPageLeft"
+                            />
+                        </div>
+    
+                        <div class="form-group col-md-6" *ngIf="oprtionsShowInMainPageRight || newCategory.showInMainPageRight || newCategory.showInMainPageLeft">
+                            <label>Показывать на главной странице - правой части: </label>
+                            <input type="checkbox" 
+                                class="form-control" 
+                                [(ngModel)]="newCategory.showInMainPageRight" 
+                                [value]="newCategory.showInMainPageRight"
+                            />
+                        </div>
 
                     <div class="form-group col-md-6">
                         <label><i class="fa fa-picture-o" aria-hidden="true"></i> Выберите изображение</label>

@@ -35,6 +35,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
   isLimitCategoriesViewInMenu = false;
   apiUrl: string = Api_config.rootUrl;
   loadContent = false;
+  optionsShowInMainPageLeft = true;
+  oprtionsShowInMainPageRight = true;
 
   getAllConnection: any;
   addConnection: any;
@@ -67,6 +69,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
           this.setCategoriesItem(this.categories);
           this.checkToLimitCategoriesViewInMenu(this.categories);
           this.setParentCategoriesModel();
+          this.checkOptionsLeftRigthShowCategories(this.categories);
         }
       },
       (err) => {
@@ -142,6 +145,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
         this.setCategoriesItem(this.categories);
 
         $('#modal').modal('toggle');
+        this.checkOptionsLeftRigthShowCategories(this.categories);
       },
       (err) => {
         console.log(err);
@@ -181,6 +185,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
         this.setCategoriesItem(this.categories);
         $('#modal').modal('toggle');
+
+        this.checkOptionsLeftRigthShowCategories(this.categories);
       },
       (err) => {
         console.log(err);
@@ -246,7 +252,10 @@ export class CategoryComponent implements OnInit, OnDestroy {
   removeInListReadyUpload(fileName: string) {
     this.filesToReadyUpload = this.filesToReadyUpload.filter(x => x.name !== fileName);
   }
-
+  checkOptionsLeftRigthShowCategories(categories: Array<Category>) {
+    this.optionsShowInMainPageLeft = categories.filter(x => x.showInMainPageLeft).length >= 4 ? false : true;
+    this.oprtionsShowInMainPageRight = categories.filter(x => x.showInMainPageRight).length >= 4 ? false : true;
+  }
   remove(_id: string) {
     this.removeConnection = this.categoryService.remove(_id).subscribe(
       (response: ResponseApi) => {
