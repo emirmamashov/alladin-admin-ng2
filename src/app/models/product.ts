@@ -22,4 +22,5 @@ export class Product {
   isHot: boolean;
   filters: Array<string>;
   priceTrade: number;
+  comments: string;
 }

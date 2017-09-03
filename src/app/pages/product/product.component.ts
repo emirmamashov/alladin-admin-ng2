@@ -308,7 +308,7 @@ export class ProductComponent implements OnInit, OnDestroy {
         }
 
         const addedProduct: Product = response.data.data.product;
-        this.products.push(addedProduct);
+        this.products.unshift(addedProduct);
 
         $('#modal').modal('toggle');
       },
