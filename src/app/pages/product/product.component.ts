@@ -310,6 +310,8 @@ export class ProductComponent implements OnInit, OnDestroy {
         const addedProduct: Product = response.data.data.product;
         this.products.unshift(addedProduct);
 
+        this.clearFilesToReadyUpload();
+
         $('#modal').modal('toggle');
       },
       (err) => {
@@ -318,6 +320,10 @@ export class ProductComponent implements OnInit, OnDestroy {
         this.showLoader(false);
       }
     );
+  }
+
+  clearFilesToReadyUpload() {
+    this.filesToReadyUpload = [];
   }
   addFilter(filter: Filter) {
     console.dir(filter);
@@ -417,6 +423,7 @@ export class ProductComponent implements OnInit, OnDestroy {
 
         $('#modal').modal('toggle');
         this.showLoader(false);
+        this.clearFilesToReadyUpload();
       },
       (err) => {
         console.log(err);
