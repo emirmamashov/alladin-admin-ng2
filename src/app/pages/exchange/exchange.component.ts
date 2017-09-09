@@ -1,5 +1,6 @@
 // core
 import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Router } from '@angular/router';
 
 // config
 import { Notify_config } from '../../config';
@@ -13,6 +14,7 @@ import { Notify } from '../../models/notify';
 import { ExchangeService } from '../../services/exchange.service';
 import { UnsubscribeService } from '../../services/unsubscribe.service';
 import { NotifyService } from '../../services/notify.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-exchange',
@@ -23,19 +25,42 @@ import { NotifyService } from '../../services/notify.service';
 export class ExchangeComponent implements OnInit, OnDestroy {
   exchange = new Exchange();
   isLoad = false;
+  loadContent = false;
 
   subscribes = new Array<any>();
 
   constructor(
     private exchangeService: ExchangeService,
     private unsubscribeService: UnsubscribeService,
-    private notifyService: NotifyService
+    private notifyService: NotifyService,
+    private authService: AuthService,
+    private router: Router
   ) {
 
   }
 
   ngOnInit() {
-    this.get();
+    this.checkAuth();
+  }
+
+  checkAuth() {
+    if (!this.authService.isCheckAuthRedirectToLogin()) {
+      this.authService.checkAuth().subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (!response.success) {
+            this.authService.logout();
+          }
+
+          this.get();
+          this.loadContent = true;
+        },
+        (err: any) => {
+          console.log(err);
+          this.authService.logout();
+        }
+      );
+    }
   }
 
   get() {

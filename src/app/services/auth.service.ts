@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import { Http } from '@angular/http';
+import { Http, RequestOptions, Headers } from '@angular/http';
 
 // rxjs
 import { Observable } from 'rxjs/Observable';
@@ -46,11 +46,26 @@ export class AuthService {
 
     if (!token) { // if (!user || !user._id || !token) {
       console.log('Вы не авторизованы');
-      this.router.navigate(['/login']);
+      this.logout();
       return true;
     }
     console.log('авторизован');
     return false;
+  }
+
+  checkAuth(): Observable<any> {
+    const url: string = Api_config.auth.checkAuth.url;
+    const token = this.localStorage.getToken();
+
+    const headers = new Headers({
+      'Content-type': 'json/application',
+      'alladin-access-token': token
+    });
+    const options = new RequestOptions({headers: headers});
+
+    return this.http.get(url, options)
+            .map(res => res.json())
+            .catch(this.handleService.returnError);
   }
 
   isCheckAuthRedirectToProfile(): Boolean { // проверка что пользователь авторизован

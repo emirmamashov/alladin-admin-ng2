@@ -147,6 +147,10 @@ export const Api_config = {
     loginAdmin: {
       method: 'POST',
       url: apiUrl + '/auth/login/admin'
+    },
+    checkAuth: {
+      method: 'GET',
+      url: apiUrl + '/auth/check-auth'
     }
   },
   promoSticker: {
