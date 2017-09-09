@@ -8,8 +8,11 @@ import { AppRoutingModule } from './app.routing';
 
 // localstorage
 import { LocalStorageModule, LocalStorageService } from 'angular-2-local-storage';
+
+// services
 import { WindowRef } from './services/window.service';
 import { MyLocalStorageService } from './services/local-storage.service';
+import { UnsubscribeService } from './services/unsubscribe.service';
 
 // primng
 import {
@@ -39,6 +42,7 @@ import { UsersComponent } from './pages/users/users.component';
 import { LoginComponent } from './pages/account/login/login.component';
 import { TopBarComponent } from './components/nav-bars/top-bar/top-bar.component';
 import { BlogsComponent } from './pages/blogs/blogs.component';
+import { ExchangeComponent } from './pages/exchange/exchange.component';
 
 @NgModule({
   declarations: [
@@ -54,7 +58,8 @@ import { BlogsComponent } from './pages/blogs/blogs.component';
     UsersComponent,
     LoginComponent,
     TopBarComponent,
-    BlogsComponent
+    BlogsComponent,
+    ExchangeComponent
   ],
   imports: [
     BrowserModule,
@@ -79,7 +84,8 @@ import { BlogsComponent } from './pages/blogs/blogs.component';
     WindowRef,
     HandleService,
     NotifyService,
-    AuthService
+    AuthService,
+    UnsubscribeService
   ],
   bootstrap: [AppComponent]
 })

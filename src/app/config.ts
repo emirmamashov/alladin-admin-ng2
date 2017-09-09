@@ -176,6 +176,16 @@ export const Api_config = {
       method: 'GET',
       url: apiUrl + '/photos'
     }
+  },
+  exchange: {
+    get: {
+      method: 'GET',
+      url: apiUrl + '/exchange'
+    },
+    update: {
+      method: 'PUT',
+      url: apiUrl + '/exchange/add'
+    }
   }
 }
 

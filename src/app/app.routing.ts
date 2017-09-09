@@ -11,6 +11,7 @@ import { BannerComponent } from './pages/banner/banner.component';
 import { UsersComponent } from './pages/users/users.component';
 import { LoginComponent } from './pages/account/login/login.component';
 import { BlogsComponent } from './pages/blogs/blogs.component';
+import { ExchangeComponent } from './pages/exchange/exchange.component';
 
 const APP_ROUTES: Routes = [
   {
@@ -52,6 +53,10 @@ const APP_ROUTES: Routes = [
   {
     path: 'blogs',
     component: BlogsComponent
+  },
+  {
+    path: 'exchange',
+    component: ExchangeComponent
   },
   {
     path: '**',
