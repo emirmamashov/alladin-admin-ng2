@@ -23,8 +23,8 @@ export class CategoryService {
     private handleService: HandleService
   ) { }
 
-  getAll(): Observable<any> {
-    const url: string = Api_config.category.getAll.url;
+  getAll(page: number, limit: number): Observable<any> {
+    const url: string = Api_config.category.getAll.url + '?page=' + page + '&limit=' + limit;
     const headers = new Headers({
       'Content-type': 'json/application'
     });

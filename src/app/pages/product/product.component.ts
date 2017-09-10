@@ -64,7 +64,6 @@ export class ProductComponent implements OnInit, OnDestroy {
   countAllPage = 0;
   pages = new Array<Paginator>();
 
-
   isEdit = false;
   isLimitHot = false;
 
@@ -264,7 +263,7 @@ export class ProductComponent implements OnInit, OnDestroy {
 
   getAllCategories() {
     this.showLoader(true);
-    this.getAllCategoriesConnection = this.categoryService.getAll().subscribe(
+    this.getAllCategoriesConnection = this.categoryService.getAll(1, null).subscribe(
       (response: ResponseApi) => {
         this.showLoader(false);
         console.log(response);

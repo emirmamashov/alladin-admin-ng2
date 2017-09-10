@@ -76,7 +76,7 @@ export class BannerComponent implements OnInit, OnDestroy {
   }
 
   getAllCategroies() {
-    this.getAllCategroiesConnection = this.categoryService.getAll().subscribe(
+    this.getAllCategroiesConnection = this.categoryService.getAll(1, null).subscribe(
       (response: ResponseApi) => {
         console.log(response);
         if (response.success) {

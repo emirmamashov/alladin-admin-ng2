@@ -1,13 +1,14 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 // config
-import { Notify_config, Api_config, LimitCategoriesViewInMenu } from '../../config';
+import { Notify_config, Api_config, LimitCategoriesViewInMenu, PageLimit } from '../../config';
 
 // models
 import { Category } from '../../models/category';
 import { ResponseApi } from '../../models/response';
 import { Notify } from '../../models/notify';
 import { SelectItem } from 'primeng/primeng';
+import { Paginator } from '../../models/paginator';
 
 // services
 import { CategoryService } from '../../services/category.service';
@@ -39,6 +40,12 @@ export class CategoryComponent implements OnInit, OnDestroy {
   oprtionsShowInMainPageRight = true;
   isLoad = false;
 
+  // pagination
+  currentPage = 1;
+  limit = PageLimit;
+  countAllPage = 0;
+  pages = new Array<Paginator>();
+
   getAllConnection: any;
   addConnection: any;
   updateConnection: any;
@@ -55,7 +62,8 @@ export class CategoryComponent implements OnInit, OnDestroy {
   ngOnInit() {
     if (!this.authService.isCheckAuthRedirectToLogin()) {
       this.categoriesItem.push({ label: 'Выбрите категорию', value: '' });
-      this.getAll();
+      this.getAll(1);
+      this.getAllWithoutPaginator();
       this.loadContent = true;
     }
   }
@@ -63,19 +71,19 @@ export class CategoryComponent implements OnInit, OnDestroy {
   showLoader(status: boolean) {
     this.isLoad = status;
   }
-  getAll() {
+  getAll(page: number) {
     this.showLoader(true);
-    this.getAllConnection = this.categoryService.getAll().subscribe(
+    this.currentPage = page;
+
+    this.getAllConnection = this.categoryService.getAll(page, this.limit).subscribe(
       (response: ResponseApi) => {
         console.log(response);
         this.showLoader(false);
         if (response.success) {
           this.categories = response.data.data.categories;
           this.viewCaregories = this.categories;
-          this.setCategoriesItem(response.data.data.categories);
-          this.checkToLimitCategoriesViewInMenu(this.categories);
-          this.setParentCategoriesModel();
-          this.checkOptionsLeftRigthShowCategories(this.categories);
+          const count = response.data.data.count;
+          this.initPaginator(this.currentPage, count);
         }
       },
       (err) => {
@@ -83,6 +91,69 @@ export class CategoryComponent implements OnInit, OnDestroy {
         console.log(err);
       }
     );
+  }
+
+  getAllWithoutPaginator() {
+    this.showLoader(true);
+    this.getAllConnection = this.categoryService.getAll(1, null).subscribe(
+      (response: ResponseApi) => {
+        console.log(response);
+        this.showLoader(false);
+        if (response.success) {
+          this.setCategoriesItem(response.data.data.categories);
+          this.checkToLimitCategoriesViewInMenu(response.data.data.categories);
+          this.setParentCategoriesModel();
+          this.checkOptionsLeftRigthShowCategories(response.data.data.categories);
+        }
+      },
+      (err) => {
+        this.showLoader(false);
+        console.log(err);
+      }
+    );
+  }
+
+
+  initPaginator(page: number, count: number) {
+    const pages = Math.round(count / this.limit);
+    this.pages = [];
+    console.log(page, this.limit, count, pages);
+    if (pages < 1) {
+      this.currentPage = 1;
+      this.countAllPage = 1;
+      const paginator = new Paginator();
+      paginator.pageNumber = 1;
+      paginator.isCurrent = true;
+      this.pages.push(paginator);
+      console.log(this.pages);
+      return;
+    }
+    this.countAllPage = pages;
+    this.currentPage = page;
+    if (this.countAllPage > 5) {
+      let maxPage = this.currentPage + 4;
+      if (maxPage > this.countAllPage) {
+        maxPage = this.countAllPage;
+      }
+
+      for (let i = this.currentPage; i <= maxPage; i++) {
+        const paginator = new Paginator();
+        paginator.pageNumber = i;
+        if (i === this.currentPage) {
+          paginator.isCurrent = true;
+        }
+        this.pages.push(paginator);
+      }
+      return;
+    }
+    for (let i = 1; i <= pages; i++) {
+      const paginator = new Paginator();
+      paginator.pageNumber = i;
+      if (i === this.currentPage) {
+        paginator.isCurrent = true;
+      }
+      this.pages.push(paginator);
+    }
   }
 
   setParentCategoriesModel() {
