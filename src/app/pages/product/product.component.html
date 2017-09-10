@@ -11,11 +11,12 @@
             <th>Телефон</th>
             <th>Цена</th>
             <th>Цена акции</th>
+            <th>Оптовая цена</th>
             <th>Горячая</th>
-            <th>Промо стикеры</th>
             <th>Изображении товара</th>
-            <th>Производитель</th>
+            <!--<th>Производитель</th>-->
             <th>Главная категория</th>
+            <th>Комментарий</th>
             <th>Действия</th>
         </tr>
     </thead>
@@ -29,8 +30,9 @@
             <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.phone }}</td>
             <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.price }}</td>
             <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.priceStock }}</td>
+            <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.pricetrade }}</td>
             <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.isHot ? 'да' : 'нет' }}</td>
-            <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.promoStickerId }}</td>
+            <!--<td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.promoStickerId }}</td>-->
             <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">
               <ng-container *ngIf="product.images">
                 <span *ngFor="let url of product.images; let i = index">
@@ -38,8 +40,9 @@
                 </span>
               </ng-container>
             </td>
-            <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.producerId }}</td>
+            <!--<td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.producerId }}</td>-->
             <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.categoryId }}</td>
+            <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.comments }}</td>
             <td>
                 <a (click)="remove(product._id)">
                     <i class="fa fa-trash-o" aria-hidden="true" style="cursor: pointer;"></i>
