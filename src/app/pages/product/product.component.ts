@@ -178,6 +178,22 @@ export class ProductComponent implements OnInit, OnDestroy {
     }
     this.countAllPage = pages;
     this.currentPage = page;
+    if (this.countAllPage > 5) {
+      let maxPage = this.currentPage + 4;
+      if (maxPage > this.countAllPage) {
+        maxPage = this.countAllPage;
+      }
+
+      for (let i = this.currentPage; i <= maxPage; i++) {
+        const paginator = new Paginator();
+        paginator.pageNumber = i;
+        if (i === this.currentPage) {
+          paginator.isCurrent = true;
+        }
+        this.pages.push(paginator);
+      }
+      return;
+    }
     for (let i = 1; i <= pages; i++) {
       const paginator = new Paginator();
       paginator.pageNumber = i;
@@ -247,8 +263,10 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   getAllCategories() {
+    this.showLoader(true);
     this.getAllCategoriesConnection = this.categoryService.getAll().subscribe(
       (response: ResponseApi) => {
+        this.showLoader(false);
         console.log(response);
         if (response.success) {
           this.categories = response.data.data.categories || this.categories;
@@ -256,6 +274,7 @@ export class ProductComponent implements OnInit, OnDestroy {
         }
       },
       (err) => {
+        this.showLoader(false);
         console.log(err);
       }
     );
