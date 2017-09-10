@@ -51,6 +51,17 @@
         </tr>
     </tbody>
 </table>
+<ul class="pagination">
+    <li class="{{ currentPage === 1 ? 'disabled': '' }}">
+        <a (click)="getAll(currentPage-1);">&laquo;</a>
+    </li>
+    <li *ngFor="let page of pages" class="{{ page.isCurrent ? 'active' : ''}}">
+        <a (click)="getAll(page.pageNumber)"> {{ page.pageNumber }} </a>
+    </li>
+    <li class="{{ currentPage == countAllPage ? 'disabled': '' }}">
+        <a (click)="getAll(currentPage+1);">&raquo;</a>
+    </li>
+</ul>
 
 <div class="modal" id="modal">
     <div class="modal-dialog" style="max-width: 100%">

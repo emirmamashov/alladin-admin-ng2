@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
 // config
-import { Notify_config, Api_config, Translit_alhabets, LimitHotProduct } from '../../config';
+import { Notify_config, Api_config, Translit_alhabets, LimitHotProduct, PageLimit } from '../../config';
 
 // models
 import { Product } from '../../models/product';
@@ -13,6 +13,7 @@ import { Producer } from '../../models/producer';
 import { PromoSticker } from '../../models/promo-sticker';
 import { Photo } from '../../models/photo';
 import { Filter } from '../../models/filter';
+import { Paginator } from '../../models/paginator';
 
 // services
 import { ProductService } from '../../services/product.service';
@@ -52,11 +53,17 @@ export class ProductComponent implements OnInit, OnDestroy {
   filters = new Array<Filter>();
 
   downloadedPhotos = new Array<Photo>();
-  photos = new Array<Photo>();
 
   newProduct = new Product();
   newFilter = new Filter();
   filesToReadyUpload = [];
+
+  // pagination
+  currentPage = 1;
+  limit = PageLimit;
+  countAllPage = 0;
+  pages = new Array<Paginator>();
+
 
   isEdit = false;
   isLimitHot = false;
@@ -69,7 +76,6 @@ export class ProductComponent implements OnInit, OnDestroy {
   categoriesItem: SelectItem[] = [];
   producersItem: SelectItem[] = [];
   promoStickersItem: SelectItem[] = [];
-  photosSelectItems: SelectItem[] = [];
   filtersItems: SelectItem[] = [];
 
   // connections
@@ -102,40 +108,84 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.checkAuth();
+  }
+
+  checkAuth() {
     if (!this.authService.isCheckAuthRedirectToLogin()) {
-      this.cities.push({ label: 'Select City', value: null });
-      this.categoriesItem.push({ label: 'Выберите категорию', value: '' });
-      this.producersItem.push({ label: 'Выберите производителя', value: '' });
-      this.promoStickersItem.push({ label: 'Выберите промостикер', value: '' });
-      this.filtersItems.push({ label: 'Выберите фильтер', value: '' });
-      this.getAll();
-      this.getAll();
-      this.getAllCategories();
-      this.getAllProducers();
-      this.getAllPromoStickers();
-      this.getAllPhotos();
-      this.getAllFilters();
-      this.loadContent = true;
+      this.authService.checkAuth().subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (!response.success) {
+            this.authService.logout();
+          }
+
+          this.cities.push({ label: 'Select City', value: null });
+          this.categoriesItem.push({ label: 'Выберите категорию', value: '' });
+          this.producersItem.push({ label: 'Выберите производителя', value: '' });
+          this.promoStickersItem.push({ label: 'Выберите промостикер', value: '' });
+          this.filtersItems.push({ label: 'Выберите фильтер', value: '' });
+          this.getAll(1);
+          this.getAllCategories();
+          this.getAllProducers();
+          this.getAllPromoStickers();
+          this.getAllFilters();
+          this.loadContent = true;
+        },
+        (err: any) => {
+          console.log(err);
+          this.authService.logout();
+        }
+      );
     }
   }
 
-  getAll() {
+  getAll(page: number) {
     this.showLoader(true);
-    this.getAllConnection = this.productService.getAll().subscribe(
+    this.currentPage = page;
+
+    this.getAllConnection = this.productService.getAll(page, this.limit).subscribe(
       (response: ResponseApi) => {
         console.log(response);
+        this.showLoader(false);
         if (response.success) {
           this.products = response.data.data.products;
-          this.photos = response.data.data.photos;
+          const count = response.data.data.allProductCount;
+          this.initPaginator(this.currentPage, count);
           this.checkToLimitIsHotProduct(this.products);
         }
-        this.showLoader(false);
       },
       (err) => {
         console.log(err);
         this.showLoader(false);
       }
     );
+  }
+
+  initPaginator(page: number, count: number) {
+    const pages = Math.round(count / this.limit);
+    this.pages = [];
+    console.log(page, this.limit, count, pages);
+    if (pages < 1) {
+      this.currentPage = 1;
+      this.countAllPage = 1;
+      const paginator = new Paginator();
+      paginator.pageNumber = 1;
+      paginator.isCurrent = true;
+      this.pages.push(paginator);
+      console.log(this.pages);
+      return;
+    }
+    this.countAllPage = pages;
+    this.currentPage = page;
+    for (let i = 1; i <= pages; i++) {
+      const paginator = new Paginator();
+      paginator.pageNumber = i;
+      if (i === this.currentPage) {
+        paginator.isCurrent = true;
+      }
+      this.pages.push(paginator);
+    }
   }
 
   getAllProducers() {
@@ -434,26 +484,6 @@ export class ProductComponent implements OnInit, OnDestroy {
 
   clearNewProcut() {
     this.newProduct = new Product();
-  }
-  setPhotosItem(photos: Array<Photo>) {
-    photos.forEach((photo) => {
-      this.photosSelectItems.push({ label: photo.name, value: {id: photo._id, url: Api_config.rootUrl + '/' + photo.url }});
-    });
-  }
-
-  getAllPhotos() {
-    this.getAllPhotosConnection = this.photoService.getAll().subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (response.success) {
-          this.photos = response.data.data.photos;
-          this.setPhotosItem(this.photos);
-        }
-      },
-      (err) => {
-        console.log(err);
-      }
-    );
   }
   addToListReadyupload(fileInput: any) {
     console.dir(fileInput);
