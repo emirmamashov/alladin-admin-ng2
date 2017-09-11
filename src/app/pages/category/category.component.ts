@@ -26,7 +26,6 @@ declare let $: any;
 })
 export class CategoryComponent implements OnInit, OnDestroy {
   categories = new Array<Category>();
-  viewCaregories = new Array<Category>();
 
   newCategory = new Category();
   categoriesItem: SelectItem[] = [];
@@ -62,7 +61,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   ngOnInit() {
     if (!this.authService.isCheckAuthRedirectToLogin()) {
       this.categoriesItem.push({ label: 'Выбрите категорию', value: '' });
-      this.getAll(1);
+      this.getAll(1, '');
       this.getAllWithoutPaginator();
       this.loadContent = true;
     }
@@ -71,17 +70,16 @@ export class CategoryComponent implements OnInit, OnDestroy {
   showLoader(status: boolean) {
     this.isLoad = status;
   }
-  getAll(page: number) {
+  getAll(page: number, searchText: string) {
     this.showLoader(true);
     this.currentPage = page;
 
-    this.getAllConnection = this.categoryService.getAll(page, this.limit).subscribe(
+    this.getAllConnection = this.categoryService.getAll(page, this.limit, searchText).subscribe(
       (response: ResponseApi) => {
         console.log(response);
         this.showLoader(false);
         if (response.success) {
           this.categories = response.data.data.categories;
-          this.viewCaregories = this.categories;
           const count = response.data.data.count;
           this.initPaginator(this.currentPage, count);
         }
@@ -95,7 +93,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   getAllWithoutPaginator() {
     this.showLoader(true);
-    this.getAllConnection = this.categoryService.getAll(1, null).subscribe(
+    this.getAllConnection = this.categoryService.getAll(1, 0, '').subscribe(
       (response: ResponseApi) => {
         console.log(response);
         this.showLoader(false);
@@ -382,7 +380,6 @@ export class CategoryComponent implements OnInit, OnDestroy {
   removeInListCategories(category: Category) {
     if (category && category._id) {
       this.categories = this.categories.filter(x => x._id !== category._id);
-      this.viewCaregories = this.categories;
       this.categoriesItem = this.categoriesItem.filter(x => x.value !== category._id);
     }
   }
@@ -407,10 +404,9 @@ export class CategoryComponent implements OnInit, OnDestroy {
   searchCategory(text: string) {
     console.log(text);
     if (!text) {
-      return this.viewCaregories = this.categories;
+      return this.getAll(1, '');
     }
-    const regex = new RegExp(text, 'i');
-    this.viewCaregories = this.categories.filter(x => regex.test(x.name) || regex.test(x.description));
+    this.getAll(1, text);
   }
 
   ngOnDestroy() {

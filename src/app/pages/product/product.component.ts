@@ -143,7 +143,7 @@ export class ProductComponent implements OnInit, OnDestroy {
     this.showLoader(true);
     this.currentPage = page;
 
-    this.getAllConnection = this.productService.getAll(page, this.limit).subscribe(
+    this.getAllConnection = this.productService.getAll(page, this.limit, '').subscribe(
       (response: ResponseApi) => {
         console.log(response);
         this.showLoader(false);
@@ -263,7 +263,7 @@ export class ProductComponent implements OnInit, OnDestroy {
 
   getAllCategories() {
     this.showLoader(true);
-    this.getAllCategoriesConnection = this.categoryService.getAll(1, null).subscribe(
+    this.getAllCategoriesConnection = this.categoryService.getAll(1, null, '').subscribe(
       (response: ResponseApi) => {
         this.showLoader(false);
         console.log(response);

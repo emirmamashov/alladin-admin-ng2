@@ -23,12 +23,12 @@ export class ProductService {
     private handleService: HandleService
   ) { }
 
-  getAll(page: number, limit: number): Observable<any> {
-    const url: string = Api_config.product.getAll.url + '?page=' + page + '&limit=' + limit;
+  getAll(page: number, limit: number, searchText: string): Observable<any> {
+    const url: string = Api_config.product.getAll.url + '?page=' + page + '&limit=' + limit + '&searchtext=' + searchText;
     const headers = new Headers({
       'Content-type': 'json/application'
     });
-    const options = new RequestOptions({headers: headers});
+    const options = new RequestOptions({ headers: headers });
 
     return this.http.get(url, options)
           .map(res => res.json())

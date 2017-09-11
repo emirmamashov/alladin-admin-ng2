@@ -54,16 +54,16 @@
 <ul class="pagination">
     <li class="{{ currentPage === 1 ? 'disabled': '' }}">
         <a *ngIf="currentPage === 1">&laquo;</a>
-        <a *ngIf="currentPage > 1" (click)="getAll(currentPage-1);">&laquo;</a>
+        <a *ngIf="currentPage > 1" (click)="getAll(currentPage-1, '', '');">&laquo;</a>
     </li>
 
     <li *ngFor="let page of pages" class="{{ page.isCurrent ? 'active' : ''}}">
-        <a (click)="getAll(page.pageNumber)"> {{ page.pageNumber }} </a>
+        <a (click)="getAll(page.pageNumber, '', '')"> {{ page.pageNumber }} </a>
     </li>
 
     <li class="{{ currentPage === countAllPage ? 'disabled': '' }}">
         <a *ngIf="currentPage === countAllPage">&raquo;</a>
-        <a *ngIf="currentPage < countAllPage" (click)="getAll(currentPage+1);">&raquo;</a>
+        <a *ngIf="currentPage < countAllPage" (click)="getAll(currentPage+1, '', '');">&raquo;</a>
     </li>
 </ul>
 
