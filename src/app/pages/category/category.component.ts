@@ -26,8 +26,9 @@ declare let $: any;
 })
 export class CategoryComponent implements OnInit, OnDestroy {
   categories = new Array<Category>();
-
+  allCategories = new Array<Category>();
   newCategory = new Category();
+
   categoriesItem: SelectItem[] = [];
   filesToReadyUpload = new Array<any>();
 
@@ -82,6 +83,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
           this.categories = response.data.data.categories;
           const count = response.data.data.count;
           this.initPaginator(this.currentPage, count);
+          this.setParentCategoriesModel(this.allCategories);
         }
       },
       (err) => {
@@ -98,9 +100,10 @@ export class CategoryComponent implements OnInit, OnDestroy {
         console.log(response);
         this.showLoader(false);
         if (response.success) {
+          this.allCategories = response.data.data.categories;
           this.setCategoriesItem(response.data.data.categories);
           this.checkToLimitCategoriesViewInMenu(response.data.data.categories);
-          this.setParentCategoriesModel();
+          this.setParentCategoriesModel(response.data.data.categories);
           this.checkOptionsLeftRigthShowCategories(response.data.data.categories);
         }
       },
@@ -154,9 +157,9 @@ export class CategoryComponent implements OnInit, OnDestroy {
     }
   }
 
-  setParentCategoriesModel() {
+  setParentCategoriesModel(allCategories: Array<Category>) {
     this.categories.forEach((category) => {
-      category.parentCategoryModel = this.categories.filter(x => x._id === category.parentCategory)[0] || new Category();
+      category.parentCategoryModel = allCategories.filter(x => x._id === category.parentCategory)[0] || new Category();
     });
   }
 
