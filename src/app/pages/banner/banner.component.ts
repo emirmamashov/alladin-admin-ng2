@@ -15,6 +15,7 @@ import { Category } from '../../models/category';
 import { BannerService } from '../../services/banner.service';
 import { NotifyService } from '../../services/notify.service';
 import { CategoryService } from '../../services/category.service';
+import { UnsubscribeService } from '../../services/unsubscribe.service';
 
 declare let $: any;
 @Component({
@@ -38,16 +39,13 @@ export class BannerComponent implements OnInit, OnDestroy {
   isEdit = false;
   apiUrl: string = Api_config.rootUrl;
 
-  getAllConnection: any;
-  addConnection: any;
-  updateConnection: any;
-  getAllCategroiesConnection: any;
-  removeConnection: any;
+  subscribes = new Array<any>();
 
   constructor(
     private bannerService: BannerService,
     private notifyService: NotifyService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private unsubscribeService: UnsubscribeService
   ) { }
 
   ngOnInit() {
@@ -57,17 +55,19 @@ export class BannerComponent implements OnInit, OnDestroy {
   }
 
   getAll() {
-    this.getAllConnection = this.bannerService.getAll().subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (response.success) {
-          this.banners = response.data.data.banners;
-          this.checkOptionsLeftRigthShowBanners(this.banners);
+    this.subscribes.push(
+      this.bannerService.getAll().subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (response.success) {
+            this.banners = response.data.data.banners;
+            this.checkOptionsLeftRigthShowBanners(this.banners);
+          }
+        },
+        (err) => {
+          console.log(err);
         }
-      },
-      (err) => {
-        console.log(err);
-      }
+      )
     );
   }
   checkOptionsLeftRigthShowBanners(banners: Array<Banner>) {
@@ -76,13 +76,18 @@ export class BannerComponent implements OnInit, OnDestroy {
   }
 
   getAllCategroies() {
-    this.getAllCategroiesConnection = this.categoryService.getAll(1, null, '').subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (response.success) {
-          this.setCategoriesSelectItems(response.data.data.categories);
+    this.subscribes.push(
+      this.categoryService.getAll(1, null, '').subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (response.success) {
+            this.setCategoriesSelectItems(response.data.data.categories);
+          }
+        },
+        (err) => {
+          console.log(err);
         }
-      }
+      )
     );
   }
 
@@ -106,27 +111,29 @@ export class BannerComponent implements OnInit, OnDestroy {
       files.push(fileObject.file);
     });
 
-    this.addConnection = this.bannerService.add(files, banner).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (!response.success) {
-          notify.text = response.message;
-          return this.notifyService.addNotify(notify);
-        }
-        const newBanner: Banner = response.data.data.banner;
-        this.banners.push(newBanner);
-        notify.type = Notify_config.typeMessage.success;
-        notify.text = 'Добавлено!';
-        this.notifyService.addNotify(notify);
-        this.newBanner = new Banner();
+    this.subscribes.push(
+      this.bannerService.add(files, banner).subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (!response.success) {
+            notify.text = response.message;
+            return this.notifyService.addNotify(notify);
+          }
+          const newBanner: Banner = response.data.data.banner;
+          this.banners.push(newBanner);
+          notify.type = Notify_config.typeMessage.success;
+          notify.text = 'Добавлено!';
+          this.notifyService.addNotify(notify);
+          this.newBanner = new Banner();
 
-        $('#modal').modal('toggle');
-        this.checkOptionsLeftRigthShowBanners(this.banners);
-      },
-      (err) => {
-        console.log(err);
-        this.notifyService.addNotify(notify);
-      }
+          $('#modal').modal('toggle');
+          this.checkOptionsLeftRigthShowBanners(this.banners);
+        },
+        (err) => {
+          console.log(err);
+          this.notifyService.addNotify(notify);
+        }
+      )
     );
   }
 
@@ -143,44 +150,48 @@ export class BannerComponent implements OnInit, OnDestroy {
       return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите наименование');
     }
 
-    this.updateConnection = this.bannerService.update(files, banner).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (!response.success) {
-          return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
-        }
-        const updateBanner: Banner = response.data.data.banner;
-        if (updateBanner) {
-          banner.images = updateBanner.images;
-        }
-        this.newBanner = new Banner();
-        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
-        this.clearFilesToReadUpload();
+    this.subscribes.push(
+      this.bannerService.update(files, banner).subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (!response.success) {
+            return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+          }
+          const updateBanner: Banner = response.data.data.banner;
+          if (updateBanner) {
+            banner.images = updateBanner.images;
+          }
+          this.newBanner = new Banner();
+          this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+          this.clearFilesToReadUpload();
 
-        $('#modal').modal('toggle');
-        this.checkOptionsLeftRigthShowBanners(this.banners);
-      },
-      (err) => {
-        console.log(err);
-        this.showMessageForUser(Notify_config.typeMessage.warning, 'Что то пошло не так');
-      }
+          $('#modal').modal('toggle');
+          this.checkOptionsLeftRigthShowBanners(this.banners);
+        },
+        (err) => {
+          console.log(err);
+          this.showMessageForUser(Notify_config.typeMessage.warning, 'Что то пошло не так');
+        }
+      )
     );
   }
 
   remove(_id: string) {
-    this.removeConnection = this.bannerService.remove(_id).subscribe(
+    this.subscribes.push(
+      this.bannerService.remove(_id).subscribe(
       (response: ResponseApi) => {
-        console.log(response);
-        if (!response.success) {
-          this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
-          return;
+          console.log(response);
+          if (!response.success) {
+            this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+            return;
+          }
+          this.removeInListBanners(response.data.data.banner);
+          this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+        },
+        (err) => {
+          console.log(err);
         }
-        this.removeInListBanners(response.data.data.banner);
-        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
-      },
-      (err) => {
-        console.log(err);
-      }
+      )
     );
   }
 
@@ -248,21 +259,7 @@ export class BannerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.getAllConnection && this.getAllConnection.unsubscribe) {
-      this.getAllConnection.unsubscribe();
-    }
-    if (this.addConnection && this.addConnection.unsubscribe) {
-      this.addConnection.unsubscribe();
-    }
-    if (this.updateConnection && this.updateConnection.unsubscribe) {
-      this.updateConnection.unsubscribe();
-    }
-    if (this.getAllCategroiesConnection && this.getAllCategroiesConnection.unsubscribe) {
-      this.getAllCategroiesConnection.unsubscribe();
-    }
-    if (this.removeConnection && this.removeConnection.unsubscribe) {
-      this.removeConnection.unsubscribe();
-    }
+    this.unsubscribeService.unsubscribings(this.subscribes);
   }
 
 }

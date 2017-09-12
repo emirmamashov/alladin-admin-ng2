@@ -13,6 +13,7 @@ import { Notify } from '../../../models/notify';
 import { AuthService } from '../../../services/auth.service';
 import { NotifyService } from '../../../services/notify.service';
 import { MyLocalStorageService } from '../../../services/local-storage.service';
+import { UnsubscribeService } from '../../../services/unsubscribe.service';
 
 @Component({
   selector: 'app-login',
@@ -21,14 +22,14 @@ import { MyLocalStorageService } from '../../../services/local-storage.service';
 })
 export class LoginComponent implements OnInit, OnDestroy {
   loadContent = false;
-
-  loginConnection: any;
+  subscribes = new Array<any>();
 
   constructor(
     private authService: AuthService,
     private notifySerivce: NotifyService,
     private localStorage: MyLocalStorageService,
-    private router: Router
+    private router: Router,
+    private unsubscribeService: UnsubscribeService
   ) { }
 
   ngOnInit() {
@@ -39,28 +40,30 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   doLogin(email: string, password: string) {
-    this.loginConnection = this.authService.login(email, password).subscribe(
+    this.subscribes.push(
+      this.authService.login(email, password).subscribe(
       (response: ResponseApi) => {
-        console.log(response);
-        if (!response.success) {
-          const validates: Array<string> = response.message.validates || [];
-          console.log(validates);
-          if (validates.length > 0) {
-            let text = '';
-            validates.forEach((message) => {
-              text += message + '<br/>';
-            });
-            return this.showError(Notify_config.typeMessage.danger, text);
+          console.log(response);
+          if (!response.success) {
+            const validates: Array<string> = response.message.validates || [];
+            console.log(validates);
+            if (validates.length > 0) {
+              let text = '';
+              validates.forEach((message) => {
+                text += message + '<br/>';
+              });
+              return this.showError(Notify_config.typeMessage.danger, text);
+            }
+            return this.showError(Notify_config.typeMessage.danger,  response.message);
           }
-          return this.showError(Notify_config.typeMessage.danger,  response.message);
+          this.localStorage.setToken(response.data.data.token);
+          this.localStorage.setUser(response.data.data.user);
+          this.router.navigate(['/products']);
+        },
+        (err) => {
+          console.log(err);
         }
-        this.localStorage.setToken(response.data.data.token);
-        this.localStorage.setUser(response.data.data.user);
-        this.router.navigate(['/products']);
-      },
-      (err) => {
-        console.log(err);
-      }
+      )
     );
   }
 
@@ -76,9 +79,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.loginConnection && this.loginConnection.unsubscribe) {
-      this.loginConnection.unsubscribe();
-    }
+    this.unsubscribeService.unsubscribings(this.subscribes);
   }
 
 }

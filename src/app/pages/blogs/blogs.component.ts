@@ -12,13 +12,14 @@ import { Notify } from '../../models/notify';
 import { BlogsService } from '../../services/blogs.service';
 import { NotifyService } from '../../services/notify.service';
 import { AuthService } from '../../services/auth.service';
+import { UnsubscribeService } from '../../services/unsubscribe.service';
 
 declare let $: any;
 @Component({
   selector: 'app-blogs',
   templateUrl: './blogs.component.html',
   styleUrls: ['./blogs.component.css'],
-  providers: [BlogsService]
+  providers: [ BlogsService ]
 })
 export class BlogsComponent implements OnInit, OnDestroy {
   blogs = new Array<Blog>();
@@ -29,15 +30,13 @@ export class BlogsComponent implements OnInit, OnDestroy {
   loadContent = false;
   isLoad = false;
 
-  getAllConnection: any;
-  addConnection: any;
-  updateConnection: any;
-  removeConnection: any;
+  subscribes = new Array<any>();
 
   constructor(
     private blogService: BlogsService,
     private notifyService: NotifyService,
-    private authService: AuthService
+    private authService: AuthService,
+    private unsubscribeService: UnsubscribeService
   ) { }
 
   ngOnInit() {
@@ -49,18 +48,20 @@ export class BlogsComponent implements OnInit, OnDestroy {
 
   getAll() {
     this.showLoader(true);
-    this.getAllConnection = this.blogService.getAll().subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (response.success) {
-          this.blogs = response.data.data.blogs;
+    this.subscribes.push(
+      this.blogService.getAll().subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (response.success) {
+            this.blogs = response.data.data.blogs;
+          }
+          this.showLoader(false);
+        },
+        (err) => {
+          console.log(err);
+          this.showLoader(false);
         }
-        this.showLoader(false);
-      },
-      (err) => {
-        console.log(err);
-        this.showLoader(false);
-      }
+      )
     );
   }
   add(blog: Blog) {
@@ -71,37 +72,39 @@ export class BlogsComponent implements OnInit, OnDestroy {
       return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите Имя');
     }
 
-    this.addConnection = this.blogService.add(blog).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        this.showLoader(false);
-        if (!response.success) {
-          let messages = response.message;
-          const validatesMessages = response.message.validates;
-          if (validatesMessages) {
-            messages = 'Проблема валидации';
-            if (validatesMessages.length > 0) {
-              messages = '';
-              validatesMessages.forEach((message) => {
-                messages += message + '<br/>';
-              });
+    this.subscribes.push(
+      this.blogService.add(blog).subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          this.showLoader(false);
+          if (!response.success) {
+            let messages = response.message;
+            const validatesMessages = response.message.validates;
+            if (validatesMessages) {
+              messages = 'Проблема валидации';
+              if (validatesMessages.length > 0) {
+                messages = '';
+                validatesMessages.forEach((message) => {
+                  messages += message + '<br/>';
+                });
+              }
             }
+            return this.showMessageForUser(Notify_config.typeMessage.danger, messages);
           }
-          return this.showMessageForUser(Notify_config.typeMessage.danger, messages);
+          const newBlog: Blog = response.data.data.blog;
+          this.blogs.push(newBlog);
+
+          this.showMessageForUser(Notify_config.typeMessage.success, 'Добавлено');
+          this.newBlog = new Blog();
+
+          $('#modal').modal('toggle');
+        },
+        (err) => {
+          console.log(err);
+          this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
+          this.showLoader(false);
         }
-        const newBlog: Blog = response.data.data.blog;
-        this.blogs.push(newBlog);
-
-        this.showMessageForUser(Notify_config.typeMessage.success, 'Добавлено');
-        this.newBlog = new Blog();
-
-        $('#modal').modal('toggle');
-      },
-      (err) => {
-        console.log(err);
-        this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
-        this.showLoader(false);
-      }
+      )
     );
   }
 
@@ -112,55 +115,59 @@ export class BlogsComponent implements OnInit, OnDestroy {
       return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите наименование');
     }
 
-    this.updateConnection = this.blogService.update(blog).subscribe(
-      (response: ResponseApi) => {
-        this.showLoader(false);
-        console.log(response);
-        if (!response.success) {
-          let messages = response.message;
-          const validatesMessages = response.message.validates;
-          if (validatesMessages) {
-            messages = 'Проблема валидации';
-            if (validatesMessages.length > 0) {
-              messages = '';
-              validatesMessages.forEach((message) => {
-                messages += message + '<br/>';
-              });
+    this.subscribes.push(
+      this.blogService.update(blog).subscribe(
+        (response: ResponseApi) => {
+          this.showLoader(false);
+          console.log(response);
+          if (!response.success) {
+            let messages = response.message;
+            const validatesMessages = response.message.validates;
+            if (validatesMessages) {
+              messages = 'Проблема валидации';
+              if (validatesMessages.length > 0) {
+                messages = '';
+                validatesMessages.forEach((message) => {
+                  messages += message + '<br/>';
+                });
+              }
             }
+            return this.showMessageForUser(Notify_config.typeMessage.danger, messages);
           }
-          return this.showMessageForUser(Notify_config.typeMessage.danger, messages);
-        }
-        const updateBlog: Blog = response.data.data.blog;
-        this.newBlog = new Blog();
+          const updateBlog: Blog = response.data.data.blog;
+          this.newBlog = new Blog();
 
-        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
-        $('#modal').modal('toggle');
-      },
-      (err) => {
-        console.log(err);
-        this.showMessageForUser(Notify_config.typeMessage.warning, 'Что то пошло не так');
-        this.showLoader(false);
-      }
+          this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+          $('#modal').modal('toggle');
+        },
+        (err) => {
+          console.log(err);
+          this.showMessageForUser(Notify_config.typeMessage.warning, 'Что то пошло не так');
+          this.showLoader(false);
+        }
+      )
     );
   }
   remove(_id: string) {
     this.showLoader(true);
-    this.removeConnection = this.blogService.remove(_id).subscribe(
+    this.subscribes.push(
+      this.blogService.remove(_id).subscribe(
       (response: ResponseApi) => {
-        this.showLoader(false);
-        console.log(response);
-        if (!response.success) {
-          this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
-          return;
+          this.showLoader(false);
+          console.log(response);
+          if (!response.success) {
+            this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+            return;
+          }
+          this.removeInListBlogs(response.data.data.blog);
+          this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+        },
+        (err) => {
+          console.log(err);
+          this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
+          this.showLoader(false);
         }
-        this.removeInListBlogs(response.data.data.blog);
-        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
-      },
-      (err) => {
-        console.log(err);
-        this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
-        this.showLoader(false);
-      }
+      )
     );
   }
 
@@ -189,18 +196,7 @@ export class BlogsComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.getAllConnection && this.getAllConnection.unsubscribe) {
-      this.getAllConnection.unsubscribe();
-    }
-    if (this.addConnection && this.addConnection.unsubscribe) {
-      this.addConnection.unsubscribe();
-    }
-    if (this.updateConnection && this.updateConnection.unsubscribe) {
-      this.updateConnection.unsubscribe();
-    }
-    if (this.removeConnection && this.removeConnection.unsubscribe) {
-      this.removeConnection.unsubscribe();
-    }
+    this.unsubscribeService.unsubscribings(this.subscribes);
   }
 
 }

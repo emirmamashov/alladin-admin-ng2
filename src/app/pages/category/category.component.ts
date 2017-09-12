@@ -14,6 +14,7 @@ import { Paginator } from '../../models/paginator';
 import { CategoryService } from '../../services/category.service';
 import { NotifyService } from '../../services/notify.service';
 import { AuthService } from '../../services/auth.service';
+import { UnsubscribeService } from '../../services/unsubscribe.service';
 
 declare let $: any;
 @Component({
@@ -31,6 +32,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   categoriesItem: SelectItem[] = [];
   filesToReadyUpload = new Array<any>();
+  subscribes = new Array<any>();
 
   isEdit = false;
   isLimitCategoriesViewInMenu = false;
@@ -46,17 +48,11 @@ export class CategoryComponent implements OnInit, OnDestroy {
   countAllPage = 0;
   pages = new Array<Paginator>();
 
-  getAllConnection: any;
-  addConnection: any;
-  updateConnection: any;
-  getAllPhotosConnection: any;
-  getAllBannersConnection: any;
-  removeConnection: any;
-
   constructor(
     private categoryService: CategoryService,
     private notifyService: NotifyService,
-    private authService: AuthService
+    private authService: AuthService,
+    private unsubscribeService: UnsubscribeService
   ) { }
 
   ngOnInit() {
@@ -75,42 +71,46 @@ export class CategoryComponent implements OnInit, OnDestroy {
     this.showLoader(true);
     this.currentPage = page;
 
-    this.getAllConnection = this.categoryService.getAll(page, this.limit, searchText).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        this.showLoader(false);
-        if (response.success) {
-          this.categories = response.data.data.categories;
-          const count = response.data.data.count;
-          this.initPaginator(this.currentPage, count);
-          this.setParentCategoriesModel(this.allCategories);
+    this.subscribes.push(
+      this.categoryService.getAll(page, this.limit, searchText).subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          this.showLoader(false);
+          if (response.success) {
+            this.categories = response.data.data.categories;
+            const count = response.data.data.count;
+            this.initPaginator(this.currentPage, count);
+            this.setParentCategoriesModel(this.allCategories);
+          }
+        },
+        (err) => {
+          this.showLoader(false);
+          console.log(err);
         }
-      },
-      (err) => {
-        this.showLoader(false);
-        console.log(err);
-      }
+      )
     );
   }
 
   getAllWithoutPaginator() {
     this.showLoader(true);
-    this.getAllConnection = this.categoryService.getAll(1, 0, '').subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        this.showLoader(false);
-        if (response.success) {
-          this.allCategories = response.data.data.categories;
-          this.setCategoriesItem(response.data.data.categories);
-          this.checkToLimitCategoriesViewInMenu(response.data.data.categories);
-          this.setParentCategoriesModel(response.data.data.categories);
-          this.checkOptionsLeftRigthShowCategories(response.data.data.categories);
+    this.subscribes.push(
+      this.categoryService.getAll(1, 0, '').subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          this.showLoader(false);
+          if (response.success) {
+            this.allCategories = response.data.data.categories;
+            this.setCategoriesItem(response.data.data.categories);
+            this.checkToLimitCategoriesViewInMenu(response.data.data.categories);
+            this.setParentCategoriesModel(response.data.data.categories);
+            this.checkOptionsLeftRigthShowCategories(response.data.data.categories);
+          }
+        },
+        (err) => {
+          this.showLoader(false);
+          console.log(err);
         }
-      },
-      (err) => {
-        this.showLoader(false);
-        console.log(err);
-      }
+      )
     );
   }
 
@@ -224,32 +224,34 @@ export class CategoryComponent implements OnInit, OnDestroy {
       return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите наименование категории');
     }
 
-    this.addConnection = this.categoryService.add(files, category).subscribe(
+    this.subscribes.push(
+      this.categoryService.add(files, category).subscribe(
       (response: ResponseApi) => {
-        console.log(response);
-        this.showLoader(false);
-        if (!response.success) {
-          return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+          console.log(response);
+          this.showLoader(false);
+          if (!response.success) {
+            return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+          }
+          const newCategory: Category = response.data.data.category;
+          newCategory.parentCategoryModel = this.categories.filter(x => x._id === newCategory.parentCategory)[0] || new Category();
+          this.categories.push(newCategory);
+          this.categoriesItem.push({ label: newCategory.name, value: newCategory._id });
+
+          this.showMessageForUser(Notify_config.typeMessage.success, 'Добавлено!');
+          this.newCategory = new Category();
+          this.clearFilesToReadUpload();
+
+          this.setCategoriesItem(this.categories);
+
+          $('#modal').modal('toggle');
+          this.checkOptionsLeftRigthShowCategories(this.categories);
+        },
+        (err) => {
+          this.showLoader(false);
+          console.log(err);
+          this.showMessageForUser(Notify_config.typeMessage.danger, 'Что пошло не так!');
         }
-        const newCategory: Category = response.data.data.category;
-        newCategory.parentCategoryModel = this.categories.filter(x => x._id === newCategory.parentCategory)[0] || new Category();
-        this.categories.push(newCategory);
-        this.categoriesItem.push({ label: newCategory.name, value: newCategory._id });
-
-        this.showMessageForUser(Notify_config.typeMessage.success, 'Добавлено!');
-        this.newCategory = new Category();
-        this.clearFilesToReadUpload();
-
-        this.setCategoriesItem(this.categories);
-
-        $('#modal').modal('toggle');
-        this.checkOptionsLeftRigthShowCategories(this.categories);
-      },
-      (err) => {
-        this.showLoader(false);
-        console.log(err);
-        this.showMessageForUser(Notify_config.typeMessage.danger, 'Что пошло не так!');
-      }
+      )
     );
   }
 
@@ -267,33 +269,35 @@ export class CategoryComponent implements OnInit, OnDestroy {
       return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите наименование категории');
     }
 
-    this.updateConnection = this.categoryService.update(files, category).subscribe(
+    this.subscribes.push(
+      this.categoryService.update(files, category).subscribe(
       (response: ResponseApi) => {
-        this.showLoader(false);
-        console.log(response);
-        if (!response.success) {
-          return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
-        }
-        this.checkToLimitCategoriesViewInMenu(this.categories);
-        const updateCategory: Category = response.data.data.category;
-        if (updateCategory) {
-          category.images = updateCategory.images;
-          category.parentCategoryModel = this.categories.filter(x => x._id === updateCategory.parentCategory)[0] || new Category();
-        }
-        this.newCategory = new Category();
-        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
-        this.clearFilesToReadUpload();
+          this.showLoader(false);
+          console.log(response);
+          if (!response.success) {
+            return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+          }
+          this.checkToLimitCategoriesViewInMenu(this.categories);
+          const updateCategory: Category = response.data.data.category;
+          if (updateCategory) {
+            category.images = updateCategory.images;
+            category.parentCategoryModel = this.categories.filter(x => x._id === updateCategory.parentCategory)[0] || new Category();
+          }
+          this.newCategory = new Category();
+          this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+          this.clearFilesToReadUpload();
 
-        this.setCategoriesItem(this.categories);
-        $('#modal').modal('toggle');
+          this.setCategoriesItem(this.categories);
+          $('#modal').modal('toggle');
 
-        this.checkOptionsLeftRigthShowCategories(this.categories);
-      },
-      (err) => {
-        this.showLoader(false);
-        console.log(err);
-        this.showMessageForUser(Notify_config.typeMessage.warning, 'Что то пошло не так');
-      }
+          this.checkOptionsLeftRigthShowCategories(this.categories);
+        },
+        (err) => {
+          this.showLoader(false);
+          console.log(err);
+          this.showMessageForUser(Notify_config.typeMessage.warning, 'Что то пошло не так');
+        }
+      )
     );
   }
 
@@ -360,23 +364,25 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
   remove(_id: string) {
     this.showLoader(true);
-    this.removeConnection = this.categoryService.remove(_id).subscribe(
-      (response: ResponseApi) => {
-        this.showLoader(false);
-        console.log(response);
-        if (!response.success) {
-          this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
-          return;
-        }
-        this.removeInListCategories(response.data.data.category);
-        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+    this.subscribes.push(
+      this.categoryService.remove(_id).subscribe(
+        (response: ResponseApi) => {
+          this.showLoader(false);
+          console.log(response);
+          if (!response.success) {
+            this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+            return;
+          }
+          this.removeInListCategories(response.data.data.category);
+          this.showMessageForUser(Notify_config.typeMessage.success, response.message);
 
-        this.setCategoriesItem(this.categories);
-      },
-      (err) => {
-        this.showLoader(false);
-        console.log(err);
-      }
+          this.setCategoriesItem(this.categories);
+        },
+        (err) => {
+          this.showLoader(false);
+          console.log(err);
+        }
+      )
     );
   }
 
@@ -413,21 +419,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if (this.getAllConnection && this.getAllConnection.unsubscribe) {
-      this.getAllConnection.unsubscribe();
-    }
-    if (this.addConnection && this.addConnection.unsubscribe) {
-      this.addConnection.unsubscribe();
-    }
-    if (this.updateConnection && this.updateConnection.unsubscribe) {
-      this.updateConnection.unsubscribe();
-    }
-    if (this.getAllPhotosConnection && this.getAllPhotosConnection.unsubscribe) {
-      this.getAllPhotosConnection.unsubscribe();
-    }
-    if (this.removeConnection && this.removeConnection.unsubscribe) {
-      this.removeConnection.unsubscribe();
-    }
+    this.unsubscribeService.unsubscribings(this.subscribes);
   }
 
 }

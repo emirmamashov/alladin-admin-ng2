@@ -12,6 +12,7 @@ import { Notify } from '../../models/notify';
 import { ProducerService } from '../../services/producer.service';
 import { NotifyService } from '../../services/notify.service';
 import { AuthService } from '../../services/auth.service';
+import { UnsubscribeService } from '../../services/unsubscribe.service';
 
 declare let $: any;
 @Component({
@@ -32,15 +33,13 @@ export class ProducerComponent implements OnInit, OnDestroy {
   loadContent = false;
   isLoad = false;
 
-  getAllConnection: any;
-  addConnection: any;
-  updateConnection: any;
-  removeConnection: any;
+  subscribes = new Array<any>();
 
   constructor(
     private producerService: ProducerService,
     private notifyService: NotifyService,
-    private authService: AuthService
+    private authService: AuthService,
+    private unsubscribeService: UnsubscribeService
   ) { }
 
   ngOnInit() {
@@ -49,16 +48,18 @@ export class ProducerComponent implements OnInit, OnDestroy {
   }
 
   getAll() {
-    this.getAllConnection = this.producerService.getAll().subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (response.success) {
-          this.producers = response.data.data.producers;
+    this.subscribes.push(
+      this.producerService.getAll().subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (response.success) {
+            this.producers = response.data.data.producers;
+          }
+        },
+        (err) => {
+          console.log(err);
         }
-      },
-      (err) => {
-        console.log(err);
-      }
+      )
     );
   }
   add(producer: Producer) {
@@ -75,26 +76,28 @@ export class ProducerComponent implements OnInit, OnDestroy {
     }
 
 
-    this.addConnection = this.producerService.add(files, producer).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (!response.success) {
-          return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+    this.subscribes.push(
+      this.producerService.add(files, producer).subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (!response.success) {
+            return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+          }
+          const newProducer: Producer = response.data.data.producer;
+          this.producers.push(newProducer);
+
+          this.showMessageForUser(Notify_config.typeMessage.success, 'Добавлено');
+          this.newProducer = new Producer();
+
+          $('#modal').modal('toggle');
+          this.showLoader(false);
+        },
+        (err) => {
+          console.log(err);
+          this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
+          this.showLoader(false);
         }
-        const newProducer: Producer = response.data.data.producer;
-        this.producers.push(newProducer);
-
-        this.showMessageForUser(Notify_config.typeMessage.success, 'Добавлено');
-        this.newProducer = new Producer();
-
-        $('#modal').modal('toggle');
-        this.showLoader(false);
-      },
-      (err) => {
-        console.log(err);
-        this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
-        this.showLoader(false);
-      }
+      )
     );
   }
 
@@ -140,48 +143,52 @@ export class ProducerComponent implements OnInit, OnDestroy {
       return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите наименование категории');
     }
 
-    this.updateConnection = this.producerService.update(files, producer).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (!response.success) {
-          return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+    this.subscribes.push(
+      this.producerService.update(files, producer).subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (!response.success) {
+            return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+          }
+          const updateProducer: Producer = response.data.data.producer;
+          if (updateProducer) {
+            producer.images = updateProducer.images;
+          }
+          this.newProducer = new Producer();
+          this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+          this.clearFilesToReadUpload();
+          $('#modal').modal('toggle');
+          this.showLoader(false);
+        },
+        (err) => {
+          console.log(err);
+          this.showMessageForUser(Notify_config.typeMessage.warning, 'Что то пошло не так');
+          this.showLoader(false);
         }
-        const updateProducer: Producer = response.data.data.producer;
-        if (updateProducer) {
-          producer.images = updateProducer.images;
-        }
-        this.newProducer = new Producer();
-        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
-        this.clearFilesToReadUpload();
-        $('#modal').modal('toggle');
-        this.showLoader(false);
-      },
-      (err) => {
-        console.log(err);
-        this.showMessageForUser(Notify_config.typeMessage.warning, 'Что то пошло не так');
-        this.showLoader(false);
-      }
+      )
     );
   }
 
   remove(_id: string) {
     this.showLoader(true);
-    this.removeConnection = this.producerService.remove(_id).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (!response.success) {
-          this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
-          return;
+    this.subscribes.push(
+      this.producerService.remove(_id).subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (!response.success) {
+            this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+            return;
+          }
+          this.removeInListProducers(response.data.data.producer);
+          this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+          this.showLoader(false);
+        },
+        (err) => {
+          console.log(err);
+          this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
+          this.showLoader(false);
         }
-        this.removeInListProducers(response.data.data.producer);
-        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
-        this.showLoader(false);
-      },
-      (err) => {
-        console.log(err);
-        this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
-        this.showLoader(false);
-      }
+      )
     );
   }
 
@@ -225,18 +232,7 @@ export class ProducerComponent implements OnInit, OnDestroy {
     this.isLoad = status;
   }
   ngOnDestroy() {
-    if (this.getAllConnection && this.getAllConnection.unsubscribe) {
-      this.getAllConnection.unsubscribe();
-    }
-    if (this.addConnection && this.addConnection.unsubscribe) {
-      this.addConnection.unsubscribe();
-    }
-    if (this.updateConnection && this.updateConnection.unsubscribe) {
-      this.updateConnection.unsubscribe();
-    }
-    if (this.removeConnection && this.removeConnection.unsubscribe) {
-      this.removeConnection.unsubscribe();
-    }
+    this.unsubscribeService.unsubscribings(this.subscribes);
   }
 
 }

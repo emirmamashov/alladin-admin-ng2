@@ -12,6 +12,7 @@ import { Notify } from '../../models/notify';
 import { PromoStickerService } from '../../services/promo-sticker.service';
 import { NotifyService } from '../../services/notify.service';
 import { AuthService } from '../../services/auth.service';
+import { UnsubscribeService } from '../../services/unsubscribe.service';
 
 declare let $: any;
 @Component({
@@ -29,15 +30,13 @@ export class PromoStickerComponent implements OnInit, OnDestroy {
 
   fileToReadyUpload: any;
 
-  private addConnection: any;
-  private getAllConnection: any;
-  private updateConnection: any;
-  private removeConnection: any;
+  private subscribes = new Array<any>();
 
   constructor(
     private promoStickerService: PromoStickerService,
     private notifyService: NotifyService,
-    private authService: AuthService
+    private authService: AuthService,
+    private unsubscribeService: UnsubscribeService
   ) { }
 
 
@@ -50,16 +49,18 @@ export class PromoStickerComponent implements OnInit, OnDestroy {
   }
 
   getAll() {
-    this.getAllConnection = this.promoStickerService.getAll().subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (response.success) {
-          this.promoStickers = response.data.data.promoStickers;
+    this.subscribes.push(
+      this.promoStickerService.getAll().subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (response.success) {
+            this.promoStickers = response.data.data.promoStickers;
+          }
+        },
+        (err) => {
+          console.log(err);
         }
-      },
-      (err) => {
-        console.log(err);
-      }
+      )
     );
   }
 
@@ -72,26 +73,28 @@ export class PromoStickerComponent implements OnInit, OnDestroy {
     notify.type = Notify_config.typeMessage.danger;
     notify.text = 'Что то пошло не так!';
 
-    this.addConnection = this.promoStickerService.add(file.files, promoSticker).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (!response.success) {
-          notify.text = response.message;
-          return this.notifyService.addNotify(notify);
-        }
-        const newCategory: PromoSticker = response.data.data.promoSticker;
-        this.promoStickers.push(newCategory);
-        notify.type = Notify_config.typeMessage.success;
-        notify.text = 'Добавлено!';
-        this.notifyService.addNotify(notify);
-        this.newPromoSticker = new PromoSticker();
+    this.subscribes.push(
+      this.promoStickerService.add(file.files, promoSticker).subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (!response.success) {
+            notify.text = response.message;
+            return this.notifyService.addNotify(notify);
+          }
+          const newCategory: PromoSticker = response.data.data.promoSticker;
+          this.promoStickers.push(newCategory);
+          notify.type = Notify_config.typeMessage.success;
+          notify.text = 'Добавлено!';
+          this.notifyService.addNotify(notify);
+          this.newPromoSticker = new PromoSticker();
 
-        $('#modal').modal('toggle');
-      },
-      (err) => {
-        console.log(err);
-        this.notifyService.addNotify(notify);
-      }
+          $('#modal').modal('toggle');
+        },
+        (err) => {
+          console.log(err);
+          this.notifyService.addNotify(notify);
+        }
+      )
     );
   }
 
@@ -100,25 +103,27 @@ update(file: any, promoSticker: PromoSticker) {
       return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите наименование категории');
     }
 
-    this.updateConnection = this.promoStickerService.update(this.fileToReadyUpload.file, promoSticker).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (!response.success) {
-          return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+    this.subscribes.push(
+      this.promoStickerService.update(this.fileToReadyUpload.file, promoSticker).subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (!response.success) {
+            return this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+          }
+          const updatePromoSticker: PromoSticker = response.data.data.promoSticker;
+          if (updatePromoSticker) {
+            promoSticker.image = updatePromoSticker.image;
+          }
+          this.newPromoSticker = new PromoSticker();
+          this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+          this.clearFilesToReadUpload();
+          $('#modal').modal('toggle');
+        },
+        (err) => {
+          console.log(err);
+          this.showMessageForUser(Notify_config.typeMessage.warning, 'Что то пошло не так');
         }
-        const updatePromoSticker: PromoSticker = response.data.data.promoSticker;
-        if (updatePromoSticker) {
-          promoSticker.image = updatePromoSticker.image;
-        }
-        this.newPromoSticker = new PromoSticker();
-        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
-        this.clearFilesToReadUpload();
-        $('#modal').modal('toggle');
-      },
-      (err) => {
-        console.log(err);
-        this.showMessageForUser(Notify_config.typeMessage.warning, 'Что то пошло не так');
-      }
+      )
     );
   }
 
@@ -161,19 +166,21 @@ update(file: any, promoSticker: PromoSticker) {
   }
 
   remove(_id: string) {
-    this.removeConnection = this.promoStickerService.remove(_id).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (!response.success) {
-          this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
-          return;
+    this.subscribes.push(
+      this.promoStickerService.remove(_id).subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (!response.success) {
+            this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+            return;
+          }
+          this.removeInListPromoSticker(response.data.data.promoSticker);
+          this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+        },
+        (err) => {
+          console.log(err);
         }
-        this.removeInListPromoSticker(response.data.data.promoSticker);
-        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
-      },
-      (err) => {
-        console.log(err);
-      }
+      )
     );
   }
 
@@ -195,17 +202,6 @@ update(file: any, promoSticker: PromoSticker) {
   }
 
   ngOnDestroy() {
-    if (this.addConnection && this.addConnection.unsubscribe) {
-      this.addConnection.unsubscribe();
-    }
-    if (this.getAllConnection && this.getAllConnection.unsubscribe) {
-      this.getAllConnection.unsubscribe();
-    }
-    if (this.updateConnection && this.updateConnection.unsubscribe) {
-      this.updateConnection.unsubscribe();
-    }
-    if (this.removeConnection && this.removeConnection.unsubscribe) {
-      this.removeConnection.unsubscribe();
-    }
+    this.unsubscribeService.unsubscribings(this.subscribes);
   }
 }

@@ -12,6 +12,7 @@ import { Notify } from '../../../models/notify';
 import { ExelService } from '../../../services/exel.service';
 import { NotifyService } from '../../../services/notify.service';
 import { AuthService } from '../../../services/auth.service';
+import { UnsubscribeService } from '../../../services/unsubscribe.service';
 
 @Component({
   selector: 'app-import',
@@ -20,15 +21,15 @@ import { AuthService } from '../../../services/auth.service';
   providers: [ ExelService ]
 })
 export class ImportComponent implements OnInit, OnDestroy {
-  private importConnection: any;
-
   loadContent = false;
+  private subscribes = new Array<any>();
 
   constructor(
     private exelService: ExelService,
     private notifyService: NotifyService,
     private router: Router,
-    private authService: AuthService
+    private authService: AuthService,
+    private unsubscribeService: UnsubscribeService
   ) { }
 
   ngOnInit() {
@@ -43,38 +44,38 @@ export class ImportComponent implements OnInit, OnDestroy {
     notify.type = Notify_config.typeMessage.danger;
     notify.text = 'Что то пошло не так!';
 
-    this.importConnection = this.exelService.import(file.files).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (response.success) {
-          let errorMsg = 'нет';
-          const import_failed_products = response.data.data.import_failed_products || [];
-          import_failed_products.forEach((importProduct) => {
-            errorMsg += '\n' + importProduct.error;
-          });
-          notify.type = Notify_config.typeMessage.success;
-          notify.text = 'Операция зынк өттү!\n Импортировано: ' + response.data.data.import_products_count + ';' +
-          '\nПровалено: ' + response.data.data.import_failed_products.length +
-          '\nОшибки: ' + errorMsg;
-          notify.delay = 10000;
-          this.notifyService.addNotify(notify);
-          this.router.navigate(['/products']);
-        } else {
-          notify.text = response.message;
+    this.subscribes.push(
+      this.exelService.import(file.files).subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (response.success) {
+            let errorMsg = 'нет';
+            const import_failed_products = response.data.data.import_failed_products || [];
+            import_failed_products.forEach((importProduct) => {
+              errorMsg += '\n' + importProduct.error;
+            });
+            notify.type = Notify_config.typeMessage.success;
+            notify.text = 'Операция зынк өттү!\n Импортировано: ' + response.data.data.import_products_count + ';' +
+            '\nПровалено: ' + response.data.data.import_failed_products.length +
+            '\nОшибки: ' + errorMsg;
+            notify.delay = 10000;
+            this.notifyService.addNotify(notify);
+            this.router.navigate(['/products']);
+          } else {
+            notify.text = response.message;
+            this.notifyService.addNotify(notify);
+          }
+        },
+        (err) => {
+          console.log(err);
           this.notifyService.addNotify(notify);
         }
-      },
-      (err) => {
-        console.log(err);
-        this.notifyService.addNotify(notify);
-      }
+      )
     );
   }
 
   ngOnDestroy() {
-    if (this.importConnection && this.importConnection.unsubscribe) {
-      this.importConnection.unsubscribe();
-    }
+    this.unsubscribeService.unsubscribings(this.subscribes);
   }
 
 }

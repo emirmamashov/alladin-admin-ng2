@@ -25,6 +25,7 @@ import { TranslitService } from '../../services/translit.service';
 import { PhotoService } from '../../services/photo.service';
 import { AuthService } from '../../services/auth.service';
 import { FiltersService } from '../../services/filters.service';
+import { UnsubscribeService } from '../../services/unsubscribe.service';
 
 declare var $: any;
 declare var CKEDITOR: any;
@@ -32,8 +33,9 @@ declare var CKEDITOR: any;
 @Component({
   selector: 'app-product',
   templateUrl: './product.component.html',
-  styleUrls: ['./product.component.css',
-  '../../../assets/ckeditor/samples/toolbarconfigurator/lib/codemirror/neo.css'
+  styleUrls: [
+    './product.component.css',
+    '../../../assets/ckeditor/samples/toolbarconfigurator/lib/codemirror/neo.css'
 ],
   providers: [
     ProductService,
@@ -77,16 +79,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   promoStickersItem: SelectItem[] = [];
   filtersItems: SelectItem[] = [];
 
-  // connections
-  getAllConnection: any;
-  getAllCategoriesConnection: any;
-  getAllProducersConnection: any;
-  getAllPromoStickersConnection: any;
-  getAllPhotosConnection: any;
-  addProductConnection: any;
-  removeConnection: any;
-  getAllFiltersConnection: any;
-  addFilterConnection: any;
+  private subscribes = new Array<any>();
 
   text: any;
   isCreateFilter = false;
@@ -101,7 +94,8 @@ export class ProductComponent implements OnInit, OnDestroy {
     private translitService: TranslitService,
     private photoService: PhotoService,
     private authService: AuthService,
-    private filtersService: FiltersService
+    private filtersService: FiltersService,
+    private unsubscribeService: UnsubscribeService
   ) {
 
   }
@@ -143,21 +137,23 @@ export class ProductComponent implements OnInit, OnDestroy {
     this.showLoader(true);
     this.currentPage = page;
 
-    this.getAllConnection = this.productService.getAll(page, this.limit, searchText).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        this.showLoader(false);
-        if (response.success) {
-          this.products = response.data.data.products;
-          const count = response.data.data.allProductCount;
-          this.initPaginator(this.currentPage, count);
-          this.checkToLimitIsHotProduct(this.products);
+    this.subscribes.push(
+      this.productService.getAll(page, this.limit, searchText).subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          this.showLoader(false);
+          if (response.success) {
+            this.products = response.data.data.products;
+            const count = response.data.data.allProductCount;
+            this.initPaginator(this.currentPage, count);
+            this.checkToLimitIsHotProduct(this.products);
+          }
+        },
+        (err) => {
+          console.log(err);
+          this.showLoader(false);
         }
-      },
-      (err) => {
-        console.log(err);
-        this.showLoader(false);
-      }
+      )
     );
   }
 
@@ -204,31 +200,35 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
 
   getAllProducers() {
-    this.getAllProducersConnection = this.producerService.getAll().subscribe(
-      (response: ResponseApi) => {
-        if (response.success) {
-          this.producers = response.data.data.producers;
-          this.setProducersItem();
+    this.subscribes.push(
+      this.producerService.getAll().subscribe(
+        (response: ResponseApi) => {
+          if (response.success) {
+            this.producers = response.data.data.producers;
+            this.setProducersItem();
+          }
+        },
+        (err) => {
+          console.log(err);
         }
-      },
-      (err) => {
-        console.log(err);
-      }
+      )
     );
   }
 
   getAllPromoStickers() {
-    this.getAllPromoStickersConnection = this.promorStickerService.getAll().subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (response.success) {
-          this.promoStickers = response.data.data.promoStickers;
-          this.setPromoStickersItem();
+    this.subscribes.push(
+      this.promorStickerService.getAll().subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (response.success) {
+            this.promoStickers = response.data.data.promoStickers;
+            this.setPromoStickersItem();
+          }
+        },
+        (err) => {
+          console.log(err);
         }
-      },
-      (err) => {
-        console.log(err);
-      }
+      )
     );
   }
 
@@ -263,35 +263,39 @@ export class ProductComponent implements OnInit, OnDestroy {
 
   getAllCategories() {
     this.showLoader(true);
-    this.getAllCategoriesConnection = this.categoryService.getAll(1, null, '').subscribe(
-      (response: ResponseApi) => {
-        this.showLoader(false);
-        console.log(response);
-        if (response.success) {
-          this.categories = response.data.data.categories || this.categories;
-          this.setCategoriesItem();
+    this.subscribes.push(
+      this.categoryService.getAll(1, null, '').subscribe(
+        (response: ResponseApi) => {
+          this.showLoader(false);
+          console.log(response);
+          if (response.success) {
+            this.categories = response.data.data.categories || this.categories;
+            this.setCategoriesItem();
+          }
+        },
+        (err) => {
+          this.showLoader(false);
+          console.log(err);
         }
-      },
-      (err) => {
-        this.showLoader(false);
-        console.log(err);
-      }
+      )
     );
   }
 
   getAllFilters() {
     console.log('---------getAllFilters---=----');
-    this.getAllFiltersConnection = this.filtersService.getAll().subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (response.success) {
-          this.filters = response.data.data.filters || this.filters;
-          this.setFiltersItem(this.filters);
+    this.subscribes.push(
+      this.filtersService.getAll().subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (response.success) {
+            this.filters = response.data.data.filters || this.filters;
+            this.setFiltersItem(this.filters);
+          }
+        },
+        (err) => {
+          console.log(err);
         }
-      },
-      (err) => {
-        console.log(err);
-      }
+      )
     );
   }
 
@@ -358,35 +362,37 @@ export class ProductComponent implements OnInit, OnDestroy {
 
     product = this.toTranslit(product);
     product = this.toTranslitForSeoUrl(product);
-    this.addProductConnection = this.productService.add(files, product).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        this.showLoader(false);
-        if (!response.success) {
-          const validates: Array<string> = response.message.validates || [];
-          console.log(validates);
-          if (validates.length > 0) {
-            let text = '';
-            validates.forEach((message) => {
-              text += message + '<br/>';
-            });
-            return this.showMessageForUser(Notify_config.typeMessage.danger, text);
+    this.subscribes.push(
+      this.productService.add(files, product).subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          this.showLoader(false);
+          if (!response.success) {
+            const validates: Array<string> = response.message.validates || [];
+            console.log(validates);
+            if (validates.length > 0) {
+              let text = '';
+              validates.forEach((message) => {
+                text += message + '<br/>';
+              });
+              return this.showMessageForUser(Notify_config.typeMessage.danger, text);
+            }
+            return this.showMessageForUser(Notify_config.typeMessage.danger,  response.message);
           }
-          return this.showMessageForUser(Notify_config.typeMessage.danger,  response.message);
+
+          const addedProduct: Product = response.data.data.product;
+          this.products.unshift(addedProduct);
+
+          this.clearFilesToReadyUpload();
+
+          $('#modal').modal('toggle');
+        },
+        (err) => {
+          console.log(err);
+          this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
+          this.showLoader(false);
         }
-
-        const addedProduct: Product = response.data.data.product;
-        this.products.unshift(addedProduct);
-
-        this.clearFilesToReadyUpload();
-
-        $('#modal').modal('toggle');
-      },
-      (err) => {
-        console.log(err);
-        this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
-        this.showLoader(false);
-      }
+      )
     );
   }
 
@@ -400,34 +406,36 @@ export class ProductComponent implements OnInit, OnDestroy {
       return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите Наименование');
     }
 
-    this.addFilterConnection = this.filtersService.add(filter).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (!response.success) {
-          let messages = response.message;
-          const validatesMessages = response.message.validates;
-          if (validatesMessages) {
-            messages = 'Проблема валидации';
-            if (validatesMessages.length > 0) {
-              messages = '';
-              validatesMessages.forEach((message) => {
-                messages += message + '<br/>';
-              });
+    this.subscribes.push(
+      this.filtersService.add(filter).subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (!response.success) {
+            let messages = response.message;
+            const validatesMessages = response.message.validates;
+            if (validatesMessages) {
+              messages = 'Проблема валидации';
+              if (validatesMessages.length > 0) {
+                messages = '';
+                validatesMessages.forEach((message) => {
+                  messages += message + '<br/>';
+                });
+              }
             }
+            return this.showMessageForUser(Notify_config.typeMessage.danger, messages);
           }
-          return this.showMessageForUser(Notify_config.typeMessage.danger, messages);
-        }
-        const newFilter: Filter = response.data.data.user;
-        this.filters.push(newFilter);
-        this.filtersItems.push({ label: newFilter.name, value: newFilter._id });
+          const newFilter: Filter = response.data.data.user;
+          this.filters.push(newFilter);
+          this.filtersItems.push({ label: newFilter.name, value: newFilter._id });
 
-        this.showMessageForUser(Notify_config.typeMessage.success, 'Добавлено');
-        this.newFilter = new Filter();
-      },
-      (err) => {
-        console.log(err);
-        this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
-      }
+          this.showMessageForUser(Notify_config.typeMessage.success, 'Добавлено');
+          this.newFilter = new Filter();
+        },
+        (err) => {
+          console.log(err);
+          this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
+        }
+      )
     );
   }
 
@@ -467,36 +475,38 @@ export class ProductComponent implements OnInit, OnDestroy {
       return this.showMessageForUser(Notify_config.typeMessage.danger, 'Пожалуйста заполните поля!');
     }
 
-    this.addProductConnection = this.productService.update(files, product).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (!response.success) {
-          const validates: Array<string> = response.message.validates || [];
-          console.log(validates);
-          if (validates.length > 0) {
-            let text = '';
-            validates.forEach((message) => {
-              text += message + '<br/>';
-            });
-            this.showMessageForUser(Notify_config.typeMessage.danger, text);
+    this.subscribes.push(
+      this.productService.update(files, product).subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (!response.success) {
+            const validates: Array<string> = response.message.validates || [];
+            console.log(validates);
+            if (validates.length > 0) {
+              let text = '';
+              validates.forEach((message) => {
+                text += message + '<br/>';
+              });
+              this.showMessageForUser(Notify_config.typeMessage.danger, text);
+            }
+            return;
           }
-          return;
+
+          const editProduct: Product = response.data.data.product;
+          let productFind: Product = this.products.filter(x => x._id === editProduct._id)[0];
+          productFind = editProduct;
+          this.checkToLimitIsHotProduct(this.products);
+          console.log(productFind);
+
+          $('#modal').modal('toggle');
+          this.showLoader(false);
+          this.clearFilesToReadyUpload();
+        },
+        (err) => {
+          console.log(err);
+          this.showLoader(false);
         }
-
-        const editProduct: Product = response.data.data.product;
-        let productFind: Product = this.products.filter(x => x._id === editProduct._id)[0];
-        productFind = editProduct;
-        this.checkToLimitIsHotProduct(this.products);
-        console.log(productFind);
-
-        $('#modal').modal('toggle');
-        this.showLoader(false);
-        this.clearFilesToReadyUpload();
-      },
-      (err) => {
-        console.log(err);
-        this.showLoader(false);
-      }
+      )
     );
   }
 
@@ -534,21 +544,23 @@ export class ProductComponent implements OnInit, OnDestroy {
   }
   remove(_id: string) {
     this.showLoader(true);
-    this.removeConnection = this.productService.remove(_id).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (!response.success) {
-          this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
-          return;
+    this.subscribes.push(
+      this.productService.remove(_id).subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (!response.success) {
+            this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+            return;
+          }
+          this.removeInListProducts(response.data.data.product);
+          this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+          this.showLoader(false);
+        },
+        (err) => {
+          console.log(err);
+          this.showLoader(false);
         }
-        this.removeInListProducts(response.data.data.product);
-        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
-        this.showLoader(false);
-      },
-      (err) => {
-        console.log(err);
-        this.showLoader(false);
-      }
+      )
     );
   }
 
@@ -608,30 +620,7 @@ removeInProductImages(product: Product, url: string) {
   }
 
 ngOnDestroy() {
-    if (this.getAllConnection && this.getAllConnection.unsubscribe) {
-      this.getAllConnection.unsubscribe();
-    }
-    if (this.getAllCategoriesConnection && this.getAllCategoriesConnection.unsubscribe) {
-      this.getAllCategoriesConnection.unsubscribe();
-    }
-    if (this.getAllProducersConnection && this.getAllProducersConnection.unsubscribe) {
-      this.getAllProducersConnection.unsubscribe();
-    }
-    if (this.addProductConnection && this.addProductConnection.unsubscribe) {
-      this.addProductConnection.unsubscribe();
-    }
-    if (this.getAllPhotosConnection && this.getAllPhotosConnection.unsubscribe) {
-      this.getAllPhotosConnection.unsubscribe();
-    }
-    if (this.removeConnection && this.removeConnection.unsubscribe) {
-      this.removeConnection.unsubscribe();
-    }
-    if (this.getAllFiltersConnection && this.getAllFiltersConnection.unsubscribe) {
-      this.getAllFiltersConnection.unsubscribe();
-    }
-    if (this.addFilterConnection && this.addFilterConnection.unsubscribe) {
-      this.addFilterConnection.unsubscribe();
-    }
+  this.unsubscribeService.unsubscribings(this.subscribes);
   }
 
 }

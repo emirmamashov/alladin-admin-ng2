@@ -12,6 +12,7 @@ import { Notify } from '../../models/notify';
 import { UsersService } from '../../services/users.service';
 import { NotifyService } from '../../services/notify.service';
 import { AuthService } from '../../services/auth.service';
+import { UnsubscribeService } from '../../services/unsubscribe.service';
 
 declare let $: any;
 @Component({
@@ -31,15 +32,13 @@ export class UsersComponent implements OnInit, OnDestroy {
   loadContent = false;
   isLoad = false;
 
-  getAllConnection: any;
-  addConnection: any;
-  updateConnection: any;
-  removeConnection: any;
+  private subscribes = new Array<any>();
 
   constructor(
     private usersService: UsersService,
     private notifyService: NotifyService,
-    private authService: AuthService
+    private authService: AuthService,
+    private unsubscribeService: UnsubscribeService
   ) { }
 
   ngOnInit() {
@@ -51,18 +50,20 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   getAll() {
     this.showLoader(true);
-    this.getAllConnection = this.usersService.getAll().subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        if (response.success) {
-          this.users = response.data.data.users;
+    this.subscribes.push(
+      this.usersService.getAll().subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (response.success) {
+            this.users = response.data.data.users;
+          }
+          this.showLoader(false);
+        },
+        (err) => {
+          console.log(err);
+          this.showLoader(false);
         }
-        this.showLoader(false);
-      },
-      (err) => {
-        console.log(err);
-        this.showLoader(false);
-      }
+      )
     );
   }
   add(user: User) {
@@ -73,37 +74,39 @@ export class UsersComponent implements OnInit, OnDestroy {
       return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите Имя');
     }
 
-    this.addConnection = this.usersService.add(user).subscribe(
-      (response: ResponseApi) => {
-        console.log(response);
-        this.showLoader(false);
-        if (!response.success) {
-          let messages = response.message;
-          const validatesMessages = response.message.validates;
-          if (validatesMessages) {
-            messages = 'Проблема валидации';
-            if (validatesMessages.length > 0) {
-              messages = '';
-              validatesMessages.forEach((message) => {
-                messages += message + '<br/>';
-              });
+    this.subscribes.push(
+      this.usersService.add(user).subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          this.showLoader(false);
+          if (!response.success) {
+            let messages = response.message;
+            const validatesMessages = response.message.validates;
+            if (validatesMessages) {
+              messages = 'Проблема валидации';
+              if (validatesMessages.length > 0) {
+                messages = '';
+                validatesMessages.forEach((message) => {
+                  messages += message + '<br/>';
+                });
+              }
             }
+            return this.showMessageForUser(Notify_config.typeMessage.danger, messages);
           }
-          return this.showMessageForUser(Notify_config.typeMessage.danger, messages);
+          const newUser: User = response.data.data.user;
+          this.users.push(newUser);
+
+          this.showMessageForUser(Notify_config.typeMessage.success, 'Добавлено');
+          this.newUser = new User();
+
+          $('#modal').modal('toggle');
+        },
+        (err) => {
+          console.log(err);
+          this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
+          this.showLoader(false);
         }
-        const newUser: User = response.data.data.user;
-        this.users.push(newUser);
-
-        this.showMessageForUser(Notify_config.typeMessage.success, 'Добавлено');
-        this.newUser = new User();
-
-        $('#modal').modal('toggle');
-      },
-      (err) => {
-        console.log(err);
-        this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
-        this.showLoader(false);
-      }
+      )
     );
   }
 
@@ -114,56 +117,60 @@ export class UsersComponent implements OnInit, OnDestroy {
       return this.showMessageForUser(Notify_config.typeMessage.danger, 'Введите имя');
     }
 
-    this.updateConnection = this.usersService.update(user).subscribe(
-      (response: ResponseApi) => {
-        this.showLoader(false);
-        console.log(response);
-        if (!response.success) {
-          let messages = response.message;
-          const validatesMessages = response.message.validates;
-          if (validatesMessages) {
-            messages = 'Проблема валидации';
-            if (validatesMessages.length > 0) {
-              messages = '';
-              validatesMessages.forEach((message) => {
-                messages += message + '<br/>';
-              });
+    this.subscribes.push(
+      this.usersService.update(user).subscribe(
+        (response: ResponseApi) => {
+          this.showLoader(false);
+          console.log(response);
+          if (!response.success) {
+            let messages = response.message;
+            const validatesMessages = response.message.validates;
+            if (validatesMessages) {
+              messages = 'Проблема валидации';
+              if (validatesMessages.length > 0) {
+                messages = '';
+                validatesMessages.forEach((message) => {
+                  messages += message + '<br/>';
+                });
+              }
             }
+            return this.showMessageForUser(Notify_config.typeMessage.danger, messages);
           }
-          return this.showMessageForUser(Notify_config.typeMessage.danger, messages);
-        }
-        const updateUser: User = response.data.data.user;
-        this.newUser = new User();
+          const updateUser: User = response.data.data.user;
+          this.newUser = new User();
 
-        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
-        $('#modal').modal('toggle');
-      },
-      (err) => {
-        console.log(err);
-        this.showMessageForUser(Notify_config.typeMessage.warning, 'Что то пошло не так');
-        this.showLoader(false);
-      }
+          this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+          $('#modal').modal('toggle');
+        },
+        (err) => {
+          console.log(err);
+          this.showMessageForUser(Notify_config.typeMessage.warning, 'Что то пошло не так');
+          this.showLoader(false);
+        }
+      )
     );
   }
 
   remove(_id: string) {
     this.showLoader(true);
-    this.removeConnection = this.usersService.remove(_id).subscribe(
-      (response: ResponseApi) => {
-        this.showLoader(false);
-        console.log(response);
-        if (!response.success) {
-          this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
-          return;
+    this.subscribes.push(
+      this.usersService.remove(_id).subscribe(
+        (response: ResponseApi) => {
+          this.showLoader(false);
+          console.log(response);
+          if (!response.success) {
+            this.showMessageForUser(Notify_config.typeMessage.danger, response.message);
+            return;
+          }
+          this.removeInListUsers(response.data.data.user);
+          this.showMessageForUser(Notify_config.typeMessage.success, response.message);
+        },
+        (err) => {
+          console.log(err);
+          this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
+          this.showLoader(false);
         }
-        this.removeInListUsers(response.data.data.user);
-        this.showMessageForUser(Notify_config.typeMessage.success, response.message);
-      },
-      (err) => {
-        console.log(err);
-        this.showMessageForUser(Notify_config.typeMessage.danger, 'Что то пошло не так');
-        this.showLoader(false);
-      }
+      )
     );
   }
 
@@ -192,18 +199,7 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.isLoad = status;
   }
   ngOnDestroy() {
-    if (this.getAllConnection && this.getAllConnection.unsubscribe) {
-      this.getAllConnection.unsubscribe();
-    }
-    if (this.addConnection && this.addConnection.unsubscribe) {
-      this.addConnection.unsubscribe();
-    }
-    if (this.updateConnection && this.updateConnection.unsubscribe) {
-      this.updateConnection.unsubscribe();
-    }
-    if (this.removeConnection && this.removeConnection.unsubscribe) {
-      this.removeConnection.unsubscribe();
-    }
+    this.unsubscribeService.unsubscribings(this.subscribes);
   }
 
 }
