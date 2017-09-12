@@ -116,7 +116,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
 
   initPaginator(page: number, count: number) {
-    const pages = Math.round(count / this.limit);
+    const pages = Math.ceil(count / this.limit);
     this.pages = [];
     console.log(page, this.limit, count, pages);
     if (pages < 1) {
