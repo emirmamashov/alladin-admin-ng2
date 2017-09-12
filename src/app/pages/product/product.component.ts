@@ -124,7 +124,7 @@ export class ProductComponent implements OnInit, OnDestroy {
           this.producersItem.push({ label: 'Выберите производителя', value: '' });
           this.promoStickersItem.push({ label: 'Выберите промостикер', value: '' });
           this.filtersItems.push({ label: 'Выберите фильтер', value: '' });
-          this.getAll(1);
+          this.getAll(1, '');
           this.getAllCategories();
           this.getAllProducers();
           this.getAllPromoStickers();
@@ -139,11 +139,11 @@ export class ProductComponent implements OnInit, OnDestroy {
     }
   }
 
-  getAll(page: number) {
+  getAll(page: number, searchText: string) {
     this.showLoader(true);
     this.currentPage = page;
 
-    this.getAllConnection = this.productService.getAll(page, this.limit, '').subscribe(
+    this.getAllConnection = this.productService.getAll(page, this.limit, searchText).subscribe(
       (response: ResponseApi) => {
         console.log(response);
         this.showLoader(false);
@@ -593,6 +593,15 @@ removeInProductImages(product: Product, url: string) {
         this.isLimitHot = false;
       }
   }
+
+  search(text: string) {
+    console.log(text);
+    if (!text) {
+      return this.getAll(1, '');
+    }
+    this.getAll(1, text);
+  }
+
 
   showLoader(status: boolean) {
     this.isLoad = status;
