@@ -100,7 +100,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
           this.showLoader(false);
           if (response.success) {
             this.allCategories = response.data.data.categories;
-            this.setCategoriesItem(response.data.data.categories);
+            this.setCategoriesItem();
             this.checkToLimitCategoriesViewInMenu(response.data.data.categories);
             this.setParentCategoriesModel(response.data.data.categories);
             this.checkOptionsLeftRigthShowCategories(response.data.data.categories);
@@ -163,12 +163,12 @@ export class CategoryComponent implements OnInit, OnDestroy {
     });
   }
 
-  setCategoriesItem(categories: Array<Category>) {
-    categories = categories.filter(x => !x.parentCategory);
-    if (categories.length === 0) {
+  setCategoriesItem() {
+    const parentCategories = this.allCategories.filter(x => !x.parentCategory);
+    if (parentCategories.length === 0) {
       return;
     }
-    categories.forEach((category) => {
+    parentCategories.forEach((category) => {
       const firstChildrenCategories = this.knowedChildrenCategories([category]);
 
       const secondChildrenCategories = this.knowedChildrenCategories(firstChildrenCategories);
@@ -202,7 +202,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
     }
     const resultCategories = new Array<Category>();
     categories.forEach((category) => {
-      const findCategories = this.categories.filter(x => x.parentCategory === category._id);
+      const findCategories = this.allCategories.filter(x => x.parentCategory === category._id);
       if (findCategories && findCategories.length > 0) {
         findCategories.forEach((findCategory) => {
           resultCategories.push(findCategory);
@@ -241,7 +241,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
           this.newCategory = new Category();
           this.clearFilesToReadUpload();
 
-          this.setCategoriesItem(this.categories);
+          this.setCategoriesItem();
 
           $('#modal').modal('toggle');
           this.checkOptionsLeftRigthShowCategories(this.categories);
@@ -287,7 +287,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
           this.showMessageForUser(Notify_config.typeMessage.success, response.message);
           this.clearFilesToReadUpload();
 
-          this.setCategoriesItem(this.categories);
+          this.setCategoriesItem();
           $('#modal').modal('toggle');
 
           this.checkOptionsLeftRigthShowCategories(this.categories);
@@ -376,7 +376,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
           this.removeInListCategories(response.data.data.category);
           this.showMessageForUser(Notify_config.typeMessage.success, response.message);
 
-          this.setCategoriesItem(this.categories);
+          this.setCategoriesItem();
         },
         (err) => {
           this.showLoader(false);
