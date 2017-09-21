@@ -94,7 +94,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   getAllWithoutPaginator() {
     this.showLoader(true);
     this.subscribes.push(
-      this.categoryService.getAll(1, 0, '').subscribe(
+      this.categoryService.getAll(1, null, '').subscribe(
         (response: ResponseApi) => {
           console.log(response);
           this.showLoader(false);
