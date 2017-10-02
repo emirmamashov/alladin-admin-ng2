@@ -70,10 +70,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 
-@angular/router@4.3.4 MIT
-
-@angular/http@4.3.4 MIT
-
 angular-2-local-storage@1.0.1 MIT
 
 @angular/animations@4.3.4 MIT
