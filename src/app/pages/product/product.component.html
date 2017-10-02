@@ -10,9 +10,9 @@
     </div>
 
     <div class="form-group col-md-8">
-        <input #text type="text" 
-        class="form-control" 
-        id="search" 
+        <input #text type="text"
+        class="form-control"
+        id="search"
         placeholder="Поиск"
         (input)="search(text.value)"/>
     </div>
@@ -39,7 +39,7 @@
         <tr *ngFor="let product of products; let i=index">
             <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ i + 1 }}</td>
             <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.name }}</td>
-            <!--<td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)"> 
+            <!--<td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">
                 <div [innerHTML] = "product.description"></div>
             </td>-->
             <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.phone }}</td>
@@ -93,28 +93,28 @@
                 <div class="row">
                     <div class="form-group col-md-6">
                         <label>Наименование: </label>
-                        <input type="text" 
-                            class="form-control" 
-                            id="name" 
-                            placeholder="Наименование" 
-                            [(ngModel)]="newProduct.name" 
+                        <input type="text"
+                            class="form-control"
+                            id="name"
+                            placeholder="Наименование"
+                            [(ngModel)]="newProduct.name"
                             [value]="newProduct.name"
                         />
                     </div>
-                    <div class="form-group col-md-6">
+                    <!--<div class="form-group col-md-6">
                         <label>Телефон: </label>
-                        <input type="text" 
-                            class="form-control" 
-                            id="phone" 
-                            placeholder="Телефон" 
-                            [(ngModel)]="newProduct.phone" 
+                        <input type="text"
+                            class="form-control"
+                            id="phone"
+                            placeholder="Телефон"
+                            [(ngModel)]="newProduct.phone"
                             [value]="newProduct.phone"/>
-                    </div>
+                    </div>-->
                     <div class="form-group col-md-6">
                         <label>Цена: </label>
-                        <input type="text" 
-                            class="form-control" 
-                            id="price" 
+                        <input type="text"
+                            class="form-control"
+                            id="price"
                             placeholder="Цена"
                             [(ngModel)]="newProduct.price"
                             [value]="newProduct.price"/>
@@ -125,7 +125,7 @@
                             class="form-control"
                             id="priceStock"
                             placeholder="Цена акции"
-                            [(ngModel)]="newProduct.priceStock" 
+                            [(ngModel)]="newProduct.priceStock"
                             [value]="newProduct.priceStock"/>
                     </div>
                     <div class="form-group col-md-6">
@@ -134,7 +134,7 @@
                             class="form-control"
                             id="priceTrade"
                             placeholder="Оптовая цена"
-                            [(ngModel)]="newProduct.priceTrade" 
+                            [(ngModel)]="newProduct.priceTrade"
                             [value]="newProduct.priceTrade"/>
                     </div>
                     <div class="form-group col-md-6">
@@ -143,14 +143,14 @@
                             class="form-control"
                             id="comments"
                             placeholder="Комментарий"
-                            [(ngModel)]="newProduct.comments" 
+                            [(ngModel)]="newProduct.comments"
                             [value]="newProduct.comments"/>
                     </div>
                     <div class="form-group col-md-6">
                         <div class="col-lg-12">
                             <!--<label> Выберите промостикер: </label>-->
-                            <p-dropdown [options]="promoStickersItem" 
-                                [(ngModel)]="newProduct.promoStickerId" 
+                            <p-dropdown [options]="promoStickersItem"
+                                [(ngModel)]="newProduct.promoStickerId"
                                 [filter]="true" [style]="{'width':'100%'}">
                             </p-dropdown>
                         </div>
@@ -177,8 +177,8 @@
                         <div class="col-lg-10">
                             <!--<label>Выберите производителя: </label>-->
                             <!--producer-->
-                            <p-dropdown [options]="producersItem" 
-                                [(ngModel)]="newProduct.producerId" 
+                            <p-dropdown [options]="producersItem"
+                                [(ngModel)]="newProduct.producerId"
                                 [filter]="true" [style]="{'width':'100%'}">
                             </p-dropdown>
                         </div>
@@ -186,9 +186,9 @@
                     <div class="form-group col-md-6">
                         <div class="col-lg-10">
                             <!--category-->
-                            <p-dropdown [options]="categoriesItem" 
-                                [(ngModel)]="newProduct.categoryId" 
-                                [filter]="true" 
+                            <p-dropdown [options]="categoriesItem"
+                                [(ngModel)]="newProduct.categoryId"
+                                [filter]="true"
                                 [style]="{'width':'100%'}">
                             </p-dropdown>
                         </div>
@@ -197,7 +197,7 @@
                         <div class="col-lg-10">
                             <!--categories-->
                             <label>Выберите категории где будет показыватся:</label>
-                            <p-multiSelect [options]="categoriesItem" 
+                            <p-multiSelect [options]="categoriesItem"
                                 [(ngModel)]="newProduct.categories" [style]="{'width': '100%'}">
                             </p-multiSelect>
                         </div>
@@ -207,7 +207,7 @@
                         <div class="col-lg-10">
                             <!--categories-->
                             <label>Выберите фильтеры:</label>
-                            <p-multiSelect [options]="filtersItems" 
+                            <p-multiSelect [options]="filtersItems"
                                 [(ngModel)]="newProduct.filters" [style]="{'width': '100%'}">
                             </p-multiSelect>
 
@@ -215,33 +215,33 @@
                             <div *ngIf="isCreateFilter">
                                 <div class="form-group col-md-12">
                                     <label>Наименование: </label>
-                                    <input type="text" 
-                                        class="form-control" 
-                                        id="name" 
-                                        placeholder="Наименование" 
-                                        [(ngModel)]="newFilter.name" 
+                                    <input type="text"
+                                        class="form-control"
+                                        id="name"
+                                        placeholder="Наименование"
+                                        [(ngModel)]="newFilter.name"
                                         [value]="newFilter.name"
                                     />
                                     <a (click)="addFilter(newFilter)">Сохранить</a>
                                 </div>
                             </div>
                         </div>
-                        
+
                     </div>
                     <div class="form-group col-md-6">
                         <label>Горячая: </label>
-                        <input *ngIf="!isLimitHot" type="checkbox" 
-                            class="form-control" 
-                            id="name" 
-                            placeholder="Наименование" 
-                            [(ngModel)]="newProduct.isHot" 
+                        <input *ngIf="!isLimitHot" type="checkbox"
+                            class="form-control"
+                            id="name"
+                            placeholder="Наименование"
+                            [(ngModel)]="newProduct.isHot"
                             [value]="newProduct.isHot"
                         />
-                        <input #isHot *ngIf="isLimitHot" type="checkbox" 
-                            class="form-control" 
-                            id="name" 
-                            placeholder="Наименование" 
-                            [(ngModel)]="newProduct.isHot" 
+                        <input #isHot *ngIf="isLimitHot" type="checkbox"
+                            class="form-control"
+                            id="name"
+                            placeholder="Наименование"
+                            [(ngModel)]="newProduct.isHot"
                             [value]="false"
                             (change)="doLimitIsHotProduct(newProduct)"
                         />
