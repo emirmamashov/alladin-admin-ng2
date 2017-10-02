@@ -189,7 +189,7 @@ export const Api_config = {
     },
     update: {
       method: 'PUT',
-      url: apiUrl + '/exchange/add'
+      url: apiUrl + '/exchange/update'
     }
   }
 }

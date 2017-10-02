@@ -44,7 +44,7 @@ export class ExchangeService {
 
 
   update(exchange: Exchange): Observable<any> {
-    const url: string = Api_config.exchange.update.url + '/' + exchange._id;
+    const url: string = Api_config.exchange.update.url;
     const token = this.localStorage.getToken();
     if (!token) {
       return this.handleService.returnError('token is null');

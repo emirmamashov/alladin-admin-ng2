@@ -1,9 +1,9 @@
 <ng-container *ngIf="loadContent">
     <app-top-bar></app-top-bar>
-    <h3>Курс валют 
+    <h3>Курс валют
         <a href="http://www.nbkr.kg/index.jsp?lang=KGZ" target="_blank">NBKR</a>
     </h3>
-    
+
     <table class="table table-striped table-hover">
         <thead>
             <tr>
@@ -11,19 +11,34 @@
                 <th>EUR</th>
                 <th>RUB</th>
                 <th>KZT</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             <tr>
-                <td>{{ exchange.usd }}</td>
-                <td>{{ exchange.eur }}</td>
-                <td>{{ exchange.rub }}</td>
-                <td>{{ exchange.kzt }}</td>
+                <td>
+                  <input [(ngModel)]="exchange.usd"/>
+                </td>
+                <td>
+                    <input [(ngModel)]="exchange.eur"/>
+                </td>
+                <td>
+                    <input [(ngModel)]="exchange.rub"/>
+                </td>
+                <td>
+                    <input [(ngModel)]="exchange.kzt"/>
+                </td>
+                <td>
+                  <i class="fa fa-pencil-square-o fa-lg"
+                    aria-hidden="true"
+                    style = "cursor:pointer"
+                    (click)="update(exchange)"></i>
+                </td>
             </tr>
         </tbody>
     </table>
 </ng-container>
-    
+
 <div class="wrapper" *ngIf="isLoad">
-        <div class="cssload-loader"></div>
-    </div>
+    <div class="cssload-loader"></div>
+</div>
