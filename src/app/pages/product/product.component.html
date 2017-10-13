@@ -56,7 +56,7 @@
               </ng-container>
             </td>
             <!--<td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.producerId }}</td>-->
-            <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.categoryId }}</td>
+            <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.category?.name }}</td>
             <td data-toggle="modal" data-target="#modal" (click)="newProduct = product; changeEditStatus(true)">{{ product.comments }}</td>
             <td>
                 <a (click)="remove(product._id)">

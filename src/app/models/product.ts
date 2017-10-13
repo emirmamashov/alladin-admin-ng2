@@ -1,4 +1,5 @@
 import { Photo } from '../models/photo';
+import { Category } from '../models/category';
 
 export class Product {
   _id: string;
@@ -23,4 +24,5 @@ export class Product {
   filters: Array<string>;
   priceTrade: number;
   comments: string;
+  category: Category;
 }
