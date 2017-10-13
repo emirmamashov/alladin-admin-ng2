@@ -47,6 +47,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   limit = PageLimit;
   countAllPage = 0;
   pages = new Array<Paginator>();
+  searchText: string;
 
   constructor(
     private categoryService: CategoryService,

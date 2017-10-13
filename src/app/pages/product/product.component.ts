@@ -81,7 +81,7 @@ export class ProductComponent implements OnInit, OnDestroy {
 
   private subscribes = new Array<any>();
 
-  text: any;
+  searchText: string;
   isCreateFilter = false;
   isLoad = false;
 
@@ -136,6 +136,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   getAll(page: number, searchText: string) {
     this.showLoader(true);
     this.currentPage = page;
+    console.log('----------getAll-----------');
 
     this.subscribes.push(
       this.productService.getAll(page, this.limit, searchText).subscribe(
@@ -606,12 +607,12 @@ removeInProductImages(product: Product, url: string) {
       }
   }
 
-  search(text: string) {
-    console.log(text);
+  search(text: string, pageNumber: number) {
+    // console.log(text);
     if (!text) {
-      return this.getAll(1, '');
+      return this.getAll(pageNumber || 1, '');
     }
-    this.getAll(1, text);
+    this.getAll(pageNumber || 1, text);
   }
 
 

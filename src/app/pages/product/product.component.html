@@ -10,11 +10,12 @@
     </div>
 
     <div class="form-group col-md-8">
-        <input #text type="text"
+        <input type="text"
+        [(ngModel)]="searchText"
         class="form-control"
         id="search"
         placeholder="Поиск"
-        (input)="search(text.value)"/>
+        (input)="search(searchText)"/>
     </div>
 
 <table class="table table-striped table-hover ">
@@ -69,16 +70,16 @@
 <ul class="pagination">
     <li class="{{ currentPage === 1 ? 'disabled': '' }}">
         <a *ngIf="currentPage === 1">&laquo;</a>
-        <a *ngIf="currentPage > 1" (click)="getAll(currentPage-1, '', '');">&laquo;</a>
+        <a *ngIf="currentPage > 1" (click)="getAll(currentPage-1, searchText);">&laquo;</a>
     </li>
 
     <li *ngFor="let page of pages" class="{{ page.isCurrent ? 'active' : ''}}">
-        <a (click)="getAll(page.pageNumber, '', '')"> {{ page.pageNumber }} </a>
+        <a (click)="getAll(page.pageNumber, searchText)"> {{ page.pageNumber }} </a>
     </li>
 
     <li class="{{ currentPage === countAllPage ? 'disabled': '' }}">
         <a *ngIf="currentPage === countAllPage">&raquo;</a>
-        <a *ngIf="currentPage < countAllPage" (click)="getAll(currentPage+1, '', '');">&raquo;</a>
+        <a *ngIf="currentPage < countAllPage" (click)="getAll(currentPage+1, searchText);">&raquo;</a>
     </li>
 </ul>
 
