@@ -146,7 +146,7 @@ export class ProductService {
   }
 
   getCountProductsByCategory(categoryId: string): Observable<any> {
-    const url: string = Api_config.product.remove.url.replace(':categoryId', categoryId);
+    const url: string = Api_config.product.countProductsByCategoryId.url.replace(':categoryId', categoryId);
 
     return this.http.get(url)
         .map(res => res.json())

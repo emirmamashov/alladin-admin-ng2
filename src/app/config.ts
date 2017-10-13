@@ -31,7 +31,7 @@ export const Api_config = {
       method: 'DELETE',
       url: apiUrl + '/products/remove' // :id
     },
-    counProductsByCategoryId: {
+    countProductsByCategoryId: {
       method: 'GET',
       url: apiUrl + '/products/getCountByCategoryId/:categoryId' // :id
     }

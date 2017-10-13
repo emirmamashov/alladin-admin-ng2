@@ -25,6 +25,7 @@
             <th>Показывать в меню</th>
             <th>Показывается в "Вам понравиться"</th>
             <th>Показывается в левой/правой части</th>
+            <th>Количество товаров</th>
             <th>Действия</th>
         </tr>
     </thead>
@@ -51,6 +52,9 @@
             <!--<td data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">{{ category.category }}</td>-->
             <td data-toggle="modal" data-target="#modal" (click)="newCategory = category; changeEditStatus(true)">
                 {{ category.showInMainPageLeft ? 'левой' : ''}}/{{category.showInMainPageRight ? 'правой' : ''}} 
+            </td>
+            <td>
+                <app-count-products categoryId="{{ category._id }}"></app-count-products>
             </td>
             <td> 
                 <a (click)="remove(category._id)">
