@@ -89,7 +89,7 @@ export class ProductService {
           .catch(this.handleService.handleError);
   }
 
-    update(files: File[], product: Product): Observable<any> {
+  update(files: File[], product: Product): Observable<any> {
     const url: string = Api_config.product.edit.url;
     const formData = new FormData();
     for (let i = 0; i < files.length; i++) {
@@ -141,6 +141,14 @@ export class ProductService {
     const url: string = Api_config.product.remove.url + '/' + _id;
 
     return this.http.delete(url)
+        .map(res => res.json())
+        .catch(this.handleService.handleError);
+  }
+
+  getCountProductsByCategory(categoryId: string): Observable<any> {
+    const url: string = Api_config.product.remove.url.replace(':categoryId', categoryId);
+
+    return this.http.get(url)
         .map(res => res.json())
         .catch(this.handleService.handleError);
   }

@@ -43,6 +43,7 @@ import { LoginComponent } from './pages/account/login/login.component';
 import { TopBarComponent } from './components/nav-bars/top-bar/top-bar.component';
 import { BlogsComponent } from './pages/blogs/blogs.component';
 import { ExchangeComponent } from './pages/exchange/exchange.component';
+import { CountProductsComponent } from './components/count-products/count-products.component';
 
 @NgModule({
   declarations: [
@@ -59,7 +60,8 @@ import { ExchangeComponent } from './pages/exchange/exchange.component';
     LoginComponent,
     TopBarComponent,
     BlogsComponent,
-    ExchangeComponent
+    ExchangeComponent,
+    CountProductsComponent
   ],
   imports: [
     BrowserModule,

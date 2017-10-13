@@ -139,7 +139,7 @@ export class ProductComponent implements OnInit, OnDestroy {
     console.log('----------getAll-----------');
 
     this.subscribes.push(
-      this.productService.getAll(page, this.limit, searchText).subscribe(
+      this.productService.getAll(page, this.limit, searchText || '').subscribe(
         (response: ResponseApi) => {
           console.log(response);
           this.showLoader(false);

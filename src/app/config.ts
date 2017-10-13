@@ -30,6 +30,10 @@ export const Api_config = {
     remove: {
       method: 'DELETE',
       url: apiUrl + '/products/remove' // :id
+    },
+    counProductsByCategoryId: {
+      method: 'GET',
+      url: apiUrl + '/products/getCountByCategoryId/:categoryId' // :id
     }
   },
   category: {

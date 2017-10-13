@@ -73,7 +73,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
     this.currentPage = page;
 
     this.subscribes.push(
-      this.categoryService.getAll(page, this.limit, searchText).subscribe(
+      this.categoryService.getAll(page, this.limit, searchText || '').subscribe(
         (response: ResponseApi) => {
           console.log(response);
           this.showLoader(false);
