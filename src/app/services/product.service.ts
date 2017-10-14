@@ -153,4 +153,16 @@ export class ProductService {
         .catch(this.handleService.handleError);
   }
 
+  getProductsByCategoryId(page: number, limit: number, categoryId: string): Observable<any> {
+    const url: string = Api_config.product.getProductsByCategoryId.url.replace(':categoryId', categoryId) + '?page=' + page + '&limit=' + limit;
+    const headers = new Headers({
+      'Content-type': 'json/application'
+    });
+    const options = new RequestOptions({ headers: headers });
+
+    return this.http.get(url, options)
+          .map(res => res.json())
+          .catch(this.handleService.handleError);
+  }
+
 }

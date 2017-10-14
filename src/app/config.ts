@@ -34,6 +34,10 @@ export const Api_config = {
     countProductsByCategoryId: {
       method: 'GET',
       url: apiUrl + '/products/getCountByCategoryId/:categoryId' // :id
+    },
+    getProductsByCategoryId: {
+      method: 'GET',
+      url: apiUrl + '/products/getProductsByCategoryId/:categoryId' // :id, query = {page: 1, limit:20}
     }
   },
   category: {

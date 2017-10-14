@@ -31,7 +31,15 @@
             <th>Горячая</th>
             <th>Изображении товара</th>
             <!--<th>Производитель</th>-->
-            <th>Главная категория</th>
+            <th>Категория
+                <p-dropdown [options]="categoriesItem"
+                    [(ngModel)]="selectFilterCategoryId"
+                    [filter]="true"
+                    [style]="{'width':'100%'}"
+                    (onChange) = "getProductsByCategoryIds(selectFilterCategoryId, 1)"
+                    >
+                </p-dropdown>
+            </th>
             <th>Комментарий</th>
             <th>Действия</th>
         </tr>
@@ -70,16 +78,16 @@
 <ul class="pagination">
     <li class="{{ currentPage === 1 ? 'disabled': '' }}">
         <a *ngIf="currentPage === 1">&laquo;</a>
-        <a *ngIf="currentPage > 1" (click)="getAll(currentPage-1, searchText);">&laquo;</a>
+        <a *ngIf="currentPage > 1" (click)="selectFilterCategoryId ? getProductsByCategoryIds(selectFilterCategoryId, currentPage-1) : getAll(currentPage-1, searchText);">&laquo;</a>
     </li>
 
     <li *ngFor="let page of pages" class="{{ page.isCurrent ? 'active' : ''}}">
-        <a (click)="getAll(page.pageNumber, searchText)"> {{ page.pageNumber }} </a>
+        <a (click)="selectFilterCategoryId ? getProductsByCategoryIds(selectFilterCategoryId, page.pageNumber) : getAll(page.pageNumber, searchText)"> {{ page.pageNumber }} </a>
     </li>
 
     <li class="{{ currentPage === countAllPage ? 'disabled': '' }}">
         <a *ngIf="currentPage === countAllPage">&raquo;</a>
-        <a *ngIf="currentPage < countAllPage" (click)="getAll(currentPage+1, searchText);">&raquo;</a>
+        <a *ngIf="currentPage < countAllPage" (click)="selectFilterCategoryId ? getProductsByCategoryIds(selectFilterCategoryId, currentPage+1) : getAll(currentPage+1, searchText);">&raquo;</a>
     </li>
 </ul>
 

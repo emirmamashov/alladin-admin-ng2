@@ -59,6 +59,7 @@ export class ProductComponent implements OnInit, OnDestroy {
   newProduct = new Product();
   newFilter = new Filter();
   filesToReadyUpload = [];
+  selectFilterCategoryId = '';
 
   // pagination
   currentPage = 1;
@@ -609,19 +610,46 @@ removeInProductImages(product: Product, url: string) {
 
   search(text: string, pageNumber: number) {
     // console.log(text);
+    this.selectFilterCategoryId = '';
     if (!text) {
       return this.getAll(pageNumber || 1, '');
     }
     this.getAll(pageNumber || 1, text);
   }
 
-
   showLoader(status: boolean) {
     this.isLoad = status;
   }
 
-ngOnDestroy() {
-  this.unsubscribeService.unsubscribings(this.subscribes);
+  getProductsByCategoryIds(categoryId: string, page: number, limit: number) {
+    console.log('getProductsByCategoryIds', categoryId);
+    this.searchText = '';
+    if (!categoryId) {
+      return console.log('not selected category');
+    }
+    
+    this.subscribes.push(
+      this.productService.getProductsByCategoryId(page || 1, limit || 20, categoryId).subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          if (!response.success) {
+            console.log(response.message);
+            return;
+          }
+          this.currentPage = page;
+          this.products = response.data.data.products;
+          this.initPaginator(this.currentPage, response.data.data.count);
+          this.checkToLimitIsHotProduct(this.products);
+        },
+        (err) => {
+          console.log(err);
+        }
+      )
+    );
+  }
+
+  ngOnDestroy() {
+    this.unsubscribeService.unsubscribings(this.subscribes);
   }
 
 }
