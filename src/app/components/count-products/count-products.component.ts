@@ -30,13 +30,14 @@ export class CountProductsComponent implements OnInit {
     if (!this.categoryId) {
       return console.log('categoryId is null');
     }
-    console.log(this.categoryId);
     this.productService.getCountProductsByCategory(this.categoryId).subscribe(
       (response: any) => {
+        console.log(this.categoryId);
         console.log(response);
-        if (response.success) {
-          this.countProducts = response.data.data;
+        if (!response.success) {
+          return console.log(response.message);
         }
+        this.countProducts = response.data.data || 0;
       },
       (err) => {
         console.log(err);

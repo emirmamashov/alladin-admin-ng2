@@ -146,6 +146,9 @@ export class ProductService {
   }
 
   getCountProductsByCategory(categoryId: string): Observable<any> {
+    if (!categoryId) {
+      return this.handleService.handleError('categoryId is null!');
+    }
     const url: string = Api_config.product.countProductsByCategoryId.url.replace(':categoryId', categoryId);
 
     return this.http.get(url)
