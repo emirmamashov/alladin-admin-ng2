@@ -20,7 +20,15 @@
             <th>Id</th>
             <th>Название</th>
             <th>Изображение</th>
-            <th>Категория родитель</th>
+            <th>Категория родитель
+                <p-dropdown [options]="categoriesItem"
+                [(ngModel)]="selectFilterCategoryId"
+                [filter]="true"
+                [style]="{'width':'100%'}"
+                (onChange) = "getChildren(selectFilterCategoryId, 1)"
+                >
+            </p-dropdown>
+            </th>
             <th>Описание</th>
             <th>Показывать в меню</th>
             <th>Показывается в "Вам понравиться"</th>

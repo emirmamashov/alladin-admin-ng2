@@ -60,6 +60,10 @@ export const Api_config = {
     remove: {
       method: 'DELETE',
       url: apiUrl + '/categories/remove' // :id
+    },
+    getChildren: {
+      method: 'GET',
+      url: apiUrl + '/categories/childrenCategories/:parentCategoryId' //:id, query = { page: 1, limit: 20 }
     }
   },
   banner: {

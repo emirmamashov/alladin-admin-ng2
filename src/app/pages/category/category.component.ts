@@ -48,6 +48,7 @@ export class CategoryComponent implements OnInit, OnDestroy {
   countAllPage = 0;
   pages = new Array<Paginator>();
   searchText: string;
+  selectFilterCategoryId = '';
 
   constructor(
     private categoryService: CategoryService,
@@ -413,10 +414,34 @@ export class CategoryComponent implements OnInit, OnDestroy {
 
   searchCategory(text: string) {
     console.log(text);
+    this.selectFilterCategoryId = '';
     if (!text) {
       return this.getAll(1, '');
     }
     this.getAll(1, text);
+  }
+
+  getChildren(parentCategoryId: string, page: number, limit: number) {
+    this.searchText = '';
+    if (!parentCategoryId) {
+      return this.getAll(1, '');
+    }
+    this.subscribes.push(
+      this.categoryService.getChildren(page || 1, limit || 20, parentCategoryId).subscribe(
+        (response: ResponseApi) => {
+          console.log(response);
+          this.currentPage = page;
+          if (!response.success) {
+            return console.log(response.message);
+          }
+          this.categories = response.data.data.categories;
+          this.initPaginator(this.currentPage, response.data.data.count);
+        },
+        (err) => {
+          console.log(err);
+        }
+      )
+    );
   }
 
   ngOnDestroy() {

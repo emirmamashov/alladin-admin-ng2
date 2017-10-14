@@ -96,4 +96,15 @@ export class CategoryService {
         .map(res => res.json())
         .catch(this.handleService.handleError);
   }
+  getChildren(page: number, limit: number, parentCategoryId: string): Observable<any> {
+    const url: string = Api_config.category.getChildren.url.replace(':parentCategoryId', parentCategoryId) + '?page=' + page + '&limit=' + limit;
+    const headers = new Headers({
+      'Content-type': 'json/application'
+    });
+    const options = new RequestOptions({headers: headers});
+
+    return this.http.get(url, options)
+            .map(res => res.json())
+            .catch(this.handleService.returnError);
+  }
 }
